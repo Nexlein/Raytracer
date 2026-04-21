@@ -1,9 +1,12 @@
 /*
 ** EPITECH PROJECT, 2026
-** G-OOP-400-MPL-4-1-bsraytracer-11
+** Raytracer
 ** File description:
 ** Camera
 */
+
+/// @file Camera.cpp
+/// @brief Implementation of the Camera class.
 
 #include "Camera.hpp"
 

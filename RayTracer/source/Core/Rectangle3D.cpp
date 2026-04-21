@@ -1,10 +1,12 @@
 /*
 ** EPITECH PROJECT, 2026
-** G-OOP-400-MPL-4-1-bsraytracer-11
+** Raytracer
 ** File description:
 ** Rectangle3D
 */
 
+/// @file Rectangle3D.cpp
+/// @brief Implementation of the Rectangle3D class.
 #include "Rectangle3D.hpp"
 
 #include "RayTracerException.hpp"

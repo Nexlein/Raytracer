@@ -1,9 +1,12 @@
 /*
 ** EPITECH PROJECT, 2026
-** BSRaytracer
+** Raytracer
 ** File description:
 ** Vector3D
 */
+
+/// @file Vector3D.cpp
+/// @brief Implementation of the Vector3D class.
 
 #include "Vector3D.hpp"
 

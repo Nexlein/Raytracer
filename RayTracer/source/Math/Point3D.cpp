@@ -1,9 +1,12 @@
 /*
 ** EPITECH PROJECT, 2026
-** G-OOP-400-MPL-4-1-bsraytracer-11
+** Raytracer
 ** File description:
 ** Point3D
 */
+
+/// @file Point3D.cpp
+/// @brief Implementation of the Point3D class.
 
 #include "Point3D.hpp"
 

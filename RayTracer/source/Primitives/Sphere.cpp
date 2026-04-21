@@ -1,9 +1,12 @@
 /*
 ** EPITECH PROJECT, 2026
-** G-OOP-400-MPL-4-1-bsraytracer-11
+** Raytracer
 ** File description:
 ** Sphere
 */
+
+/// @file Sphere.cpp
+/// @brief Implementation of the Sphere class.
 
 #include "Sphere.hpp"
 
