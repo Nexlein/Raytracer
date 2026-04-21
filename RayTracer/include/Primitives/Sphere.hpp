@@ -21,6 +21,6 @@ namespace RayTracer {
         Point3D _center;
         double _radius;
 
-        [[nodiscard]] bool hits(const Ray& ray) const override;
+        [[nodiscard]] bool hits(const Ray& ray, HitRecord& hitRecord) const override;
     };
 }  // namespace RayTracer
