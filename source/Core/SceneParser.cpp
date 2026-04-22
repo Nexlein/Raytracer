@@ -30,6 +30,27 @@ bool RayTracer::SceneParser::getAsDouble(const libconfig::Setting& setting, cons
     return setting.lookupValue(key, value);
 }
 
+Math::Vector3D<double> RayTracer::SceneParser::parseColor(
+    const libconfig::Setting& primitiveSetting)
+{
+    if (!primitiveSetting.exists("color"))
+        throw RayTracerException("SceneParser: Missing color parameter for primitive.");
+
+    const libconfig::Setting& colorSetting = primitiveSetting["color"];
+
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+
+    if (!colorSetting.lookupValue("r", red) || !colorSetting.lookupValue("g", green) ||
+        !colorSetting.lookupValue("b", blue)) {
+        throw RayTracerException(
+            "SceneParser: Invalid or missing r, g, b values in color parameter.");
+    }
+
+    return Math::Vector3D<double>(red, green, blue);
+}
+
 std::vector<RayTracer::SphereData> RayTracer::SceneParser::parseSpheres(
     const libconfig::Setting& spheres)
 {
@@ -47,23 +68,8 @@ std::vector<RayTracer::SphereData> RayTracer::SceneParser::parseSpheres(
             throw RayTracerException("SceneParser: Missing parameters for sphere.");
         }
 
-        if (!sphereSetting.exists("color"))
-            throw RayTracerException("SceneParser: Missing color parameter for sphere.");
-
-        const libconfig::Setting& colorSetting = sphereSetting["color"];
-
-        int red = 0;
-        int green = 0;
-        int blue = 0;
-
-        if (!colorSetting.lookupValue("r", red) || !colorSetting.lookupValue("g", green) ||
-            !colorSetting.lookupValue("b", blue)) {
-            throw RayTracerException(
-                "SceneParser: Invalid or missing r, g, b values in color parameter.");
-        }
-
-        parsedSpheres.push_back(SphereData{Math::Point3D<double>(x, y, z), radius,
-                                           Math::Vector3D<double>(red, green, blue)});
+        parsedSpheres.push_back(
+            SphereData{Math::Point3D<double>(x, y, z), radius, parseColor(sphereSetting)});
     }
 
     return parsedSpheres;
@@ -84,23 +90,8 @@ std::vector<RayTracer::PlaneData> RayTracer::SceneParser::parsePlanes(
             throw RayTracerException("SceneParser: Missing parameters for plane.");
         }
 
-        if (!planeSetting.exists("color"))
-            throw RayTracerException("SceneParser: Missing color parameter for plane.");
-
-        const libconfig::Setting& colorSetting = planeSetting["color"];
-
-        int red = 0;
-        int green = 0;
-        int blue = 0;
-
-        if (!colorSetting.lookupValue("r", red) || !colorSetting.lookupValue("g", green) ||
-            !colorSetting.lookupValue("b", blue)) {
-            throw RayTracerException(
-                "SceneParser: Invalid or missing r, g, b values in color parameter.");
-        }
-
         parsedPlanes.push_back(
-            PlaneData{axis, static_cast<int>(position), Math::Vector3D<double>(red, green, blue)});
+            PlaneData{axis, static_cast<int>(position), parseColor(planeSetting)});
     }
 
     return parsedPlanes;
