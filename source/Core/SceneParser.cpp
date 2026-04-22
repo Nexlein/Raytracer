@@ -38,10 +38,14 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
 
         std::vector<std::unique_ptr<IPrimitive>> primitives;
         const libconfig::Setting& spheres = root["primitives"]["spheres"];
+        const libconfig::Setting& planes = root["primitives"]["planes"];
         PrimitiveFactory factory;
 
         for (int i = 0; i < spheres.getLength(); i++)
             primitives.push_back(factory.createSphere(spheres[i]));
+
+        for (int i = 0; i < planes.getLength(); i++)
+            primitives.push_back(factory.createPlane(planes[i]));
 
         return SceneData{std::move(cam), std::move(primitives), width, height};
 

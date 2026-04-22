@@ -36,6 +36,12 @@ Math::Vector3D<T> Math::Point3D<T>::operator-(const Point3D<T>& other) const
 }
 
 template <typename T>
+T Math::Point3D<T>::dot(const Vector3D<T>& other) const
+{
+    return _x * other._x + _y * other._y + _z * other._z;
+}
+
+template <typename T>
 void Math::Point3D<T>::translate(const Vector3D<T>& v)
 {
     _x += v._x;

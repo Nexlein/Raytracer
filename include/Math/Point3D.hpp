@@ -49,6 +49,11 @@ namespace Math {
         /// from this point
         [[nodiscard]] Math::Vector3D<T> operator-(const Point3D& other) const;
 
+        /// @brief Computes the dot product of this point and another vector
+        /// @param other The other vector
+        /// @return The dot product
+        [[nodiscard]] T dot(const Vector3D<T>& other) const;
+
         /// @brief Translates the point by a given vector, modifying the point's coordinates
         /// @param v The vector by which to translate the point
         void translate(const Vector3D<T>& v);
