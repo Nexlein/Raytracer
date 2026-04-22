@@ -70,6 +70,11 @@ namespace RayTracer {
         /// @return The parsed plane data
         std::vector<PlaneData> parsePlanes(const libconfig::Setting& planes);
 
+        /// @brief Parses an RGB color object from a primitive setting
+        /// @param primitiveSetting The primitive setting containing a "color" object
+        /// @return The parsed RGB color as a vector
+        Math::Vector3D<double> parseColor(const libconfig::Setting& primitiveSetting);
+
         /// @brief Helper function to extract a double value from a libconfig setting
         /// @param setting The libconfig setting to extract the value from
         /// @param key The key of the value to extract
