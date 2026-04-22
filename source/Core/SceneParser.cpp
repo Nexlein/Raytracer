@@ -12,6 +12,100 @@
 #include "RayTracerException.hpp"
 #include "Vector3D.hpp"
 
+bool RayTracer::SceneParser::getAsDouble(const libconfig::Setting& setting, const char* key,
+                                         double& value)
+{
+    int intValue = 0;
+    if (setting.lookupValue(key, intValue)) {
+        value = static_cast<double>(intValue);
+        return true;
+    }
+
+    float floatValue = 0.0f;
+    if (setting.lookupValue(key, floatValue)) {
+        value = static_cast<double>(floatValue);
+        return true;
+    }
+
+    return setting.lookupValue(key, value);
+}
+
+std::vector<RayTracer::SphereData> RayTracer::SceneParser::parseSpheres(
+    const libconfig::Setting& spheres)
+{
+    std::vector<SphereData> parsedSpheres;
+
+    for (int i = 0; i < spheres.getLength(); i++) {
+        const libconfig::Setting& sphereSetting = spheres[i];
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        double radius = 0.0;
+
+        if (!getAsDouble(sphereSetting, "x", x) || !getAsDouble(sphereSetting, "y", y) ||
+            !getAsDouble(sphereSetting, "z", z) || !getAsDouble(sphereSetting, "r", radius)) {
+            throw RayTracerException("SceneParser: Missing parameters for sphere.");
+        }
+
+        if (!sphereSetting.exists("color"))
+            throw RayTracerException("SceneParser: Missing color parameter for sphere.");
+
+        const libconfig::Setting& colorSetting = sphereSetting["color"];
+
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+
+        if (!colorSetting.lookupValue("r", red) || !colorSetting.lookupValue("g", green) ||
+            !colorSetting.lookupValue("b", blue)) {
+            throw RayTracerException(
+                "SceneParser: Invalid or missing r, g, b values in color parameter.");
+        }
+
+        parsedSpheres.push_back(SphereData{Math::Point3D<double>(x, y, z), radius,
+                                           Math::Vector3D<double>(red, green, blue)});
+    }
+
+    return parsedSpheres;
+}
+
+std::vector<RayTracer::PlaneData> RayTracer::SceneParser::parsePlanes(
+    const libconfig::Setting& planes)
+{
+    std::vector<PlaneData> parsedPlanes;
+
+    for (int i = 0; i < planes.getLength(); i++) {
+        const libconfig::Setting& planeSetting = planes[i];
+        std::string axis;
+        double position = 0.0;
+
+        if (!planeSetting.lookupValue("axis", axis) ||
+            !getAsDouble(planeSetting, "position", position)) {
+            throw RayTracerException("SceneParser: Missing parameters for plane.");
+        }
+
+        if (!planeSetting.exists("color"))
+            throw RayTracerException("SceneParser: Missing color parameter for plane.");
+
+        const libconfig::Setting& colorSetting = planeSetting["color"];
+
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+
+        if (!colorSetting.lookupValue("r", red) || !colorSetting.lookupValue("g", green) ||
+            !colorSetting.lookupValue("b", blue)) {
+            throw RayTracerException(
+                "SceneParser: Invalid or missing r, g, b values in color parameter.");
+        }
+
+        parsedPlanes.push_back(
+            PlaneData{axis, static_cast<int>(position), Math::Vector3D<double>(red, green, blue)});
+    }
+
+    return parsedPlanes;
+}
+
 RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
 {
     try {
@@ -23,29 +117,50 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
         int width = root["camera"]["resolution"]["width"];
         int height = root["camera"]["resolution"]["height"];
 
-        double camX = root["camera"]["position"]["x"];
-        double camY = root["camera"]["position"]["y"];
-        double camZ = root["camera"]["position"]["z"];
+        const libconfig::Setting& cameraSetting = root["camera"];
+        const libconfig::Setting& positionSetting = cameraSetting["position"];
+        const libconfig::Setting& rotationSetting = cameraSetting["rotation"];
 
-        double rotX = root["camera"]["rotation"]["x"];
-        double rotY = root["camera"]["rotation"]["y"];
-        double rotZ = root["camera"]["rotation"]["z"];
+        double camX = 0.0;
+        double camY = 0.0;
+        double camZ = 0.0;
+        double rotX = 0.0;
+        double rotY = 0.0;
+        double rotZ = 0.0;
+        double fov = 0.0;
 
-        double fov = root["camera"]["fieldOfView"];
+        if (!getAsDouble(positionSetting, "x", camX) || !getAsDouble(positionSetting, "y", camY) ||
+            !getAsDouble(positionSetting, "z", camZ) || !getAsDouble(rotationSetting, "x", rotX) ||
+            !getAsDouble(rotationSetting, "y", rotY) || !getAsDouble(rotationSetting, "z", rotZ) ||
+            !getAsDouble(cameraSetting, "fieldOfView", fov)) {
+            throw RayTracerException("SceneParser: Missing parameters for camera.");
+        }
 
         Camera cam(Math::Point3D(camX, camY, camZ), Math::Vector3D(rotX, rotY, rotZ), width, height,
                    fov);
 
         std::vector<std::unique_ptr<IPrimitive>> primitives;
-        const libconfig::Setting& spheres = root["primitives"]["spheres"];
-        const libconfig::Setting& planes = root["primitives"]["planes"];
         PrimitiveFactory factory;
 
-        for (int i = 0; i < spheres.getLength(); i++)
-            primitives.push_back(factory.createSphere(spheres[i]));
+        if (root.exists("primitives")) {
+            const libconfig::Setting& primitivesSetting = root["primitives"];
 
-        for (int i = 0; i < planes.getLength(); i++)
-            primitives.push_back(factory.createPlane(planes[i]));
+            if (primitivesSetting.exists("spheres")) {
+                const libconfig::Setting& spheres = primitivesSetting["spheres"];
+                const std::vector<SphereData> parsedSpheres = parseSpheres(spheres);
+
+                for (const SphereData& sphere : parsedSpheres)
+                    primitives.push_back(factory.createSphere(sphere));
+            }
+
+            if (primitivesSetting.exists("planes")) {
+                const libconfig::Setting& planes = primitivesSetting["planes"];
+                const std::vector<PlaneData> parsedPlanes = parsePlanes(planes);
+
+                for (const PlaneData& plane : parsedPlanes)
+                    primitives.push_back(factory.createPlane(plane));
+            }
+        }
 
         return SceneData{std::move(cam), std::move(primitives), width, height};
 
@@ -58,5 +173,8 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
     } catch (const libconfig::SettingNotFoundException& nfex) {
         throw RayTracerException("Missing setting in configuration file: " +
                                  std::string(nfex.getPath()));
+    } catch (const libconfig::SettingTypeException& stex) {
+        throw RayTracerException("Invalid setting type in configuration file: " +
+                                 std::string(stex.getPath()));
     }
 }
