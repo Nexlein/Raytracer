@@ -16,7 +16,7 @@
 
 /// @brief Namespace for the RayTracer project
 namespace RayTracer {
-    /// @brief Represents a camera in 3D space
+    /// @brief Represents a camera in 3D space for ray tracing
     class Camera {
         public:
         /// @brief Construct a Camera object
