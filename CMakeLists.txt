@@ -36,6 +36,9 @@ endif()
 if(NOT LIBCONFIGXX_FOUND)
     message(STATUS "libconfig++ not found, fetching from GitHub...")
 
+    set(BUILD_EXAMPLES OFF CACHE BOOL "Disable libconfig examples" FORCE)
+    set(BUILD_TESTS OFF CACHE BOOL "Disable libconfig tests" FORCE)
+
     fetchcontent_declare(libconfig
         GIT_REPOSITORY https://github.com/hyperrealm/libconfig.git
         GIT_TAG v1.7.3
