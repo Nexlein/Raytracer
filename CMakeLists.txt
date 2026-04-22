@@ -19,13 +19,13 @@ target_compile_options(raytracerGlobal INTERFACE
 
 # On inclut automatiquement tous les sous-dossiers pertinents
 target_include_directories(raytracerGlobal INTERFACE
-    ${PROJECT_SOURCE_DIR}/RayTracer/include
-    ${PROJECT_SOURCE_DIR}/RayTracer/include/Math
-    ${PROJECT_SOURCE_DIR}/RayTracer/include/Core
-    ${PROJECT_SOURCE_DIR}/RayTracer/include/Primitives
-    ${PROJECT_SOURCE_DIR}/RayTracer/include/Lights
-    ${PROJECT_SOURCE_DIR}/RayTracer/include/Exceptions
-    ${PROJECT_SOURCE_DIR}/RayTracer/include/Factory
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/include/Math
+    ${PROJECT_SOURCE_DIR}/include/Core
+    ${PROJECT_SOURCE_DIR}/include/Primitives
+    ${PROJECT_SOURCE_DIR}/include/Lights
+    ${PROJECT_SOURCE_DIR}/include/Exceptions
+    ${PROJECT_SOURCE_DIR}/include/Factory
 )
 
 # === DEPENDENCIES: LIBCONFIG++ ===
@@ -72,7 +72,7 @@ else()
 endif()
 
 # === PROJECT CORE ===
-file(GLOB_RECURSE CORE_FILES CONFIGURE_DEPENDS "RayTracer/source/*.cpp")
+file(GLOB_RECURSE CORE_FILES CONFIGURE_DEPENDS "source/*.cpp")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 add_executable(raytracer ${CORE_FILES})
