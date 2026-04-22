@@ -31,9 +31,10 @@ namespace RayTracer {
         /// @brief Radius of the sphere
         double _radius;
 
-        /// @brief Determines if a ray hits the sphere
+        /// @brief Determines if a ray intersects the sphere and fills the hit record with intersection details
         /// @param ray The ray to test for intersection with the sphere
-        /// @return True if the ray intersects with the sphere, false otherwise
-        [[nodiscard]] bool hits(const Ray& ray) const override;
+        /// @param hitRecord The hit record to be filled with intersection details if the ray hits the sphere
+        /// @return True if the ray intersects the sphere, false otherwise
+        [[nodiscard]] bool hits(const Ray& ray, HitRecord& hitRecord) const override;
     };
 }  // namespace RayTracer

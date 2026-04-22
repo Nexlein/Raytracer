@@ -12,24 +12,21 @@
 
 #include "Point3D.hpp"
 #include "Ray.hpp"
-#include "Rectangle3D.hpp"
+#include "Vector3D.hpp"
 
 /// @brief Namespace for the RayTracer project
 namespace RayTracer {
-    using Point3D = Math::Point3D<double>;
-
-    /// @brief Represents a camera
+    /// @brief Represents a camera in 3D space for ray tracing
     class Camera {
         public:
-        /// @brief Constructs a Camera object
-        /// @param origin The position of the camera in 3D space
-        /// @param screen The rectangular screen representing the camera's view
-        Camera(const Point3D& origin, const Rectangle3D& screen);
-
-        /// @brief Origin point of the camera
-        Point3D _origin;
-        /// @brief Rectangular screen representing the camera's view
-        Rectangle3D _screen;
+        /// @brief Construct a Camera object
+        /// @param position Position of the camera in 3D space
+        /// @param rotation Rotation of the camera in degrees
+        /// @param width Width of the camera's viewport in pixels
+        /// @param height Height of the camera's viewport in pixels
+        /// @param fieldOfView Field of view of the camera in degrees
+        Camera(const Math::Point3D<double>& position, const Math::Vector3D<double>& rotation,
+               int width, int height, double fieldOfView);
 
         /// @brief Generates a ray from the camera through a point on the screen
         /// @param u The horizontal coordinate on the screen (0 to 1)
@@ -37,5 +34,17 @@ namespace RayTracer {
         /// @return A Ray object representing the ray from the camera through the specified point on
         /// the screen
         [[nodiscard]] Ray ray(double u, double v) const;
+
+        private:
+        /// @brief Position of the camera in 3D space
+        Math::Point3D<double> _position;
+        /// @brief Rotation of the camera in degrees
+        Math::Vector3D<double> _rotation;
+        /// @brief Width of the camera's viewport in pixels
+        int _width;
+        /// @brief Height of the camera's viewport in pixels
+        int _height;
+        /// @brief Field of view of the camera in degrees
+        double _fieldOfView;
     };
 }  // namespace RayTracer
