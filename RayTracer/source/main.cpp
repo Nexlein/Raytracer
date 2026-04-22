@@ -5,7 +5,7 @@
 ** main
 */
 
-int main()
-{
-    return 0;
-}
+/// @file main.cpp
+/// @brief Entry point for the RayTracer application.
+
+int main() { return 0; }
