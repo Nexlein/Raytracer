@@ -13,6 +13,7 @@
 #include "Vector3D.hpp"
 
 #include "DirectionalLight.hpp"
+#include "AmbientLight.hpp"
 
 bool RayTracer::SceneParser::getAsDouble(const libconfig::Setting& setting, const char* key,
                                          double& value)
@@ -51,6 +52,46 @@ Math::Vector3D<double> RayTracer::SceneParser::parseColor(
     }
 
     return Math::Vector3D<double>(red, green, blue);
+}
+
+void RayTracer::SceneParser::parseAmbientLight(
+    std::vector<std::unique_ptr<ILight>>& lights,
+    const libconfig::Setting& lightSetting)
+{
+    double ambientIntensity = 0.0;
+
+    getAsDouble(lightSetting, "ambient", ambientIntensity);
+    if (ambientIntensity > 0.0)
+        lights.push_back(std::make_unique<AmbientLight>(ambientIntensity));
+}
+
+void RayTracer::SceneParser::parseDirectionalLights(
+    std::vector<std::unique_ptr<ILight>>& lights,
+    const libconfig::Setting& lightSetting)
+{
+    double diffuse = 0.0;
+
+    getAsDouble(lightSetting, "diffuse", diffuse);
+    if (lightSetting.exists("directional") && diffuse > 0.0) {
+        const libconfig::Setting& directionalLights = lightSetting["directional"];
+
+        for (int i = 0; i < directionalLights.getLength(); i++) {
+            if (!directionalLights[i].exists("direction"))
+                throw RayTracerException("SceneParser: Missing parameters for directional light.");
+
+            const libconfig::Setting& directionSetting = directionalLights[i]["direction"];
+            double x = 0.0;
+            double y = 0.0;
+            double z = 0.0;
+
+            if (!getAsDouble(directionSetting, "x", x) ||
+                !getAsDouble(directionSetting, "y", y) ||
+                !getAsDouble(directionSetting, "z", z))
+                throw RayTracerException("SceneParser: Missing parameters for directional light.");
+
+            lights.push_back(std::make_unique<DirectionalLight>(Math::Vector3D<double>(x, y, z), diffuse));
+        }
+    }
 }
 
 std::vector<RayTracer::SphereData> RayTracer::SceneParser::parseSpheres(
@@ -157,30 +198,10 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
         }
 
         if (root.exists("lights")) {
-            const libconfig::Setting& lightsSetting = root["lights"];
-            double diffuse = 0.8;  // default diffuse intensity for directional and point lights
+            const libconfig::Setting& lightSetting = root["lights"];
 
-            getAsDouble(lightsSetting, "diffuse", diffuse);
-            if (lightsSetting.exists("directional")) {
-                const libconfig::Setting& directionalLights = lightsSetting["directional"];
-
-                for (int i = 0; i < directionalLights.getLength(); i++) {
-                    if (!directionalLights[i].exists("direction"))
-                        throw RayTracerException("SceneParser: Missing parameters for directional light.");
-
-                    const libconfig::Setting& directionSetting = directionalLights[i]["direction"];
-                    double x = 0.0;
-                    double y = 0.0;
-                    double z = 0.0;
-
-                    if (!getAsDouble(directionSetting, "x", x) ||
-                        !getAsDouble(directionSetting, "y", y) ||
-                        !getAsDouble(directionSetting, "z", z))
-                        throw RayTracerException("SceneParser: Missing parameters for directional light.");
-
-                    lights.push_back(std::make_unique<DirectionalLight>(Math::Vector3D<double>(x, y, z), diffuse));
-                }
-            }
+            parseAmbientLight(lights, lightSetting);
+            parseDirectionalLights(lights, lightSetting);
         }
         return SceneData{std::move(cam), std::move(primitives), std::move(lights), width, height};
 
