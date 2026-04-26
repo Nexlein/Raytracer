@@ -15,6 +15,6 @@ namespace RayTracer {
         virtual ~ILight() = default;
         /// @brief Color of the light, used for rendering
         /// @return Retourne l'intensité diffuse [0.0, 1.0] pour un point donné
-        [[nodiscard]] virtual double computeDiffuse(const HitRecord& hit) const = 0;
+        [[nodiscard]] virtual double computeDiffuse([[maybe_unused]] const HitRecord& hit) const = 0;
     };
 }
