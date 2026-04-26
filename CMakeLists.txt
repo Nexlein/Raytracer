@@ -23,7 +23,7 @@ target_include_directories(raytracerGlobal INTERFACE
     ${PROJECT_SOURCE_DIR}/include/Math
     ${PROJECT_SOURCE_DIR}/include/Core
     ${PROJECT_SOURCE_DIR}/include/Primitives
-    ${PROJECT_SOURCE_DIR}/include/Lights
+    ${PROJECT_SOURCE_DIR}/include/Light
     ${PROJECT_SOURCE_DIR}/include/Exceptions
     ${PROJECT_SOURCE_DIR}/include/Factory
 )
