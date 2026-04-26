@@ -12,6 +12,8 @@
 #include "RayTracerException.hpp"
 #include "Vector3D.hpp"
 
+#include "DirectionalLight.hpp"
+
 bool RayTracer::SceneParser::getAsDouble(const libconfig::Setting& setting, const char* key,
                                          double& value)
 {
@@ -131,6 +133,7 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
                    fov);
 
         std::vector<std::unique_ptr<IPrimitive>> primitives;
+        std::vector<std::unique_ptr<ILight>> lights;
         PrimitiveFactory factory;
 
         if (root.exists("primitives")) {
@@ -153,7 +156,33 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
             }
         }
 
-        return SceneData{std::move(cam), std::move(primitives), width, height};
+        if (root.exists("lights")) {
+            const libconfig::Setting& lightsSetting = root["lights"];
+            double diffuse = 0.8;  // default diffuse intensity for directional and point lights
+
+            getAsDouble(lightsSetting, "diffuse", diffuse);
+            if (lightsSetting.exists("directional")) {
+                const libconfig::Setting& directionalLights = lightsSetting["directional"];
+
+                for (int i = 0; i < directionalLights.getLength(); i++) {
+                    if (!directionalLights[i].exists("direction"))
+                        throw RayTracerException("SceneParser: Missing parameters for directional light.");
+
+                    const libconfig::Setting& directionSetting = directionalLights[i]["direction"];
+                    double x = 0.0;
+                    double y = 0.0;
+                    double z = 0.0;
+
+                    if (!getAsDouble(directionSetting, "x", x) ||
+                        !getAsDouble(directionSetting, "y", y) ||
+                        !getAsDouble(directionSetting, "z", z))
+                        throw RayTracerException("SceneParser: Missing parameters for directional light.");
+
+                    lights.push_back(std::make_unique<DirectionalLight>(Math::Vector3D<double>(x, y, z), diffuse));
+                }
+            }
+        }
+        return SceneData{std::move(cam), std::move(primitives), std::move(lights), width, height};
 
     } catch (const libconfig::FileIOException& fioex) {
         throw RayTracerException("I/O error while reading file: " + filePath);
