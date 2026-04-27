@@ -13,6 +13,7 @@
 #include <fstream>
 #include <iostream>
 #include <limits>
+#include <algorithm>
 
 #include "RayTracerException.hpp"
 
@@ -69,12 +70,18 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
     }
 
     if (hitAnything) {
-        double totalLight = 0.0;
+        Math::Vector3D<double> totalLight(0.0, 0.0, 0.0);
         for (const auto& light : lights)
             totalLight += light->computeDiffuse(closestRec);
-        totalLight = std::min(1.0, totalLight);
+        // + ambient si t'as une méthode séparée
 
-        return hitPrimitive->color * totalLight;  // couleur assombrie selon l'angle
+        // clamp 0-1
+        totalLight._x = std::clamp(totalLight._x, 0.0, 1.0);
+        totalLight._y = std::clamp(totalLight._y, 0.0, 1.0);
+        totalLight._z = std::clamp(totalLight._z, 0.0, 1.0);
+
+        // primitive.color en 0-255, totalLight en 0-1 → résultat en 0-255
+        return (hitPrimitive->color / 255.0) * totalLight * 255.0;
     }
 
     return Math::Vector3D<double>(0.0, 0.0, 255.0);

@@ -49,7 +49,7 @@ Math::Vector3D<double> RayTracer::SceneParser::parseColor(
         !colorSetting.lookupValue("b", blue)) {
         throw RayTracerException(
             "SceneParser: Invalid or missing r, g, b values in color parameter.");
-    }
+        }
 
     return Math::Vector3D<double>(red, green, blue);
 }
@@ -59,10 +59,24 @@ void RayTracer::SceneParser::parseAmbientLight(
     const libconfig::Setting& lightSetting)
 {
     double ambientIntensity = 0.0;
-
     getAsDouble(lightSetting, "ambient", ambientIntensity);
+
+    Vector3D color = {255.0, 255.0, 255.0};
+    if (lightSetting.exists("color")) {
+        const libconfig::Setting& colorSetting = lightSetting["color"];
+        int red = 0;
+        int green = 0;
+        int blue = 0;
+
+        if (!colorSetting.lookupValue("r", red) || !colorSetting.lookupValue("g", green) ||
+            !colorSetting.lookupValue("b", blue)) {
+            throw RayTracerException(
+                "SceneParser: Invalid or missing r, g, b values in directional light color.");
+        }
+        color = Math::Vector3D<double>(red, green, blue);
+    }
     if (ambientIntensity > 0.0)
-        lights.push_back(std::make_unique<AmbientLight>(ambientIntensity));
+        lights.push_back(std::make_unique<AmbientLight>(ambientIntensity, color));
 }
 
 void RayTracer::SceneParser::parseDirectionalLights(
@@ -83,13 +97,27 @@ void RayTracer::SceneParser::parseDirectionalLights(
             double x = 0.0;
             double y = 0.0;
             double z = 0.0;
+            Vector3D color = {255.0, 255.0, 255.0};
 
+            if (directionalLights[i].exists("color")) {
+                const libconfig::Setting& colorSetting = directionalLights[i]["color"];
+                int red = 0;
+                int green = 0;
+                int blue = 0;
+
+                if (!colorSetting.lookupValue("r", red) || !colorSetting.lookupValue("g", green) ||
+                    !colorSetting.lookupValue("b", blue)) {
+                    throw RayTracerException(
+                        "SceneParser: Invalid or missing r, g, b values in directional light color.");
+                }
+                color = Math::Vector3D<double>(red, green, blue);
+            }
             if (!getAsDouble(directionSetting, "x", x) ||
                 !getAsDouble(directionSetting, "y", y) ||
                 !getAsDouble(directionSetting, "z", z))
                 throw RayTracerException("SceneParser: Missing parameters for directional light.");
 
-            lights.push_back(std::make_unique<DirectionalLight>(Math::Vector3D<double>(x, y, z), diffuse));
+            lights.push_back(std::make_unique<DirectionalLight>(Math::Vector3D<double>(x, y, z), diffuse, color));
         }
     }
 }
