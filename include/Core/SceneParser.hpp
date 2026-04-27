@@ -78,6 +78,16 @@ namespace RayTracer {
         /// @return The parsed RGB color as a vector
         Math::Vector3D<double> parseColor(const libconfig::Setting& primitiveSetting);
 
+        /// @brief parses an ambient light definition from the configuration file and adds it to the list of lights
+        /// @param lights list of lights to which the parsed ambient light will be added
+        /// @param lightSetting libconfig setting containing the ambient light definition
+        void parseAmbientLight(std::vector<std::unique_ptr<ILight>>& lights, const libconfig::Setting& lightSetting);
+
+        /// @brief parses a list of directional lights from the configuration file and adds them to the list of lights
+        /// @param lights list of lights to which the parsed directional light will be added
+        /// @param lightSetting libconfig setting containing the directional light definition
+        void parseDirectionalLights(std::vector<std::unique_ptr<ILight>>& lights, const libconfig::Setting& lightSetting);
+
         /// @brief Helper function to extract a double value from a libconfig setting
         /// @param setting The libconfig setting to extract the value from
         /// @param key The key of the value to extract

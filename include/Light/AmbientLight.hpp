@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2026
 ** Raytracer
 ** File description:
-** DirectionalLight
+** AmbientLight
 */
 
 #include "ILight.hpp"
@@ -11,12 +11,12 @@
 #pragma once
 
 namespace RayTracer {
-    class DirectionalLight : public ILight {
+    class AmbientLight : public ILight {
     public:
-        /// @brief Constructor for DirectionalLight
+        /// @brief Constructor for AmbientLight
         /// @param direction direction of the light
         /// @param intensity intensity of the light
-        DirectionalLight(const Vector3D& direction, double intensity);
+        AmbientLight(double intensity);
 
         /// @brief Computes the diffuse lighting for a given hit record
         /// @param hit The hit record for which to compute diffuse lighting
@@ -24,9 +24,6 @@ namespace RayTracer {
         [[nodiscard]] double computeDiffuse([[maybe_unused]] const HitRecord& hit) const override;
 
     private:
-        // Direction of the light, used for rendering
-        Vector3D _direction;
-
         // Intensity of the light, used for rendering
         double _intensity;
     };
