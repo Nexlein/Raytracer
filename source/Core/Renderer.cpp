@@ -24,6 +24,7 @@ void RayTracer::Renderer::writeColor(std::ostream& out, const Math::Vector3D<dou
 
 void RayTracer::Renderer::render(const Camera& camera,
                                  const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+                                 const std::vector<std::unique_ptr<ILight>>& lights,
                                  int width, int height, const std::string& filename) const
 {
     std::ofstream outFile(filename);
@@ -38,7 +39,7 @@ void RayTracer::Renderer::render(const Camera& camera,
             double v = static_cast<double>(y) / (height - 1);
 
             Ray r = camera.ray(u, v);
-            Math::Vector3D<double> pixelColor = computeRayColor(r, primitives);
+            Math::Vector3D<double> pixelColor = computeRayColor(r, primitives, lights);
             writeColor(outFile, pixelColor);
         }
     }
@@ -47,10 +48,12 @@ void RayTracer::Renderer::render(const Camera& camera,
 }
 
 Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
-    const Ray& ray, const std::vector<std::unique_ptr<IPrimitive>>& primitives) const
+    const Ray& ray, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+    const std::vector<std::unique_ptr<ILight>>& lights) const
 {
     bool hitAnything = false;
     HitRecord tempRec;
+    HitRecord closestRec;
     double closest = std::numeric_limits<double>::infinity();
     const IPrimitive* hitPrimitive = nullptr;
 
@@ -58,13 +61,21 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
         if (primitive->hits(ray, tempRec)) {
             if (tempRec.distance < closest && tempRec.distance > 0.001) {
                 closest = tempRec.distance;
+                closestRec = tempRec;
                 hitPrimitive = primitive.get();
                 hitAnything = true;
             }
         }
     }
 
-    if (hitAnything) return hitPrimitive->color;
+    if (hitAnything) {
+        double totalLight = 0.0;
+        for (const auto& light : lights)
+            totalLight += light->computeDiffuse(closestRec);
+        totalLight = std::min(1.0, totalLight);
+
+        return hitPrimitive->color * totalLight;  // couleur assombrie selon l'angle
+    }
 
     return Math::Vector3D<double>(0.0, 0.0, 255.0);
 }

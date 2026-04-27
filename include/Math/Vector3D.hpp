@@ -38,6 +38,8 @@ namespace Math {
         /// @return The dot product
         [[nodiscard]] T dot(const Vector3D& other) const;
 
+        [[nodiscard]] Vector3D normalized() const;
+
         /// @brief Rotates the vector around the X axis
         /// @param angle The angle of rotation in radians
         void rotateX(double angle);

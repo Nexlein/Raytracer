@@ -32,6 +32,14 @@ T Math::Vector3D<T>::dot(const Vector3D<T>& other) const
 }
 
 template <typename T>
+Math::Vector3D<T> Math::Vector3D<T>::normalized() const
+{
+    T len = std::sqrt(_x * _x + _y * _y + _z * _z);
+    if (len == 0) return *this;
+    return Vector3D<T>(_x / len, _y / len, _z / len);
+}
+
+template <typename T>
 void Math::Vector3D<T>::rotateX(double angle)
 {
     double radians = angle * (std::acos(-1.0) / 180.0);

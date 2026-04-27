@@ -17,6 +17,7 @@
 
 #include "Camera.hpp"
 #include "IPrimitive.hpp"
+#include "ILight.hpp"
 
 /// @brief Namespace for the Ray Tracer project
 namespace RayTracer {
@@ -26,6 +27,8 @@ namespace RayTracer {
         Camera camera;
         /// @brief List of primitives in the scene
         std::vector<std::unique_ptr<IPrimitive>> primitives;
+        /// @brief List of lights in the scene
+        std::vector<std::unique_ptr<ILight>> lights;
         /// @brief Width of the output image
         int width;
         /// @brief Height of the output image
