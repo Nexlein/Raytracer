@@ -14,17 +14,10 @@ namespace RayTracer {
     class AmbientLight : public ILight {
     public:
         /// @brief Constructor for AmbientLight
-        /// @param direction direction of the light
         /// @param intensity intensity of the light
-        AmbientLight(double intensity);
+        /// @param color color of the light
+        AmbientLight(double intensity, Math::Vector3D<double> color);
 
-        /// @brief Computes the diffuse lighting for a given hit record
-        /// @param hit The hit record for which to compute diffuse lighting
-        /// @return The computed diffuse lighting value
-        [[nodiscard]] double computeDiffuse([[maybe_unused]] const HitRecord& hit) const override;
-
-    private:
-        // Intensity of the light, used for rendering
-        double _intensity;
+        [[nodiscard]] Math::Vector3D<double> computeDiffuse([[maybe_unused]] const HitRecord& hit) const override;
     };
 }

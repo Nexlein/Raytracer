@@ -1,9 +1,13 @@
 #include "AmbientLight.hpp"
 
-RayTracer::AmbientLight::AmbientLight(double intensity) : _intensity(intensity) {}
+RayTracer::AmbientLight::AmbientLight(double intensity,  Math::Vector3D<double> color)
+{
+    _intensity = intensity;
+    _color = color;
+}
 
-double RayTracer::AmbientLight::computeDiffuse(
+Math::Vector3D<double> RayTracer::AmbientLight::computeDiffuse(
     [[maybe_unused]] const HitRecord& hit) const
 {
-    return _intensity;
+    return (_color / 255.0) * _intensity;
 }

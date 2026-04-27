@@ -16,18 +16,13 @@ namespace RayTracer {
         /// @brief Constructor for DirectionalLight
         /// @param direction direction of the light
         /// @param intensity intensity of the light
-        DirectionalLight(const Vector3D& direction, double intensity);
+        /// @param color color of the light
+        DirectionalLight(const Vector3D& direction, double intensity, Math::Vector3D<double> color);
 
-        /// @brief Computes the diffuse lighting for a given hit record
-        /// @param hit The hit record for which to compute diffuse lighting
-        /// @return The computed diffuse lighting value
-        [[nodiscard]] double computeDiffuse([[maybe_unused]] const HitRecord& hit) const override;
+        [[nodiscard]] Math::Vector3D<double> computeDiffuse([[maybe_unused]] const HitRecord& hit) const override;
 
     private:
         // Direction of the light, used for rendering
         Vector3D _direction;
-
-        // Intensity of the light, used for rendering
-        double _intensity;
     };
 }

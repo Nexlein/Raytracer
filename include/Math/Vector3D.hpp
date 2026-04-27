@@ -79,22 +79,22 @@ namespace Math {
         /// @brief Adds a vector to this vector element-wise
         /// @param other The vector to add
         /// @return Reference to the modified vector
-        [[nodiscard]] Vector3D& operator+=(const Vector3D& other);
+        Vector3D& operator+=(const Vector3D& other);
 
         /// @brief Subtracts a vector from this vector element-wise
         /// @param other The vector to subtract
         /// @return Reference to the modified vector
-        [[nodiscard]] Vector3D& operator-=(const Vector3D& other);
+        Vector3D& operator-=(const Vector3D& other);
 
         /// @brief Multiplies this vector by another vector element-wise
         /// @param other The vector to multiply
         /// @return Reference to the modified vector
-        [[nodiscard]] Vector3D& operator*=(const Vector3D& other);
+        Vector3D& operator*=(const Vector3D& other);
 
         /// @brief Divides this vector by another vector element-wise
         /// @param other The vector to divide by
         /// @return Reference to the modified vector
-        [[nodiscard]] Vector3D& operator/=(const Vector3D& other);
+        Vector3D& operator/=(const Vector3D& other);
 
         // Operator with scalar
 
@@ -123,21 +123,21 @@ namespace Math {
         /// @brief Adds a scalar to each element of this vector
         /// @param scalar The scalar to add
         /// @return Reference to the modified vector
-        [[nodiscard]] Vector3D& operator+=(T scalar);
+        Vector3D& operator+=(T scalar);
 
         /// @brief Subtracts a scalar from each element of this vector
         /// @param scalar The scalar to subtract
         /// @return Reference to the modified vector
-        [[nodiscard]] Vector3D& operator-=(T scalar);
+        Vector3D& operator-=(T scalar);
 
         /// @brief Multiplies each element of this vector by a scalar
         /// @param scalar The scalar to multiply
         /// @return Reference to the modified vector
-        [[nodiscard]] Vector3D& operator*=(T scalar);
+        Vector3D& operator*=(T scalar);
 
         /// @brief Divides each element of this vector by a scalar
         /// @param scalar The scalar to divide by
         /// @return Reference to the modified vector
-        [[nodiscard]] Vector3D& operator/=(T scalar);
+        Vector3D& operator/=(T scalar);
     };
 }  // namespace Math
