@@ -19,7 +19,8 @@ namespace RayTracer {
         /// @param key The key of the value to extract
         /// @param value The variable to store the extracted value
         /// @return True if the value was successfully extracted, false otherwise
-        inline bool getAsDouble(const libconfig::Setting& setting, const std::string& key, double& value)
+        inline bool getAsDouble(const libconfig::Setting& setting, const std::string& key,
+                                double& value)
         {
             int intValue = 0;
             if (setting.lookupValue(key.c_str(), intValue)) {
