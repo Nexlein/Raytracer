@@ -42,8 +42,8 @@ int main(int argc, char** argv)
         RayTracer::SceneParser parser;
         RayTracer::SceneData sceneData = parser.parse(argv[1]);
 
-        RayTracer::Renderer renderer;
-        renderer.render(sceneData.camera, sceneData.primitives, sceneData.lights, sceneData.width, sceneData.height, OUTPUT_FILENAME);
+        RayTracer::Renderer renderer = std::move(sceneData.renderer);
+        renderer.render(sceneData.camera, sceneData.primitives, sceneData.lights, OUTPUT_FILENAME);
 
     } catch (const RayTracer::RayTracerException& e) {
         std::cerr << "RayTracer Error: " << e.what() << std::endl;

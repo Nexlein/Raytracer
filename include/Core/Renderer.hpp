@@ -10,13 +10,14 @@
 
 #pragma once
 
+#include <libconfig.h++>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "Camera.hpp"
-#include "IPrimitive.hpp"
 #include "ILight.hpp"
+#include "IPrimitive.hpp"
 #include "Vector3D.hpp"
 
 /// @brief Namespace for the Ray Tracer project
@@ -24,36 +25,46 @@ namespace RayTracer {
     /// @brief Renderer class responsible for rendering the scene
     class Renderer {
         public:
+        /// @brief Default constructor
+        Renderer() = default;
+
+        /// @brief Initializes the renderer with settings from a configuration file
+        /// @param setting The configuration settings for the renderer
+        void init(const libconfig::Setting& setting);
+
         /// @brief Renders the scene to an image file
         /// @param camera The camera to use for rendering
         /// @param primitives The list of primitives in the scene
         /// @param lights The list of lights in the scene
-        /// @param width The width of the output image
-        /// @param height The height of the output image
         /// @param filename The name of the output image file
         void render(const Camera& camera,
                     const std::vector<std::unique_ptr<IPrimitive>>& primitives,
-                    const std::vector<std::unique_ptr<ILight>>& lights, int width,
-                    int height, const std::string& filename) const;
+                    const std::vector<std::unique_ptr<ILight>>& lights,
+                    const std::string& filename) const;
 
         private:
+        /// @brief Width of the output image
+        int _width;
+        /// @brief Height of the output image
+        int _height;
+        /// @brief Background color of the scene
+        Math::Vector3D<double> _backgroundColor;
+
         /// @brief Checks if a point is in shadow
         /// @param hit The hit record
         /// @param lightDir The direction to the light
         /// @param primitives The list of primitives in the scene
         /// @return True if the point is in shadow, false otherwise
-        bool isInShadow(const HitRecord& hit,
-            const Math::Vector3D<double>& lightDir,
-            const std::vector<std::unique_ptr<IPrimitive>>& primitives) const;
+        bool isInShadow(const HitRecord& hit, const Math::Vector3D<double>& lightDir,
+                        const std::vector<std::unique_ptr<IPrimitive>>& primitives) const;
 
         /// @brief Computes the color for a given ray based on the scene's primitives
         /// @param ray The ray to trace
-        /// @param camera The camera (for background color)
         /// @param primitives The list of primitives in the scene
         /// @param lights The list of lights in the scene
         /// @return The computed color for the ray
         [[nodiscard]] Math::Vector3D<double> computeRayColor(
-            const Ray& ray, const Camera& camera, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+            const Ray& ray, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
             const std::vector<std::unique_ptr<ILight>>& lights) const;
 
         /// @brief Writes the color of a pixel to the output stream

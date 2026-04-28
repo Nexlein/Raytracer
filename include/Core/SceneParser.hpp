@@ -18,6 +18,7 @@
 #include "Camera.hpp"
 #include "ILight.hpp"
 #include "IPrimitive.hpp"
+#include "Renderer.hpp"
 
 /// @brief Namespace for the Ray Tracer project
 namespace RayTracer {
@@ -25,14 +26,12 @@ namespace RayTracer {
     struct SceneData {
         /// @brief Camera object representing the camera in the scene
         Camera camera;
+        /// @brief Renderer object representing the renderer configuration
+        Renderer renderer;
         /// @brief List of primitives in the scene
         std::vector<std::unique_ptr<IPrimitive>> primitives;
         /// @brief List of lights in the scene
         std::vector<std::unique_ptr<ILight>> lights;
-        /// @brief Width of the output image
-        int width;
-        /// @brief Height of the output image
-        int height;
     };
 
     /// @brief SceneParser class responsible for parsing scene files
