@@ -77,8 +77,5 @@ void RayTracer::Sphere::init(const libconfig::Setting& setting)
 }
 
 extern "C" {
-RayTracer::IPrimitive* entryPoint()
-{
-    return new RayTracer::Sphere();
-}
+RayTracer::IPrimitive* entryPoint() { return new RayTracer::Sphere(); }
 }
