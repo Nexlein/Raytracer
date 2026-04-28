@@ -21,6 +21,7 @@ namespace RayTracer {
     /// @brief Represents a sphere in 3D space
     class Sphere : public IPrimitive {
         public:
+        Sphere() = default;
         /// @brief Constructs a Sphere object
         /// @param center The center point of the sphere in 3D space
         /// @param radius The radius of the sphere
@@ -31,10 +32,16 @@ namespace RayTracer {
         /// @brief Radius of the sphere
         double _radius;
 
-        /// @brief Determines if a ray intersects the sphere and fills the hit record with intersection details
+        /// @brief Determines if a ray intersects the sphere and fills the hit record with
+        /// intersection details
         /// @param ray The ray to test for intersection with the sphere
-        /// @param hitRecord The hit record to be filled with intersection details if the ray hits the sphere
+        /// @param hitRecord The hit record to be filled with intersection details if the ray hits
+        /// the sphere
         /// @return True if the ray intersects the sphere, false otherwise
         [[nodiscard]] bool hits(const Ray& ray, HitRecord& hitRecord) const override;
+
+        /// @brief Initializes the sphere with settings from a configuration file
+        /// @param setting The configuration settings for the sphere
+        void init(const libconfig::Setting& setting) override;
     };
 }  // namespace RayTracer

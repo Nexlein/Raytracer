@@ -11,7 +11,9 @@
 #include "Sphere.hpp"
 
 #include <cmath>
+#include <memory>
 
+#include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
 RayTracer::Sphere::Sphere(const Point3D& center, double radius) : _center(center), _radius(radius)
@@ -43,4 +45,40 @@ bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
     rec.normal = (rec.p - _center) / _radius;
 
     return true;
+}
+
+void RayTracer::Sphere::init(const libconfig::Setting& setting)
+{
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+
+    ConfigUtils::getAsDouble(setting, "x", x);
+    ConfigUtils::getAsDouble(setting, "y", y);
+    ConfigUtils::getAsDouble(setting, "z", z);
+
+    _center = Math::Point3D<double>(x, y, z);
+
+    _radius = 1.0;
+    ConfigUtils::getAsDouble(setting, "r", _radius);
+
+    if (setting.exists("color")) {
+        const libconfig::Setting& c = setting["color"];
+        double r = 255.0;
+        double g = 255.0;
+        double b = 255.0;
+        ConfigUtils::getAsDouble(c, "r", r);
+        ConfigUtils::getAsDouble(c, "g", g);
+        ConfigUtils::getAsDouble(c, "b", b);
+        color._x = static_cast<int>(r);
+        color._y = static_cast<int>(g);
+        color._z = static_cast<int>(b);
+    }
+}
+
+extern "C" {
+std::unique_ptr<RayTracer::IPrimitive> entryPoint()
+{
+    return std::make_unique<RayTracer::Sphere>();
+}
 }
