@@ -13,3 +13,5 @@ Math::Vector3D<double> RayTracer::DirectionalLight::computeDiffuse(const HitReco
     double intensity = _intensity * std::max(0.0, dot);
     return (_color / 255.0) * intensity;
 }
+
+Math::Vector3D<double> RayTracer::DirectionalLight::getDirection() const { return _direction; }

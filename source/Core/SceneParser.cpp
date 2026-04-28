@@ -83,10 +83,7 @@ void RayTracer::SceneParser::parseDirectionalLights(
     std::vector<std::unique_ptr<ILight>>& lights,
     const libconfig::Setting& lightSetting)
 {
-    double diffuse = 0.0;
-
-    getAsDouble(lightSetting, "diffuse", diffuse);
-    if (lightSetting.exists("directional") && diffuse > 0.0) {
+    if (lightSetting.exists("directional")) {
         const libconfig::Setting& directionalLights = lightSetting["directional"];
 
         for (int i = 0; i < directionalLights.getLength(); i++) {
@@ -97,8 +94,15 @@ void RayTracer::SceneParser::parseDirectionalLights(
             double x = 0.0;
             double y = 0.0;
             double z = 0.0;
-            Vector3D color = {255.0, 255.0, 255.0};
+            if (!getAsDouble(directionSetting, "x", x) ||
+                !getAsDouble(directionSetting, "y", y) ||
+                !getAsDouble(directionSetting, "z", z))
+                throw RayTracerException("SceneParser: Missing parameters for directional light.");
 
+            double intensity = 0.0;
+            getAsDouble(directionalLights[i], "intensity", intensity);
+
+            Vector3D color = {255.0, 255.0, 255.0};
             if (directionalLights[i].exists("color")) {
                 const libconfig::Setting& colorSetting = directionalLights[i]["color"];
                 int red = 0;
@@ -112,12 +116,8 @@ void RayTracer::SceneParser::parseDirectionalLights(
                 }
                 color = Math::Vector3D<double>(red, green, blue);
             }
-            if (!getAsDouble(directionSetting, "x", x) ||
-                !getAsDouble(directionSetting, "y", y) ||
-                !getAsDouble(directionSetting, "z", z))
-                throw RayTracerException("SceneParser: Missing parameters for directional light.");
 
-            lights.push_back(std::make_unique<DirectionalLight>(Math::Vector3D<double>(x, y, z), diffuse, color));
+            lights.push_back(std::make_unique<DirectionalLight>(Math::Vector3D<double>(x, y, z), intensity, color));
         }
     }
 }

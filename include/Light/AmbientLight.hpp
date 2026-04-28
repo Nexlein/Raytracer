@@ -19,5 +19,7 @@ namespace RayTracer {
         AmbientLight(double intensity, Math::Vector3D<double> color);
 
         [[nodiscard]] Math::Vector3D<double> computeDiffuse([[maybe_unused]] const HitRecord& hit) const override;
+
+        bool castsShadow() const override;
     };
 }

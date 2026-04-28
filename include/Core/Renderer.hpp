@@ -37,6 +37,15 @@ namespace RayTracer {
                     int height, const std::string& filename) const;
 
         private:
+        /// @brief Checks if a point is in shadow
+        /// @param hit The hit record
+        /// @param lightDir The direction to the light
+        /// @param primitives The list of primitives in the scene
+        /// @return True if the point is in shadow, false otherwise
+        bool isInShadow(const HitRecord& hit,
+            const Math::Vector3D<double>& lightDir,
+            const std::vector<std::unique_ptr<IPrimitive>>& primitives) const;
+
         /// @brief Computes the color for a given ray based on the scene's primitives
         /// @param ray The ray to trace
         /// @param primitives The list of primitives in the scene

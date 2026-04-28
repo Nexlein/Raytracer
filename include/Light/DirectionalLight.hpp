@@ -21,6 +21,7 @@ namespace RayTracer {
 
         [[nodiscard]] Math::Vector3D<double> computeDiffuse([[maybe_unused]] const HitRecord& hit) const override;
 
+        virtual Math::Vector3D<double> getDirection() const override;
     private:
         // Direction of the light, used for rendering
         Vector3D _direction;
