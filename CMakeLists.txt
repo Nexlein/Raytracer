@@ -71,6 +71,15 @@ else()
     message(STATUS "libconfig++ found via PkgConfig: ${LIBCONFIGXX_VERSION}")
 endif()
 
+# Add libconfig++ to the global interface target
+if(LIBCONFIGXX_FOUND)
+    target_include_directories(raytracerGlobal INTERFACE ${LIBCONFIGXX_INCLUDE_DIRS})
+    target_link_libraries(raytracerGlobal INTERFACE ${LIBCONFIGXX_LIBRARIES})
+else()
+    target_link_libraries(raytracerGlobal INTERFACE config++)
+    target_include_directories(raytracerGlobal INTERFACE ${libconfig_SOURCE_DIR}/lib)
+endif()
+
 # === PROJECT CORE ===
 file(GLOB_RECURSE CORE_FILES CONFIGURE_DEPENDS "source/*.cpp")
 
@@ -81,14 +90,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 add_executable(raytracer ${CORE_FILES})
 target_link_libraries(raytracer PRIVATE raytracerGlobal)
 set_target_properties(raytracer PROPERTIES ENABLE_EXPORTS TRUE)
-
-if(LIBCONFIGXX_FOUND)
-    target_include_directories(raytracer PRIVATE ${LIBCONFIGXX_INCLUDE_DIRS})
-    target_link_libraries(raytracer PRIVATE ${LIBCONFIGXX_LIBRARIES})
-else()
-    target_link_libraries(raytracer PRIVATE config++)
-    target_include_directories(raytracer PRIVATE ${libconfig_SOURCE_DIR}/lib)
-endif()
 
 # === PLUGINS ===
 set(PLUGIN_DIR "${PROJECT_SOURCE_DIR}/plugins")
