@@ -16,8 +16,8 @@
 #include <vector>
 
 #include "Camera.hpp"
-#include "IPrimitive.hpp"
 #include "ILight.hpp"
+#include "IPrimitive.hpp"
 
 /// @brief Namespace for the Ray Tracer project
 namespace RayTracer {
@@ -35,25 +35,6 @@ namespace RayTracer {
         int height;
     };
 
-    /// @brief Parsed sphere description extracted from the scene file
-    struct SphereData {
-        /// @brief Center of the sphere in 3D space
-        Math::Point3D<double> center;
-        /// @brief Radius of the sphere
-        double radius;
-        /// @brief Color of the sphere, used for rendering
-        Math::Vector3D<double> color;
-    };
-
-    struct PlaneData {
-        /// @brief Axis along which the plane is oriented (X, Y, or Z)
-        std::string axis;
-        /// @brief Position of the plane along the specified axis
-        int position;
-        /// @brief Color of the plane, used for rendering
-        Math::Vector3D<double> color;
-    };
-
     /// @brief SceneParser class responsible for parsing scene files
     class SceneParser {
         public:
@@ -63,36 +44,18 @@ namespace RayTracer {
         SceneData parse(const std::string& filePath);
 
         private:
-        /// @brief Parses all sphere definitions from the configuration file
-        /// @param spheres The libconfig array containing sphere definitions
-        /// @return The parsed sphere data
-        std::vector<SphereData> parseSpheres(const libconfig::Setting& spheres);
-
-        /// @brief Parses all plane definitions from the configuration file
-        /// @param planes The libconfig array containing plane definitions
-        /// @return The parsed plane data
-        std::vector<PlaneData> parsePlanes(const libconfig::Setting& planes);
-
-        /// @brief Parses an RGB color object from a primitive setting
-        /// @param primitiveSetting The primitive setting containing a "color" object
-        /// @return The parsed RGB color as a vector
-        Math::Vector3D<double> parseColor(const libconfig::Setting& primitiveSetting);
-
-        /// @brief parses an ambient light definition from the configuration file and adds it to the list of lights
+        /// @brief parses an ambient light definition from the configuration file and adds it to the
+        /// list of lights
         /// @param lights list of lights to which the parsed ambient light will be added
         /// @param lightSetting libconfig setting containing the ambient light definition
-        void parseAmbientLight(std::vector<std::unique_ptr<ILight>>& lights, const libconfig::Setting& lightSetting);
+        void parseAmbientLight(std::vector<std::unique_ptr<ILight>>& lights,
+                               const libconfig::Setting& lightSetting);
 
-        /// @brief parses a list of directional lights from the configuration file and adds them to the list of lights
+        /// @brief parses a list of directional lights from the configuration file and adds them to
+        /// the list of lights
         /// @param lights list of lights to which the parsed directional light will be added
         /// @param lightSetting libconfig setting containing the directional light definition
-        void parseDirectionalLights(std::vector<std::unique_ptr<ILight>>& lights, const libconfig::Setting& lightSetting);
-
-        /// @brief Helper function to extract a double value from a libconfig setting
-        /// @param setting The libconfig setting to extract the value from
-        /// @param key The key of the value to extract
-        /// @param value The variable to store the extracted value
-        /// @return True if the value was successfully extracted, false otherwise
-        bool getAsDouble(const libconfig::Setting& setting, const char* key, double& value);
+        void parseDirectionalLights(std::vector<std::unique_ptr<ILight>>& lights,
+                                    const libconfig::Setting& lightSetting);
     };
 }  // namespace RayTracer

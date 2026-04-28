@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <libconfig.h++>
+
 #include "Point3D.hpp"
 #include "Ray.hpp"
 #include "Vector3D.hpp"
@@ -19,6 +21,9 @@ namespace RayTracer {
     /// @brief Represents a camera in 3D space for ray tracing
     class Camera {
         public:
+        /// @brief Default constructor
+        Camera() = default;
+
         /// @brief Construct a Camera object
         /// @param position Position of the camera in 3D space
         /// @param rotation Rotation of the camera in degrees
@@ -35,7 +40,22 @@ namespace RayTracer {
         /// the screen
         [[nodiscard]] Ray ray(double u, double v) const;
 
+        /// @brief Initializes the camera with settings from a configuration file
+        /// @param setting The configuration settings for the camera
+        void init(const libconfig::Setting& setting);
+
+        /// @brief Gets the background color of the scene
+        /// @return The background color
+        [[nodiscard]] Math::Vector3D<double> getBackgroundColor() const;
+
+        /// @brief Sets the background color of the scene
+        /// @param color The new background color
+        void setBackgroundColor(const Math::Vector3D<double>& color);
+
         private:
+        /// @brief Background color of the scene
+        Math::Vector3D<double> _backgroundColor;
+
         /// @brief Position of the camera in 3D space
         Math::Point3D<double> _position;
         /// @brief Rotation of the camera in degrees

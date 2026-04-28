@@ -48,11 +48,12 @@ namespace RayTracer {
 
         /// @brief Computes the color for a given ray based on the scene's primitives
         /// @param ray The ray to trace
+        /// @param camera The camera (for background color)
         /// @param primitives The list of primitives in the scene
         /// @param lights The list of lights in the scene
         /// @return The computed color for the ray
         [[nodiscard]] Math::Vector3D<double> computeRayColor(
-            const Ray& ray, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+            const Ray& ray, const Camera& camera, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
             const std::vector<std::unique_ptr<ILight>>& lights) const;
 
         /// @brief Writes the color of a pixel to the output stream
