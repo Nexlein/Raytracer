@@ -24,7 +24,10 @@ namespace RayTracer {
         /// @brief Constructs a Ray object
         /// @param origin The starting point of the ray in 3D space
         /// @param direction The direction vector of the ray
-        Ray(const Point3D& origin, const Vector3D& direction);
+        Ray(const Point3D& origin, const Vector3D& direction)
+            : _origin(origin), _direction(direction)
+        {
+        }
 
         /// @brief Origin point of the ray
         Point3D _origin;
