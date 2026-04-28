@@ -27,8 +27,8 @@ void RayTracer::SceneParser::parseDirectionalLights(std::vector<std::unique_ptr<
     const libconfig::Setting& directionalLights = lightSetting["directional"];
 
     for (int i = 0; i < directionalLights.getLength(); i++) {
-        lights.push_back(PluginFactory<ILight>::create(
-            "./plugins/raytracer_directionallight.so", directionalLights[i]));
+        lights.push_back(PluginFactory<ILight>::create("./plugins/raytracer_directionallight.so",
+                                                       directionalLights[i]));
     }
 }
 
@@ -42,12 +42,14 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
 
         if (!root.exists("camera"))
             throw RayTracerException("SceneParser: Missing camera configuration.");
+        if (!root.exists("renderer"))
+            throw RayTracerException("SceneParser: Missing renderer configuration.");
 
         Camera cam;
         cam.init(root["camera"]);
 
-        int width = root["camera"]["resolution"]["width"];
-        int height = root["camera"]["resolution"]["height"];
+        Renderer renderer;
+        renderer.init(root["renderer"]);
 
         std::vector<std::unique_ptr<IPrimitive>> primitives;
         std::vector<std::unique_ptr<ILight>> lights;
@@ -59,8 +61,7 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
                 const libconfig::Setting& listSetting = primitivesSetting[i];
                 std::string typeName = listSetting.getName();
 
-                if (!typeName.empty() && typeName.back() == 's')
-                    typeName.pop_back();
+                if (!typeName.empty() && typeName.back() == 's') typeName.pop_back();
 
                 for (int j = 0; j < listSetting.getLength(); ++j) {
                     std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
@@ -76,7 +77,8 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
             if (lightSetting.exists("ambient")) parseAmbientLight(lights, lightSetting);
             if (lightSetting.exists("directional")) parseDirectionalLights(lights, lightSetting);
         }
-        return SceneData{std::move(cam), std::move(primitives), std::move(lights), width, height};
+        return SceneData{std::move(cam), std::move(renderer), std::move(primitives),
+                         std::move(lights)};
 
     } catch (const libconfig::FileIOException& fioex) {
         throw RayTracerException("I/O error while reading file: " + filePath);
