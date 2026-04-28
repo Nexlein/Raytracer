@@ -3,20 +3,20 @@ project(Raytracer LANGUAGES CXX)
 
 # === GLOBAL CONFIGURATION ===
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(FetchContent)
 find_package(PkgConfig QUIET)
 
 # === INTERFACE TARGET (Common includes and flags) ===
-# On crée une cible globale pour propager facilement nos options
 add_library(raytracerGlobal INTERFACE)
 
 target_compile_options(raytracerGlobal INTERFACE
     -Wall -Wextra -Werror -Wpedantic
-    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-std=c++26>
 )
 
-# On inclut automatiquement tous les sous-dossiers pertinents
 target_include_directories(raytracerGlobal INTERFACE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/include/Math
