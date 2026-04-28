@@ -34,7 +34,7 @@ void RayTracer::Renderer::render(const Camera& camera,
 
     outFile << "P3\n" << width << ' ' << height << "\n255\n";
 
-    for (int y = height; y >= 0; y--) {
+    for (int y = height - 1; y >= 0; y--) {
         for (int x = 0; x < width; x++) {
             double u = static_cast<double>(x) / (width - 1);
             double v = static_cast<double>(y) / (height - 1);
