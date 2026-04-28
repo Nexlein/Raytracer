@@ -48,6 +48,22 @@ void RayTracer::Renderer::render(const Camera& camera,
     outFile.close();
 }
 
+bool RayTracer::Renderer::isInShadow(
+    const HitRecord& hit,
+    const Math::Vector3D<double>& lightDir,
+    const std::vector<std::unique_ptr<IPrimitive>>& primitives) const
+{
+    // Ray depuis le hit point vers la lumière
+    Ray shadowRay(hit.p + hit.normal * 0.001, lightDir); // offset évite l'auto-intersection
+
+    HitRecord tempRec;
+    for (const auto& primitive : primitives) {
+        if (primitive->hits(shadowRay, tempRec) && tempRec.distance > 0.001)
+            return true; // quelque chose bloque
+    }
+    return false;
+}
+
 Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
     const Ray& ray, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
     const std::vector<std::unique_ptr<ILight>>& lights) const
@@ -71,9 +87,10 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
 
     if (hitAnything) {
         Math::Vector3D<double> totalLight(0.0, 0.0, 0.0);
-        for (const auto& light : lights)
-            totalLight += light->computeDiffuse(closestRec);
-        // + ambient si t'as une méthode séparée
+        for (const auto& light : lights) {
+            if (!light->castsShadow() || !isInShadow(closestRec, light->getDirection(), primitives))
+                totalLight += light->computeDiffuse(closestRec);
+        }
 
         // clamp 0-1
         totalLight._x = std::clamp(totalLight._x, 0.0, 1.0);

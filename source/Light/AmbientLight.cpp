@@ -11,3 +11,5 @@ Math::Vector3D<double> RayTracer::AmbientLight::computeDiffuse(
 {
     return (_color / 255.0) * _intensity;
 }
+
+bool RayTracer::AmbientLight::castsShadow() const { return false; }
