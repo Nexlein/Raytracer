@@ -25,14 +25,7 @@ Math::Vector3D<double> RayTracer::DirectionalLight::getDirection() const { retur
 void RayTracer::DirectionalLight::init(const libconfig::Setting& setting)
 {
     _intensity = 0.0;
-    if (!ConfigUtils::getAsDouble(setting, "diffuse", _intensity)) {
-        try {
-            const libconfig::Setting& parent = setting.getParent().getParent();
-            ConfigUtils::getAsDouble(parent, "diffuse", _intensity);
-        } catch (...) {
-            // Ignore error : intensity = 0.0
-        }
-    }
+    ConfigUtils::getAsDouble(setting, "intensity", _intensity);
 
     _color = Math::Vector3D<double>(255.0, 255.0, 255.0);
     if (setting.exists("color")) {
