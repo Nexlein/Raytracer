@@ -40,6 +40,23 @@ RayTracer::Triangle::Triangle(
 
 bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
 {
+    const double epsilon = 1e-6;
+
+    //Calcul des arêtes
+    Vector3D edge1 = _v1 - _v0;
+    Vector3D edge2 = _v2 - _v0;
+
+    Vector3D pvec(
+        ray._direction._y * edge2._z - ray._direction._z * edge2._y,
+        ray._direction._z * edge2._x - ray._direction._x * edge2._z,
+        ray._direction._x * edge2._y - ray._direction._y * edge2._x
+    );
+
+    double det = edge1.dot(pvec);
+
+    // "det" proche de 0 = rayon parallèle au triangle
+    if (std::abs(det) < epsilon) return false;
+
 }
 
 extern "C" {
