@@ -61,6 +61,9 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
                 const libconfig::Setting& listSetting = primitivesSetting[i];
                 std::string typeName = listSetting.getName();
 
+                if (!typeName.empty() && typeName.back() == 's')
+                    typeName.pop_back();
+
                 for (int j = 0; j < listSetting.getLength(); ++j) {
                     std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
                     primitives.push_back(
