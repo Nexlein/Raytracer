@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <libconfig.h++>
+
 #include "Ray.hpp"
 
 /// @brief Namespace for the Ray Tracer project
@@ -32,11 +34,15 @@ namespace RayTracer {
         /// @brief Color of the primitive, used for rendering
         Math::Vector3D<double> color;
 
+        /// @brief Initializes the primitive with settings from a configuration file
+        /// @param setting The configuration settings for the primitive
+        virtual void init(const libconfig::Setting& setting) = 0;
+
         /// @brief Determines if a ray intersects the primitive and fills the hit record with
         /// intersection details
         /// @param ray The ray to test for intersection with the primitive
-        /// @param hitRecord The hit record to be filled with intersection details if the ray hits the
-        /// primitive
+        /// @param hitRecord The hit record to be filled with intersection details if the ray hits
+        /// the primitive
         /// @return True if the ray intersects the primitive, false otherwise
         [[nodiscard]] virtual bool hits(const Ray& ray, HitRecord& hitRecord) const = 0;
     };
