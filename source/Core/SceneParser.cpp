@@ -24,13 +24,11 @@ void RayTracer::SceneParser::parseAmbientLight(std::vector<std::unique_ptr<ILigh
 void RayTracer::SceneParser::parseDirectionalLights(std::vector<std::unique_ptr<ILight>>& lights,
                                                     const libconfig::Setting& lightSetting)
 {
-    if (lightSetting.exists("directional")) {
-        const libconfig::Setting& directionalLights = lightSetting["directional"];
+    const libconfig::Setting& directionalLights = lightSetting["directional"];
 
-        for (int i = 0; i < directionalLights.getLength(); i++) {
-            lights.push_back(PluginFactory<ILight>::create(
-                "./plugins/raytracer_directionallight.so", directionalLights[i]));
-        }
+    for (int i = 0; i < directionalLights.getLength(); i++) {
+        lights.push_back(PluginFactory<ILight>::create(
+            "./plugins/raytracer_directionallight.so", directionalLights[i]));
     }
 }
 

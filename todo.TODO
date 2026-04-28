@@ -1,2 +1,2 @@
-Renderer:
-    - utilisation d'un pointeur C style: computeRayColor()
+DLLoader:
+    - utilisation d'un pointeur C style ? dans getInstance()
