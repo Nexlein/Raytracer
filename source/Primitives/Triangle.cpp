@@ -94,6 +94,55 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     return true;
 }
 
+void RayTracer::Triangle::init(const libconfig::Setting& setting)
+{
+    if (setting.exists("v0")) {
+        const libconfig::Setting& v0 = setting["v0"];
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        ConfigUtils::getAsDouble(v0, "x", x);
+        ConfigUtils::getAsDouble(v0, "y", y);
+        ConfigUtils::getAsDouble(v0, "z", z);
+        _v0 = Point3D(x, y, z);
+    }
+
+    if (setting.exists("v1")) {
+        const libconfig::Setting& v1 = setting["v1"];
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        ConfigUtils::getAsDouble(v1, "x", x);
+        ConfigUtils::getAsDouble(v1, "y", y);
+        ConfigUtils::getAsDouble(v1, "z", z);
+        _v1 = Point3D(x, y, z);
+    }
+
+    if (setting.exists("v2")) {
+        const libconfig::Setting& v2 = setting["v2"];
+        double x = 0.0;
+        double y = 0.0;
+        double z = 0.0;
+        ConfigUtils::getAsDouble(v2, "x", x);
+        ConfigUtils::getAsDouble(v2, "y", y);
+        ConfigUtils::getAsDouble(v2, "z", z);
+        _v2 = Point3D(x, y, z);
+    }
+
+    if (setting.exists("color")) {
+        const libconfig::Setting& c = setting["color"];
+        double r = 255.0;
+        double g = 255.0;
+        double b = 255.0;
+        ConfigUtils::getAsDouble(c, "r", r);
+        ConfigUtils::getAsDouble(c, "g", g);
+        ConfigUtils::getAsDouble(c, "b", b);
+        color._x = static_cast<int>(r);
+        color._y = static_cast<int>(g);
+        color._z = static_cast<int>(b);
+    }
+}
+
 extern "C" {
 RayTracer::IPrimitive* entryPoint() { return new RayTracer::Triangle(); }
 }
