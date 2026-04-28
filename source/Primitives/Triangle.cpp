@@ -57,6 +57,23 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     // "det" proche de 0 = rayon parallèle au triangle
     if (std::abs(det) < epsilon) return false;
 
+    double invDet = 1.0 / det;
+
+    Vector3D tvec = ray._origin - _v0;
+    double u = tvec.dot(pvec) * invDet;
+
+    // "u" en dehors du triangle
+    if (u < 0.0 || u > 1.0) return false;
+
+    Vector3D qvec(
+        tvec._y * edge1._z - tvec._z * edge1._y,
+        tvec._z * edge1._x - tvec._x * edge1._z,
+        tvec._x * edge1._y - tvec._y * edge1._x
+    );
+    double v = ray._direction.dot(qvec) * invDet;
+    // "v" en dehors du triangle
+    if (v < 0.0 || u + v > 1.0) return false;
+
 }
 
 extern "C" {
