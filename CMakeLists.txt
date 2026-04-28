@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20...4.0)
+cmake_minimum_required(VERSION 3.5...4.0)
 project(Raytracer LANGUAGES CXX)
 
 # === GLOBAL CONFIGURATION ===
@@ -14,7 +14,7 @@ find_package(PkgConfig QUIET)
 add_library(raytracerGlobal INTERFACE)
 
 target_compile_options(raytracerGlobal INTERFACE
-    -Wall -Wextra -Werror -Wpedantic
+    -Wall -Wextra -Werror -Wpedantic -Wold-style-cast
 )
 
 target_include_directories(raytracerGlobal INTERFACE
@@ -30,11 +30,13 @@ target_include_directories(raytracerGlobal INTERFACE
 
 # === DEPENDENCIES: LIBCONFIG++ ===
 if(PKG_CONFIG_FOUND)
-    pkg_check_modules(LIBCONFIGXX QUIET libconfig++)
+    pkg_check_modules(LIBCONFIGXX QUIET IMPORTED_TARGET libconfig++)
 endif()
 
 if(NOT LIBCONFIGXX_FOUND)
     message(STATUS "libconfig++ not found, fetching from GitHub...")
+
+    set(CMAKE_POLICY_VERSION_MINIMUM "3.5" CACHE STRING "Minimum policy version" FORCE)
 
     set(BUILD_EXAMPLES OFF CACHE BOOL "Disable libconfig examples" FORCE)
     set(BUILD_TESTS OFF CACHE BOOL "Disable libconfig tests" FORCE)
@@ -72,58 +74,44 @@ else()
 endif()
 
 # Add libconfig++ to the global interface target
-if(LIBCONFIGXX_FOUND)
-    target_include_directories(raytracerGlobal INTERFACE ${LIBCONFIGXX_INCLUDE_DIRS})
-    target_link_libraries(raytracerGlobal INTERFACE ${LIBCONFIGXX_LIBRARIES})
+if(TARGET PkgConfig::LIBCONFIGXX)
+    target_link_libraries(raytracerGlobal INTERFACE PkgConfig::LIBCONFIGXX)
 else()
+    # Fallback pour la version FetchContent
     target_link_libraries(raytracerGlobal INTERFACE config++)
     target_include_directories(raytracerGlobal INTERFACE ${libconfig_SOURCE_DIR}/lib)
 endif()
 
 # === PROJECT CORE ===
 file(GLOB_RECURSE CORE_FILES CONFIGURE_DEPENDS "source/*.cpp")
-
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Primitives/.*\\.cpp$")
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Light/.*\\.cpp$")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
+
 add_executable(raytracer ${CORE_FILES})
 target_link_libraries(raytracer PRIVATE raytracerGlobal)
 set_target_properties(raytracer PROPERTIES ENABLE_EXPORTS TRUE)
 
 # === PLUGINS ===
-set(PLUGIN_DIR "${PROJECT_SOURCE_DIR}/plugins")
-file(MAKE_DIRECTORY ${PLUGIN_DIR})
+set(PLUGIN_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/plugins)
 
-# Sphere
-add_library(raytracer_sphere SHARED source/Primitives/Sphere.cpp)
-target_link_libraries(raytracer_sphere PRIVATE raytracerGlobal)
-set_target_properties(raytracer_sphere PROPERTIES
-    PREFIX ""
-    LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_DIR}
-)
+function(add_raytracer_plugin target_name source_file)
+    add_library(${target_name} MODULE ${source_file})
+    target_link_libraries(${target_name} PRIVATE raytracerGlobal)
 
-# Plane
-add_library(raytracer_plane SHARED source/Primitives/Plane.cpp)
-target_link_libraries(raytracer_plane PRIVATE raytracerGlobal)
-set_target_properties(raytracer_plane PROPERTIES
-    PREFIX ""
-    LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_DIR}
-)
+    set_target_properties(${target_name} PROPERTIES
+        PREFIX ""
+        LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT_DIR}
+    )
 
-# AmbientLight
-add_library(raytracer_ambientlight SHARED source/Light/AmbientLight.cpp)
-target_link_libraries(raytracer_ambientlight PRIVATE raytracerGlobal)
-set_target_properties(raytracer_ambientlight PROPERTIES
-    PREFIX ""
-    LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_DIR}
-)
+    if(APPLE)
+        set_target_properties(${target_name} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
+    endif()
+endfunction()
 
-# DirectionalLight
-add_library(raytracer_directionallight SHARED source/Light/DirectionalLight.cpp)
-target_link_libraries(raytracer_directionallight PRIVATE raytracerGlobal)
-set_target_properties(raytracer_directionallight PROPERTIES
-    PREFIX ""
-    LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_DIR}
-)
-add_compile_options(-Wold-style-cast)
+add_raytracer_plugin(raytracer_sphere source/Primitives/Sphere.cpp)
+add_raytracer_plugin(raytracer_plane source/Primitives/Plane.cpp)
+add_raytracer_plugin(raytracer_triangle source/Primitives/Triangle.cpp)
+add_raytracer_plugin(raytracer_ambientlight source/Light/AmbientLight.cpp)
+add_raytracer_plugin(raytracer_directionallight source/Light/DirectionalLight.cpp)
