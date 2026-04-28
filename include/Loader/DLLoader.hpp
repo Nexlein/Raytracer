@@ -44,14 +44,14 @@ namespace RayTracer {
         {
             if (!_handle) return nullptr;
 
-            typedef std::unique_ptr<T> (*EntryPointFunc)();
+            using EntryPointFunc = T* (*)();
 
             auto createModule =
                 reinterpret_cast<EntryPointFunc>(dlsym(_handle.get(), entryPointName.c_str()));
 
             if (createModule == nullptr) throw DLLoaderException(dlerror());
 
-            return createModule();
+            return std::unique_ptr<T>(createModule());
         }
 
         /// @brief Exception class for DLLoader errors
@@ -70,8 +70,9 @@ namespace RayTracer {
         };
 
         private:
+        using Deleter = void (*)(void*);
         /// @brief A unique pointer that manages the handle to the loaded shared library, ensuring
         /// it is properly closed when the DLLoader is destroyed
-        std::unique_ptr<void, void (*)(void*)> _handle;
+        std::unique_ptr<void, Deleter> _handle;
     };
 }  // namespace RayTracer
