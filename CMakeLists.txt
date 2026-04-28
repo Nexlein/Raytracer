@@ -112,5 +112,6 @@ endfunction()
 
 add_raytracer_plugin(raytracer_sphere source/Primitives/Sphere.cpp)
 add_raytracer_plugin(raytracer_plane source/Primitives/Plane.cpp)
+add_raytracer_plugin(raytracer_triangle source/Primitives/Triangle.cpp)
 add_raytracer_plugin(raytracer_ambientlight source/Light/AmbientLight.cpp)
 add_raytracer_plugin(raytracer_directionallight source/Light/DirectionalLight.cpp)
