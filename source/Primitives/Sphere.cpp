@@ -77,8 +77,8 @@ void RayTracer::Sphere::init(const libconfig::Setting& setting)
 }
 
 extern "C" {
-std::unique_ptr<RayTracer::IPrimitive> entryPoint()
+RayTracer::IPrimitive* entryPoint()
 {
-    return std::make_unique<RayTracer::Sphere>();
+    return new RayTracer::Sphere();
 }
 }
