@@ -38,11 +38,13 @@ namespace Math {
         /// @param other The vector to be added to the point
         /// @return A new Point3D object representing the result of adding the vector to the point
         [[nodiscard]] Point3D operator+(const Vector3D<T>& other) const;
+
         /// @brief Subtracts a vector from the point, resulting in a new point
         /// @param other The vector to be subtracted from the point
         /// @return A new Point3D object representing the result of subtracting the vector from the
         /// point
         [[nodiscard]] Point3D operator-(const Vector3D<T>& other) const;
+
         /// @brief Subtracts another point from this point, resulting in a vector
         /// @param other The point to be subtracted from this point
         /// @return A new Vector3D object representing the result of subtracting the other point
