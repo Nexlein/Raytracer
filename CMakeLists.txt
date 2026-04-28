@@ -74,6 +74,7 @@ endif()
 # Add libconfig++ to the global interface target
 if(LIBCONFIGXX_FOUND)
     target_include_directories(raytracerGlobal INTERFACE ${LIBCONFIGXX_INCLUDE_DIRS})
+    target_link_directories(raytracerGlobal INTERFACE ${LIBCONFIGXX_LIBRARY_DIRS})
     target_link_libraries(raytracerGlobal INTERFACE ${LIBCONFIGXX_LIBRARIES})
 else()
     target_link_libraries(raytracerGlobal INTERFACE config++)
@@ -85,45 +86,55 @@ file(GLOB_RECURSE CORE_FILES CONFIGURE_DEPENDS "source/*.cpp")
 
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Primitives/.*\\.cpp$")
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Light/.*\\.cpp$")
+set(CORE_EXEC_FILES ${CORE_FILES})
+list(FILTER CORE_EXEC_FILES EXCLUDE REGEX "source/main\\.cpp$")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
-add_executable(raytracer ${CORE_FILES})
-target_link_libraries(raytracer PRIVATE raytracerGlobal)
+add_library(raytracer_core STATIC ${CORE_EXEC_FILES})
+target_link_libraries(raytracer_core PRIVATE raytracerGlobal)
+
+add_executable(raytracer source/main.cpp)
+target_link_libraries(raytracer PRIVATE raytracerGlobal raytracer_core)
 set_target_properties(raytracer PROPERTIES ENABLE_EXPORTS TRUE)
 
 # === PLUGINS ===
 set(PLUGIN_DIR "${PROJECT_SOURCE_DIR}/plugins")
 file(MAKE_DIRECTORY ${PLUGIN_DIR})
+set(PLUGIN_SUFFIX ".so")
 
 # Sphere
 add_library(raytracer_sphere SHARED source/Primitives/Sphere.cpp)
-target_link_libraries(raytracer_sphere PRIVATE raytracerGlobal)
+target_link_libraries(raytracer_sphere PRIVATE raytracerGlobal raytracer_core)
 set_target_properties(raytracer_sphere PROPERTIES
     PREFIX ""
+    SUFFIX ${PLUGIN_SUFFIX}
     LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_DIR}
 )
 
 # Plane
 add_library(raytracer_plane SHARED source/Primitives/Plane.cpp)
-target_link_libraries(raytracer_plane PRIVATE raytracerGlobal)
+target_link_libraries(raytracer_plane PRIVATE raytracerGlobal raytracer_core)
 set_target_properties(raytracer_plane PROPERTIES
     PREFIX ""
+    SUFFIX ${PLUGIN_SUFFIX}
     LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_DIR}
 )
 
 # AmbientLight
 add_library(raytracer_ambientlight SHARED source/Light/AmbientLight.cpp)
-target_link_libraries(raytracer_ambientlight PRIVATE raytracerGlobal)
+target_link_libraries(raytracer_ambientlight PRIVATE raytracerGlobal raytracer_core)
 set_target_properties(raytracer_ambientlight PROPERTIES
     PREFIX ""
+    SUFFIX ${PLUGIN_SUFFIX}
     LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_DIR}
 )
 
 # DirectionalLight
 add_library(raytracer_directionallight SHARED source/Light/DirectionalLight.cpp)
-target_link_libraries(raytracer_directionallight PRIVATE raytracerGlobal)
+target_link_libraries(raytracer_directionallight PRIVATE raytracerGlobal raytracer_core)
 set_target_properties(raytracer_directionallight PROPERTIES
     PREFIX ""
+    SUFFIX ${PLUGIN_SUFFIX}
     LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_DIR}
 )
 add_compile_options(-Wold-style-cast)
