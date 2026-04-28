@@ -14,7 +14,7 @@ find_package(PkgConfig QUIET)
 add_library(raytracerGlobal INTERFACE)
 
 target_compile_options(raytracerGlobal INTERFACE
-    -Wall -Wextra -Werror -Wpedantic -Wold-style-cast
+    -Wall -Wextra -Werror -Wpedantic -Wold-style-cast -O3 -ffast-math
 )
 
 target_include_directories(raytracerGlobal INTERFACE
