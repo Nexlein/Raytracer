@@ -74,6 +74,11 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     // "v" en dehors du triangle
     if (v < 0.0 || u + v > 1.0) return false;
 
+    double t = edge2.dot(qvec) * invDet;
+
+    // Vérifie que l'intersection est devant la caméra
+    if (t <= epsilon) return false;
+
 }
 
 extern "C" {
