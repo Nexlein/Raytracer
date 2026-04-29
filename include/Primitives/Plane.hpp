@@ -30,7 +30,7 @@ namespace RayTracer {
         Vector3D _normal;
 
         /// @brief Position of the plane in 3D space
-        double _position;
+        Point3D _position;
 
         /// @brief Determines if a ray intersects the plane and fills the hit record with
         /// intersection details
