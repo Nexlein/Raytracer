@@ -13,9 +13,9 @@
 #include <string>
 #include <vector>
 
+#include "IMaterial.hpp"
 #include "IPrimitive.hpp"
 #include "Point3D.hpp"
-#include "IMaterial.hpp"
 
 namespace RayTracer {
     /// @brief Lightweight triangle structure for internal OBJ use
