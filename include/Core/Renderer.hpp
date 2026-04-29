@@ -110,7 +110,7 @@ namespace RayTracer {
                 totalLight._z = std::clamp(totalLight._z, 0.0, 1.0);
 
                 // primitive.color en 0-255, totalLight en 0-1 → résultat en 0-255
-                return (hitPrimitive->color / 255.0) * totalLight * 255.0;
+                return (hitPrimitive->getColor() / 255.0) * totalLight * 255.0;
             }
 
             return _backgroundColor;

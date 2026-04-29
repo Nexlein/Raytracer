@@ -106,9 +106,9 @@ void RayTracer::Triangle::init(const libconfig::Setting& setting)
         ConfigUtils::getAsDouble(c, "r", r);
         ConfigUtils::getAsDouble(c, "g", g);
         ConfigUtils::getAsDouble(c, "b", b);
-        color._x = static_cast<int>(r);
-        color._y = static_cast<int>(g);
-        color._z = static_cast<int>(b);
+        _color._x = static_cast<int>(r);
+        _color._y = static_cast<int>(g);
+        _color._z = static_cast<int>(b);
     }
 }
 
