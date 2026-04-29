@@ -39,12 +39,12 @@ void RayTracer::SceneParser::setMaterialstoPrimitives(
     const std::map<std::string, std::shared_ptr<IMaterial>>& materials)
 {
     for (auto& primitive : primitives) {
-        if (!primitive->materialName.empty()) {
-            auto it = materials.find(primitive->materialName);
+        if (!primitive->getMaterialName().empty()) {
+            auto it = materials.find(primitive->getMaterialName());
             if (it != materials.end())
-                primitive->material = it->second;
+                primitive->setMaterial(it->second);
             else
-                throw RayTracerException("SceneParser: Material '" + primitive->materialName +
+                throw RayTracerException("SceneParser: Material '" + primitive->getMaterialName() +
                                          "' not found for primitive.");
         }
     }

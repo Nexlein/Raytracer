@@ -100,7 +100,7 @@ void RayTracer::Triangle::init(const libconfig::Setting& setting)
 
     if (setting.exists("material")) {
         std::string name = setting["material"];
-        materialName = name;
+        _materialName = name;
     }
 }
 

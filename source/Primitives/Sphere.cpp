@@ -38,7 +38,7 @@ bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
     rec.distance = root;
     rec.p = ray._origin + (ray._direction * rec.distance);
     rec.normal = (rec.p - _center) / _radius;
-    rec.material = material.get();
+    rec.material = _material.get();
     return true;
 }
 
@@ -61,7 +61,7 @@ void RayTracer::Sphere::init(const libconfig::Setting& setting)
 
     if (setting.exists("material")) {
         std::string name = setting["material"];
-        materialName = name;
+        _materialName = name;
     }
 }
 

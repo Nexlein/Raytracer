@@ -35,13 +35,6 @@ namespace RayTracer {
         public:
         virtual ~IPrimitive() = default;
 
-
-
-        /// @brief Name of the material associated with the primitive, used to link the material
-        std::string materialName;
-
-        /// @brief Shared pointer to the material associated with the primitive, used for rendering
-        std::shared_ptr<IMaterial> material;
         /// @brief Initializes the primitive with settings from a configuration file
         /// @param setting The configuration settings for the primitive
         virtual void init(const libconfig::Setting& setting) = 0;
@@ -56,10 +49,25 @@ namespace RayTracer {
 
         /// @brief Gets the color of the primitive
         /// @return The color vector of the primitive
-        [[nodiscard]] inline const Math::Vector3D<double> getColor() const { return material->getColor(); }
+        [[nodiscard]] inline const Math::Vector3D<double> getColor() const { return _material->getColor(); }
 
         /// @brief Sets the color of the primitive
         /// @param color The color vector to set for the primitive
-        inline void setColor(const Math::Vector3D<double>& color) { material->setColor(color); }
+        inline void setColor(const Math::Vector3D<double>& color) { _material->setColor(color); }
+
+        [[nodiscard]] inline const std::string& getMaterialName() const { return _materialName; }
+
+        inline const std::string& setMaterialName(const std::string& materialName) { _materialName = materialName; return _materialName; }
+
+        [[nodiscard]] inline const std::shared_ptr<IMaterial>& getMaterial() const { return _material; }
+
+        inline const std::shared_ptr<IMaterial>& setMaterial(const std::shared_ptr<IMaterial>& material) { _material = material; return _material; }
+
+        protected:
+        /// @brief Name of the material associated with the primitive, used to link the material
+        std::string _materialName;
+
+        /// @brief Shared pointer to the material associated with the primitive, used for rendering
+        std::shared_ptr<IMaterial> _material;
     };
 }  // namespace RayTracer
