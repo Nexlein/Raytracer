@@ -111,13 +111,46 @@ Math::Point3D<double> RayTracer::Obj::getVertex(
 
 void RayTracer::Obj::parseVertex(std::istringstream& iss,
                                  std::vector<Math::Point3D<double>>& vertices, double scale,
-                                 const Math::Vector3D<double>& position)
+                                 const Math::Vector3D<double>& position,
+                                 const Math::Vector3D<double>& rotation)
 {
     double x, y, z;
     iss >> x >> y >> z;
-    x = x * scale + position._x;
-    y = y * scale + position._y;
-    z = z * scale + position._z;
+
+    // Scale
+    x *= scale;
+    y *= scale;
+    z *= scale;
+
+    // Convert rotation to radians
+    double pi = std::acos(-1.0);
+    double rotX = rotation._x * (pi / 180.0);
+    double rotY = rotation._y * (pi / 180.0);
+    double rotZ = rotation._z * (pi / 180.0);
+
+    // Rotate around X axis
+    double tempY = y * std::cos(rotX) - z * std::sin(rotX);
+    double tempZ = y * std::sin(rotX) + z * std::cos(rotX);
+    y = tempY;
+    z = tempZ;
+
+    // Rotate around Y axis
+    double tempX = x * std::cos(rotY) + z * std::sin(rotY);
+    tempZ = -x * std::sin(rotY) + z * std::cos(rotY);
+    x = tempX;
+    z = tempZ;
+
+    // Rotate around Z axis
+    tempX = x * std::cos(rotZ) - y * std::sin(rotZ);
+    tempY = x * std::sin(rotZ) + y * std::cos(rotZ);
+    x = tempX;
+    y = tempY;
+
+    // Translate
+    x += position._x;
+    y += position._y;
+    z += position._z;
+
     vertices.emplace_back(x, y, z);
 }
 
@@ -156,7 +189,8 @@ void RayTracer::Obj::parseFace(std::istringstream& iss,
 }
 
 void RayTracer::Obj::loadObjFile(const std::string& filepath, double scale,
-                                 const Math::Vector3D<double>& position)
+                                 const Math::Vector3D<double>& position,
+                                 const Math::Vector3D<double>& rotation)
 {
     std::ifstream file(filepath);
     if (!file.is_open()) throw RayTracerException("Obj: Could not open file " + filepath);
@@ -172,7 +206,7 @@ void RayTracer::Obj::loadObjFile(const std::string& filepath, double scale,
         iss >> type;
 
         if (type == "v")
-            parseVertex(iss, vertices, scale, position);
+            parseVertex(iss, vertices, scale, position, rotation);
         else if (type == "f")
             parseFace(iss, vertices);
     }
@@ -186,24 +220,20 @@ void RayTracer::Obj::init(const libconfig::Setting& setting)
     }
 
     double scale = 1.0;
-    if (setting.exists("scale")) ConfigUtils::getAsDouble(setting, "scale", scale);
+    ConfigUtils::getAsDouble(setting, "scale", scale);
 
-    Math::Vector3D<double> position(0.0, 0.0, 0.0);
-    if (setting.exists("position")) {
-        const libconfig::Setting& pos = setting["position"];
-        double tx = 0.0, ty = 0.0, tz = 0.0;
-        ConfigUtils::getAsDouble(pos, "x", tx);
-        ConfigUtils::getAsDouble(pos, "y", ty);
-        ConfigUtils::getAsDouble(pos, "z", tz);
-        position = {tx, ty, tz};
-    }
+    Math::Vector3D<double> translation;
+    ConfigUtils::parseVector3D(setting, "translation", translation, false);
+
+    Math::Vector3D<double> rotation;
+    ConfigUtils::parseVector3D(setting, "rotation", rotation, false);
 
     if (setting.exists("file")) {
         std::string filepath;
         setting.lookupValue("file", filepath);
-        loadObjFile(filepath, scale, position);
+        loadObjFile(filepath, scale, translation, rotation);
     } else
-        throw RayTracerException("Obj: Missing 'file' parameter.");
+        throw RayTracerException("Obj: Missing required parameter 'file'.");
 }
 
 extern "C" {

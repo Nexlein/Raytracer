@@ -52,12 +52,20 @@ namespace RayTracer {
         /// @param filepath The path to the .obj file
         /// @param scale An optional scaling factor
         /// @param translation An optional translation vector
+        /// @param rotation An optional rotation vector (Euler angles in degrees)
         void loadObjFile(const std::string& filepath, double scale,
-                         const Math::Vector3D<double>& translation);
+                         const Math::Vector3D<double>& translation,
+                         const Math::Vector3D<double>& rotation);
 
-        /// @brief Parses a vertex from an input stream
+        /// @brief Parses a vertex from an input stream and applies transformations
+        /// @param iss The input stream containing the vertex data
+        /// @param vertices The list of vertices parsed so far (used for indexing faces)
+        /// @param scale The scaling factor to apply to the vertex
+        /// @param translation The translation vector to translate the vertex
+        /// @param rotation The rotation vector (Euler angles in degrees) to rotate the vertex
         void parseVertex(std::istringstream& iss, std::vector<Math::Point3D<double>>& vertices,
-                         double scale, const Math::Vector3D<double>& translation);
+                         double scale, const Math::Vector3D<double>& translation,
+                         const Math::Vector3D<double>& rotation);
 
         /// @brief Parses a face from an input stream
         void parseFace(std::istringstream& iss, const std::vector<Math::Point3D<double>>& vertices);
