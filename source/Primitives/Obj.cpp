@@ -22,37 +22,48 @@ bool RayTracer::ObjTriangle::hits(const Ray& ray, HitRecord& rec) const
 {
     const double epsilon = 1e-6;
 
+    // 1. Define the triangle's edges
     Math::Vector3D<double> edge1 = _v1 - _v0;
     Math::Vector3D<double> edge2 = _v2 - _v0;
 
+    // 2. Calculate determinant to check if ray is parallel to the triangle
     Math::Vector3D<double> pvec(ray._direction._y * edge2._z - ray._direction._z * edge2._y,
                                 ray._direction._z * edge2._x - ray._direction._x * edge2._z,
                                 ray._direction._x * edge2._y - ray._direction._y * edge2._x);
 
     double det = edge1.dot(pvec);
+    // If determinant is close to 0, ray is parallel to the triangle
     if (std::abs(det) < epsilon) return false;
 
     double invDet = 1.0 / det;
 
+    // 3. Calculate U parameter (barycentric coordinate) and test bounds
     Math::Vector3D<double> tvec = ray._origin - _v0;
     double u = tvec.dot(pvec) * invDet;
 
+    // If U is outside [0, 1], the hit is outside the triangle
     if (u < 0.0 || u > 1.0) return false;
 
+    // 4. Calculate V parameter and test bounds
     Math::Vector3D<double> qvec(tvec._y * edge1._z - tvec._z * edge1._y,
                                 tvec._z * edge1._x - tvec._x * edge1._z,
                                 tvec._x * edge1._y - tvec._y * edge1._x);
     double v = ray._direction.dot(qvec) * invDet;
 
+    // If V is outside or U+V > 1, the hit is outside the triangle
     if (v < 0.0 || u + v > 1.0) return false;
 
+    // 5. Calculate T (distance to intersection point)
     double t = edge2.dot(qvec) * invDet;
 
+    // If T is negative, the triangle is behind the camera
     if (t <= epsilon) return false;
 
+    // 6. Valid hit -> Save the hit info
     rec.distance = t;
     rec.p = ray._origin + (ray._direction * t);
 
+    // Calculate the face normal using cross product of edges
     Math::Vector3D<double> normal(edge1._y * edge2._z - edge1._z * edge2._y,
                                   edge1._z * edge2._x - edge1._x * edge2._z,
                                   edge1._x * edge2._y - edge1._y * edge2._x);
