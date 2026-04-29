@@ -36,17 +36,17 @@ namespace Math {
 
         /// @brief Computes the length (magnitude) of the vector
         /// @return The length of the vector
-        [[nodiscard]] T length() const { return std::sqrt(_x * _x + _y * _y + _z * _z); }
+        [[nodiscard]] inline T length() const { return std::sqrt(_x * _x + _y * _y + _z * _z); }
 
         /// @brief Computes the dot product of this vector and another vector
         /// @param other The other vector
         /// @return The dot product
-        [[nodiscard]] T dot(const Vector3D& other) const
+        [[nodiscard]] inline T dot(const Vector3D& other) const
         {
             return _x * other._x + _y * other._y + _z * other._z;
         }
 
-        [[nodiscard]] Vector3D normalized() const
+        [[nodiscard]] inline Vector3D normalized() const
         {
             T len = std::sqrt(_x * _x + _y * _y + _z * _z);
             if (len == 0) return *this;
@@ -55,7 +55,7 @@ namespace Math {
 
         /// @brief Rotates the vector around the X axis
         /// @param angle The angle of rotation in radians
-        void rotateX(double angle)
+        inline void rotateX(double angle)
         {
             double radians = angle * (std::acos(-1.0) / 180.0);
             double cos_a = std::cos(radians);
@@ -67,7 +67,7 @@ namespace Math {
 
         /// @brief Rotates the vector around the Y axis
         /// @param angle The angle of rotation in radians
-        void rotateY(double angle)
+        inline void rotateY(double angle)
         {
             double radians = angle * (std::acos(-1.0) / 180.0);
             double cos_a = std::cos(radians);
@@ -79,7 +79,7 @@ namespace Math {
 
         /// @brief Rotates the vector around the Z axis
         /// @param angle The angle of rotation in radians
-        void rotateZ(double angle)
+        inline void rotateZ(double angle)
         {
             double radians = angle * (std::acos(-1.0) / 180.0);
             double cos_a = std::cos(radians);
@@ -94,7 +94,7 @@ namespace Math {
         /// @brief Adds two vectors element-wise
         /// @param other The vector to add
         /// @return The resulting vector
-        [[nodiscard]] Vector3D operator+(const Vector3D& other) const
+        [[nodiscard]] inline Vector3D operator+(const Vector3D& other) const
         {
             return Vector3D(_x + other._x, _y + other._y, _z + other._z);
         }
@@ -102,7 +102,7 @@ namespace Math {
         /// @brief Subtracts a vector from this vector element-wise
         /// @param other The vector to subtract
         /// @return The resulting vector
-        [[nodiscard]] Vector3D operator-(const Vector3D& other) const
+        [[nodiscard]] inline Vector3D operator-(const Vector3D& other) const
         {
             return Vector3D(_x - other._x, _y - other._y, _z - other._z);
         }
@@ -110,7 +110,7 @@ namespace Math {
         /// @brief Multiplies two vectors element-wise
         /// @param other The vector to multiply
         /// @return The resulting vector
-        [[nodiscard]] Vector3D operator*(const Vector3D& other) const
+        [[nodiscard]] inline Vector3D operator*(const Vector3D& other) const
         {
             return Vector3D(_x * other._x, _y * other._y, _z * other._z);
         }
@@ -118,7 +118,7 @@ namespace Math {
         /// @brief Divides this vector by another vector element-wise
         /// @param other The vector to divide by
         /// @return The resulting vector
-        [[nodiscard]] Vector3D operator/(const Vector3D& other) const
+        [[nodiscard]] inline Vector3D operator/(const Vector3D& other) const
         {
             if (other._x == 0 || other._y == 0 || other._z == 0)
                 throw RayTracer::RayTracerException("Vector3D: Division by zero (vector).");
@@ -130,7 +130,7 @@ namespace Math {
         /// @brief Adds a vector to this vector element-wise
         /// @param other The vector to add
         /// @return Reference to the modified vector
-        Vector3D& operator+=(const Vector3D& other)
+        inline Vector3D& operator+=(const Vector3D& other)
         {
             _x += other._x;
             _y += other._y;
@@ -141,7 +141,7 @@ namespace Math {
         /// @brief Subtracts a vector from this vector element-wise
         /// @param other The vector to subtract
         /// @return Reference to the modified vector
-        Vector3D& operator-=(const Vector3D& other)
+        inline Vector3D& operator-=(const Vector3D& other)
         {
             _x -= other._x;
             _y -= other._y;
@@ -152,7 +152,7 @@ namespace Math {
         /// @brief Multiplies this vector by another vector element-wise
         /// @param other The vector to multiply
         /// @return Reference to the modified vector
-        Vector3D& operator*=(const Vector3D& other)
+        inline Vector3D& operator*=(const Vector3D& other)
         {
             _x *= other._x;
             _y *= other._y;
@@ -163,7 +163,7 @@ namespace Math {
         /// @brief Divides this vector by another vector element-wise
         /// @param other The vector to divide by
         /// @return Reference to the modified vector
-        Vector3D& operator/=(const Vector3D& other)
+        inline Vector3D& operator/=(const Vector3D& other)
         {
             if (other._x == 0 || other._y == 0 || other._z == 0)
                 throw RayTracer::RayTracerException("Vector3D: Division by zero (vector).");
@@ -178,7 +178,7 @@ namespace Math {
         /// @brief Adds a scalar to each element of the vector
         /// @param scalar The scalar to add
         /// @return The resulting vector
-        [[nodiscard]] Vector3D operator+(T scalar) const
+        [[nodiscard]] inline Vector3D operator+(T scalar) const
         {
             return Vector3D(_x + scalar, _y + scalar, _z + scalar);
         }
@@ -186,7 +186,7 @@ namespace Math {
         /// @brief Subtracts a scalar from each element of the vector
         /// @param scalar The scalar to subtract
         /// @return The resulting vector
-        [[nodiscard]] Vector3D operator-(T scalar) const
+        [[nodiscard]] inline Vector3D operator-(T scalar) const
         {
             return Vector3D(_x - scalar, _y - scalar, _z - scalar);
         }
@@ -194,7 +194,7 @@ namespace Math {
         /// @brief Multiplies each element of the vector by a scalar
         /// @param scalar The scalar to multiply
         /// @return The resulting vector
-        [[nodiscard]] Vector3D operator*(T scalar) const
+        [[nodiscard]] inline Vector3D operator*(T scalar) const
         {
             return Vector3D(_x * scalar, _y * scalar, _z * scalar);
         }
@@ -202,7 +202,7 @@ namespace Math {
         /// @brief Divides each element of the vector by a scalar
         /// @param scalar The scalar to divide by
         /// @return The resulting vector
-        [[nodiscard]] Vector3D operator/(T scalar) const
+        [[nodiscard]] inline Vector3D operator/(T scalar) const
         {
             if (scalar == 0)
                 throw RayTracer::RayTracerException("Vector3D: Division by zero (scalar).");
@@ -214,7 +214,7 @@ namespace Math {
         /// @brief Adds a scalar to each element of this vector
         /// @param scalar The scalar to add
         /// @return Reference to the modified vector
-        Vector3D& operator+=(T scalar)
+        inline Vector3D& operator+=(T scalar)
         {
             _x += scalar;
             _y += scalar;
@@ -225,7 +225,7 @@ namespace Math {
         /// @brief Subtracts a scalar from each element of this vector
         /// @param scalar The scalar to subtract
         /// @return Reference to the modified vector
-        Vector3D& operator-=(T scalar)
+        inline Vector3D& operator-=(T scalar)
         {
             _x -= scalar;
             _y -= scalar;
@@ -236,7 +236,7 @@ namespace Math {
         /// @brief Multiplies each element of this vector by a scalar
         /// @param scalar The scalar to multiply
         /// @return Reference to the modified vector
-        Vector3D& operator*=(T scalar)
+        inline Vector3D& operator*=(T scalar)
         {
             _x *= scalar;
             _y *= scalar;
@@ -247,7 +247,7 @@ namespace Math {
         /// @brief Divides each element of this vector by a scalar
         /// @param scalar The scalar to divide by
         /// @return Reference to the modified vector
-        Vector3D& operator/=(T scalar)
+        inline Vector3D& operator/=(T scalar)
         {
             if (scalar == 0)
                 throw RayTracer::RayTracerException("Vector3D: Division by zero (scalar).");

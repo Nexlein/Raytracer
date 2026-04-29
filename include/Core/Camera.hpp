@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <libconfig.h++>
 #include <cmath>
+#include <libconfig.h++>
 
 #include "Point3D.hpp"
 #include "Ray.hpp"
@@ -41,7 +41,7 @@ namespace RayTracer {
         /// @param ratio The aspect ratio of the screen (width / height)
         /// @return A Ray object representing the ray from the camera through the specified point on
         /// the screen
-        [[nodiscard]] Ray ray(double u, double v, double ratio) const
+        [[nodiscard]] inline Ray ray(double u, double v, double ratio) const
         {
             double scale = std::tan(_fieldOfView * 0.5 * M_PI / 180.0);
 

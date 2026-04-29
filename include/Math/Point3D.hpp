@@ -37,7 +37,7 @@ namespace Math {
         /// @brief Adds a vector to the point, resulting in a new point
         /// @param other The vector to be added to the point
         /// @return A new Point3D object representing the result of adding the vector to the point
-        [[nodiscard]] Point3D operator+(const Vector3D<T>& other) const
+        [[nodiscard]] inline Point3D operator+(const Vector3D<T>& other) const
         {
             return Point3D(_x + other._x, _y + other._y, _z + other._z);
         }
@@ -46,7 +46,7 @@ namespace Math {
         /// @param other The vector to be subtracted from the point
         /// @return A new Point3D object representing the result of subtracting the vector from the
         /// point
-        [[nodiscard]] Point3D operator-(const Vector3D<T>& other) const
+        [[nodiscard]] inline Point3D operator-(const Vector3D<T>& other) const
         {
             return Point3D(_x - other._x, _y - other._y, _z - other._z);
         }
@@ -55,7 +55,7 @@ namespace Math {
         /// @param other The point to be subtracted from this point
         /// @return A new Vector3D object representing the result of subtracting the other point
         /// from this point
-        [[nodiscard]] Math::Vector3D<T> operator-(const Point3D& other) const
+        [[nodiscard]] inline Math::Vector3D<T> operator-(const Point3D& other) const
         {
             return Math::Vector3D<T>(_x - other._x, _y - other._y, _z - other._z);
         }
@@ -63,14 +63,14 @@ namespace Math {
         /// @brief Computes the dot product of this point and another vector
         /// @param other The other vector
         /// @return The dot product
-        [[nodiscard]] T dot(const Vector3D<T>& other) const
+        [[nodiscard]] inline T dot(const Vector3D<T>& other) const
         {
             return _x * other._x + _y * other._y + _z * other._z;
         }
 
         /// @brief Translates the point by a given vector, modifying the point's coordinates
         /// @param v The vector by which to translate the point
-        void translate(const Vector3D<T>& v)
+        inline void translate(const Vector3D<T>& v)
         {
             _x += v._x;
             _y += v._y;
