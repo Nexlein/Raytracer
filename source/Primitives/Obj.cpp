@@ -90,6 +90,7 @@ bool RayTracer::Obj::hits(const Ray& ray, HitRecord& hitRecord) const
 
     if (hitAnything) hitRecord.normal = hitRecord.normal.normalized();
 
+    hitRecord.material = _material.get();
     return hitAnything;
 }
 
@@ -135,7 +136,7 @@ void RayTracer::Obj::parseFace(std::istringstream& iss,
         t._v0 = getVertex(i1, vertices);
         t._v1 = getVertex(i2, vertices);
         t._v2 = getVertex(i3, vertices);
-        t.color = _color;
+        t._material = _material.get();
         _triangles.push_back(t);
 
         // Handle quads
@@ -146,7 +147,7 @@ void RayTracer::Obj::parseFace(std::istringstream& iss,
             t2._v0 = getVertex(i1, vertices);
             t2._v1 = getVertex(i3, vertices);
             t2._v2 = getVertex(i4, vertices);
-            t2.color = _color;
+            t2._material = _material.get();
             _triangles.push_back(t2);
         }
     } catch (const RayTracerException&) {
@@ -179,17 +180,10 @@ void RayTracer::Obj::loadObjFile(const std::string& filepath, double scale,
 
 void RayTracer::Obj::init(const libconfig::Setting& setting)
 {
-    if (setting.exists("color")) {
-        const libconfig::Setting& c = setting["color"];
-        double r = 255.0, g = 255.0, b = 255.0;
-        ConfigUtils::getAsDouble(c, "r", r);
-        ConfigUtils::getAsDouble(c, "g", g);
-        ConfigUtils::getAsDouble(c, "b", b);
-        _color._x = static_cast<int>(r);
-        _color._y = static_cast<int>(g);
-        _color._z = static_cast<int>(b);
-    } else
-        _color = {255.0, 255.0, 255.0};
+    if (setting.exists("material")) {
+        std::string name = setting["material"];
+        _materialName = name;
+    }
 
     double scale = 1.0;
     if (setting.exists("scale")) ConfigUtils::getAsDouble(setting, "scale", scale);
