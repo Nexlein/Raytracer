@@ -22,11 +22,6 @@ namespace RayTracer {
     class Triangle : public IPrimitive {
         public:
         Triangle() = default;
-        /// @brief Constructs a Triangle object
-        /// @param v0 The first vertex of the triangle
-        /// @param v1 The second vertex of the triangle
-        /// @param v2 The third vertex of the triangle
-        Triangle(const Point3D& v0, const Point3D& v1, const Point3D& v2);
 
         /// @brief The three vertices of the triangle
         Point3D _v0;

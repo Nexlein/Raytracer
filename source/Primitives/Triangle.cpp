@@ -16,41 +16,17 @@
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
-RayTracer::Triangle::Triangle(
-    const Point3D& v0, const Point3D& v1, const Point3D& v2) :
-    _v0(v0), _v1(v1), _v2(v2)
-{
-    if (v0._x == v1._x && v0._y == v1._y && v0._z == v1._z)
-        throw RayTracer::RayTracerException("Triangle: Vertices cannot be the same point.");
-    if (v0._x == v2._x && v0._y == v2._y && v0._z == v2._z)
-        throw RayTracer::RayTracerException("Triangle: Vertices cannot be the same point.");
-    if (v1._x == v2._x && v1._y == v2._y && v1._z == v2._z)
-        throw RayTracer::RayTracerException("Triangle: Vertices cannot be the same point.");
-    
-    Vector3D edge1 = v1 - v0;
-    Vector3D edge2 = v2 - v0;
-    Vector3D normal(
-        edge1._y * edge2._z - edge1._z * edge2._y,
-        edge1._z * edge2._x - edge1._x * edge2._z,
-        edge1._x * edge2._y - edge1._y * edge2._x);
-
-    if (normal._x == 0.0 && normal._y == 0.0 && normal._z == 0.0)
-        throw RayTracer::RayTracerException("Triangle: Vertices cannot be collinear.");
-}
-
 bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
 {
     const double epsilon = 1e-6;
 
-    //Calcul des arêtes
+    // Calcul des arêtes
     Vector3D edge1 = _v1 - _v0;
     Vector3D edge2 = _v2 - _v0;
 
-    Vector3D pvec(
-        ray._direction._y * edge2._z - ray._direction._z * edge2._y,
-        ray._direction._z * edge2._x - ray._direction._x * edge2._z,
-        ray._direction._x * edge2._y - ray._direction._y * edge2._x
-    );
+    Vector3D pvec(ray._direction._y * edge2._z - ray._direction._z * edge2._y,
+                  ray._direction._z * edge2._x - ray._direction._x * edge2._z,
+                  ray._direction._x * edge2._y - ray._direction._y * edge2._x);
 
     double det = edge1.dot(pvec);
 
@@ -65,11 +41,8 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     // "u" en dehors du triangle
     if (u < 0.0 || u > 1.0) return false;
 
-    Vector3D qvec(
-        tvec._y * edge1._z - tvec._z * edge1._y,
-        tvec._z * edge1._x - tvec._x * edge1._z,
-        tvec._x * edge1._y - tvec._y * edge1._x
-    );
+    Vector3D qvec(tvec._y * edge1._z - tvec._z * edge1._y, tvec._z * edge1._x - tvec._x * edge1._z,
+                  tvec._x * edge1._y - tvec._y * edge1._x);
     double v = ray._direction.dot(qvec) * invDet;
     // "v" en dehors du triangle
     if (v < 0.0 || u + v > 1.0) return false;
@@ -84,11 +57,9 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     rec.p = ray._origin + (ray._direction * t);
 
     // Calculer la normale du triangle
-    Vector3D normal(
-        edge1._y * edge2._z - edge1._z * edge2._y,
-        edge1._z * edge2._x - edge1._x * edge2._z,
-        edge1._x * edge2._y - edge1._y * edge2._x
-    );
+    Vector3D normal(edge1._y * edge2._z - edge1._z * edge2._y,
+                    edge1._z * edge2._x - edge1._x * edge2._z,
+                    edge1._x * edge2._y - edge1._y * edge2._x);
     rec.normal = normal.normalized();
 
     return true;
@@ -96,38 +67,36 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
 
 void RayTracer::Triangle::init(const libconfig::Setting& setting)
 {
-    if (setting.exists("v0")) {
-        const libconfig::Setting& v0 = setting["v0"];
+    auto loadVertex = [](const libconfig::Setting& vertex, Point3D& point) {
         double x = 0.0;
         double y = 0.0;
         double z = 0.0;
-        ConfigUtils::getAsDouble(v0, "x", x);
-        ConfigUtils::getAsDouble(v0, "y", y);
-        ConfigUtils::getAsDouble(v0, "z", z);
-        _v0 = Point3D(x, y, z);
+
+        ConfigUtils::getAsDouble(vertex, "x", x);
+        ConfigUtils::getAsDouble(vertex, "y", y);
+        ConfigUtils::getAsDouble(vertex, "z", z);
+
+        point = Point3D(x, y, z);
+    };
+
+    loadVertex(setting["v0"], _v0);
+    loadVertex(setting["v1"], _v1);
+    loadVertex(setting["v2"], _v2);
+
+    if ((_v0._x == _v1._x && _v0._y == _v1._y && _v0._z == _v1._z) ||
+        (_v0._x == _v2._x && _v0._y == _v2._y && _v0._z == _v2._z) ||
+        (_v1._x == _v2._x && _v1._y == _v2._y && _v1._z == _v2._z)) {
+        throw RayTracer::RayTracerException("Triangle: Vertices cannot be the same point.");
     }
 
-    if (setting.exists("v1")) {
-        const libconfig::Setting& v1 = setting["v1"];
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        ConfigUtils::getAsDouble(v1, "x", x);
-        ConfigUtils::getAsDouble(v1, "y", y);
-        ConfigUtils::getAsDouble(v1, "z", z);
-        _v1 = Point3D(x, y, z);
-    }
+    Vector3D edge1 = _v1 - _v0;
+    Vector3D edge2 = _v2 - _v0;
+    Vector3D normal(edge1._y * edge2._z - edge1._z * edge2._y,
+                    edge1._z * edge2._x - edge1._x * edge2._z,
+                    edge1._x * edge2._y - edge1._y * edge2._x);
 
-    if (setting.exists("v2")) {
-        const libconfig::Setting& v2 = setting["v2"];
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
-        ConfigUtils::getAsDouble(v2, "x", x);
-        ConfigUtils::getAsDouble(v2, "y", y);
-        ConfigUtils::getAsDouble(v2, "z", z);
-        _v2 = Point3D(x, y, z);
-    }
+    if (normal._x == 0.0 && normal._y == 0.0 && normal._z == 0.0)
+        throw RayTracer::RayTracerException("Triangle: Vertices cannot be collinear.");
 
     if (setting.exists("color")) {
         const libconfig::Setting& c = setting["color"];
