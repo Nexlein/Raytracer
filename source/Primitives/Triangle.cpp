@@ -98,17 +98,9 @@ void RayTracer::Triangle::init(const libconfig::Setting& setting)
     if (normal._x == 0.0 && normal._y == 0.0 && normal._z == 0.0)
         throw RayTracer::RayTracerException("Triangle: Vertices cannot be collinear.");
 
-    if (setting.exists("color")) {
-        const libconfig::Setting& c = setting["color"];
-        double r = 255.0;
-        double g = 255.0;
-        double b = 255.0;
-        ConfigUtils::getAsDouble(c, "r", r);
-        ConfigUtils::getAsDouble(c, "g", g);
-        ConfigUtils::getAsDouble(c, "b", b);
-        _color._x = static_cast<int>(r);
-        _color._y = static_cast<int>(g);
-        _color._z = static_cast<int>(b);
+    if (setting.exists("material")) {
+        std::string name = setting["material"];
+        _materialName = name;
     }
 }
 

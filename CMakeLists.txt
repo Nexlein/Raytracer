@@ -21,6 +21,7 @@ target_include_directories(raytracerGlobal INTERFACE
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/include/Math
     ${PROJECT_SOURCE_DIR}/include/Core
+    ${PROJECT_SOURCE_DIR}/include/Materials
     ${PROJECT_SOURCE_DIR}/include/Primitives
     ${PROJECT_SOURCE_DIR}/include/Light
     ${PROJECT_SOURCE_DIR}/include/Exceptions
@@ -117,3 +118,4 @@ add_raytracer_plugin(raytracer_cylinder source/Primitives/Cylinder.cpp)
 add_raytracer_plugin(raytracer_obj source/Primitives/Obj.cpp)
 add_raytracer_plugin(raytracer_ambientlight source/Light/AmbientLight.cpp)
 add_raytracer_plugin(raytracer_directionallight source/Light/DirectionalLight.cpp)
+add_raytracer_plugin(raytracer_lambertian source/Materials/Lambertian.cpp)

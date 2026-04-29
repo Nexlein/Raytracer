@@ -76,9 +76,10 @@ namespace RayTracer {
         /// @param lights The list of lights in the scene
         /// @return The computed color for the ray
         [[nodiscard]] inline Math::Vector3D<double> computeRayColor(
-            const Ray& ray, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+            const Ray& ray, int depth, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
             const std::vector<std::unique_ptr<ILight>>& lights) const
         {
+            if (depth <= 0) return {0.0, 0.0, 0.0};
             bool hitAnything = false;
             HitRecord tempRec;
             HitRecord closestRec;
@@ -103,14 +104,21 @@ namespace RayTracer {
                         !isInShadow(closestRec, light->getDirection(), primitives))
                         totalLight += light->computeLight(closestRec);
                 }
-
-                // clamp 0-1
                 totalLight._x = std::clamp(totalLight._x, 0.0, 1.0);
                 totalLight._y = std::clamp(totalLight._y, 0.0, 1.0);
                 totalLight._z = std::clamp(totalLight._z, 0.0, 1.0);
 
-                // primitive.color en 0-255, totalLight en 0-1 → résultat en 0-255
-                return (hitPrimitive->getColor() / 255.0) * totalLight * 255.0;
+                Math::Vector3D<double> baseColor = (hitPrimitive->getColor() / 255.0) * totalLight;
+
+                if (closestRec.material) {
+                    Ray scattered;
+                    Math::Vector3D<double> attenuation;
+                    if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
+                        // baseColor porte déjà la lumière directe, on l'utilise tel quel
+                        return baseColor * 255.0;
+                    }
+                }
+                return baseColor * 255.0;
             }
 
             return _backgroundColor;

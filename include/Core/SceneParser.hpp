@@ -11,12 +11,14 @@
 #pragma once
 
 #include <libconfig.h++>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "Camera.hpp"
 #include "ILight.hpp"
+#include "IMaterial.hpp"
 #include "IPrimitive.hpp"
 #include "Renderer.hpp"
 
@@ -32,6 +34,8 @@ namespace RayTracer {
         std::vector<std::unique_ptr<IPrimitive>> primitives;
         /// @brief List of lights in the scene
         std::vector<std::unique_ptr<ILight>> lights;
+        /// @brief Map of meterials available in the scene, indexed by their name
+        std::map<std::string, std::shared_ptr<IMaterial>> materials;
     };
 
     /// @brief SceneParser class responsible for parsing scene files
@@ -56,5 +60,9 @@ namespace RayTracer {
         /// @param lightSetting libconfig setting containing the directional light definition
         void parseDirectionalLights(std::vector<std::unique_ptr<ILight>>& lights,
                                     const libconfig::Setting& lightSetting);
+
+        void setMaterialstoPrimitives(
+            std::vector<std::unique_ptr<IPrimitive>>& primitives,
+            const std::map<std::string, std::shared_ptr<IMaterial>>& materials);
     };
 }  // namespace RayTracer

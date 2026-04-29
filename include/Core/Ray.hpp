@@ -21,6 +21,8 @@ namespace RayTracer {
     /// @brief Represents a ray in 3D space
     class Ray {
         public:
+        /// @brief Default constructor
+        Ray() = default;
         /// @brief Constructs a Ray object
         /// @param origin The starting point of the ray in 3D space
         /// @param direction The direction vector of the ray

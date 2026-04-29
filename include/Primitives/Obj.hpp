@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 
+#include "IMaterial.hpp"
 #include "IPrimitive.hpp"
 #include "Point3D.hpp"
 
@@ -22,7 +23,7 @@ namespace RayTracer {
         Math::Point3D<double> _v0;
         Math::Point3D<double> _v1;
         Math::Point3D<double> _v2;
-        Math::Vector3D<double> color;
+        IMaterial* _material;
 
         [[nodiscard]] bool hits(const Ray& ray, HitRecord& hitRecord) const;
     };
