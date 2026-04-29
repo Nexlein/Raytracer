@@ -16,12 +16,6 @@ namespace RayTracer {
         /// @brief Default constructor for DirectionalLight
         DirectionalLight() = default;
 
-        /// @brief Constructor for DirectionalLight
-        /// @param direction direction of the light
-        /// @param intensity intensity of the light
-        /// @param color color of the light
-        DirectionalLight(const Vector3D& direction, double intensity, Math::Vector3D<double> color);
-
         /// @brief Initializes the light with settings from a configuration file
         /// @param setting The configuration settings for the light
         void init(const libconfig::Setting& setting) override;

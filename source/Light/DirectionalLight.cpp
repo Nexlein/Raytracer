@@ -5,14 +5,6 @@
 
 #include "ConfigUtils.hpp"
 
-RayTracer::DirectionalLight::DirectionalLight(const Vector3D& direction, double intensity,
-                                              Math::Vector3D<double> color)
-    : _direction(direction.normalized())
-{
-    _intensity = intensity;
-    _color = color;
-}
-
 Math::Vector3D<double> RayTracer::DirectionalLight::computeLight(const HitRecord& hit) const
 {
     double dot = hit.normal.dot(_direction);
