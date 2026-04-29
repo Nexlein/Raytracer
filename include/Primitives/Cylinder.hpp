@@ -10,9 +10,10 @@
 
 #pragma once
 
+#include <optional>
+
 #include "IPrimitive.hpp"
 #include "Point3D.hpp"
-#include <optional>
 
 /// @brief Namespace for the RayTracer project
 namespace RayTracer {

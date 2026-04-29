@@ -28,7 +28,6 @@ namespace RayTracer {
         Point3D _v1;
         Point3D _v2;
 
-
         /// @brief Determines if a ray intersects the triangle and fills the hit record with
         /// intersection details
         /// @param ray The ray to test for intersection with the triangle
@@ -36,9 +35,9 @@ namespace RayTracer {
         /// the triangle
         /// @return True if the ray intersects the triangle, false otherwise
         [[nodiscard]] bool hits(const Ray& ray, HitRecord& hitRecord) const override;
-        
+
         /// @brief Initializes the triangle with settings from a configuration file
         /// @param setting The configuration settings for the triangle
         void init(const libconfig::Setting& setting) override;
     };
-} // namespace RayTracer
+}  // namespace RayTracer
