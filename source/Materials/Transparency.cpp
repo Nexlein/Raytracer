@@ -9,7 +9,8 @@
 
 #include "ConfigUtils.hpp"
 
-RayTracer::Transparency::Transparency(std::string name, Math::Vector3D<double> color, double transparency, double refractiveIndex)
+RayTracer::Transparency::Transparency(std::string name, Math::Vector3D<double> color,
+                                      double transparency, double refractiveIndex)
     : _transparency(transparency), _refractiveIndex(refractiveIndex)
 {
     _name = name;
