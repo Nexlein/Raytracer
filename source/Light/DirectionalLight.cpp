@@ -16,27 +16,14 @@ Math::Vector3D<double> RayTracer::DirectionalLight::getDirection() const { retur
 
 void RayTracer::DirectionalLight::init(const libconfig::Setting& setting)
 {
-    _intensity = 0.0;
-    ConfigUtils::getAsDouble(setting, "intensity", _intensity);
+    if (!ConfigUtils::getAsDouble(setting, "intensity", _intensity))
+        throw RayTracerException("DirectionalLight: Missing required parameter 'intensity'.");
 
-    _color = Math::Vector3D<double>(255.0, 255.0, 255.0);
-    if (setting.exists("color")) {
-        const libconfig::Setting& colorSetting = setting["color"];
-        double r = 255.0, g = 255.0, b = 255.0;
-        ConfigUtils::getAsDouble(colorSetting, "r", r);
-        ConfigUtils::getAsDouble(colorSetting, "g", g);
-        ConfigUtils::getAsDouble(colorSetting, "b", b);
-        _color = Math::Vector3D<double>(r, g, b);
-    }
+    ConfigUtils::parseColor(setting, "color", _color);
 
-    double x = 0.0, y = 0.0, z = 0.0;
-    if (setting.exists("direction")) {
-        const libconfig::Setting& directionSetting = setting["direction"];
-        ConfigUtils::getAsDouble(directionSetting, "x", x);
-        ConfigUtils::getAsDouble(directionSetting, "y", y);
-        ConfigUtils::getAsDouble(directionSetting, "z", z);
-    }
-    _direction = Math::Vector3D<double>(x, y, z).normalized();
+    Vector3D direction;
+    ConfigUtils::parseVector3D(setting, "direction", direction, true);
+    _direction = direction.normalized();
 }
 
 extern "C" {
