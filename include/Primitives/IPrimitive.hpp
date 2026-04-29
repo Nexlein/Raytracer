@@ -31,9 +31,6 @@ namespace RayTracer {
         public:
         virtual ~IPrimitive() = default;
 
-        /// @brief Color of the primitive, used for rendering
-        Math::Vector3D<double> color;
-
         /// @brief Initializes the primitive with settings from a configuration file
         /// @param setting The configuration settings for the primitive
         virtual void init(const libconfig::Setting& setting) = 0;
@@ -45,5 +42,17 @@ namespace RayTracer {
         /// the primitive
         /// @return True if the ray intersects the primitive, false otherwise
         [[nodiscard]] virtual bool hits(const Ray& ray, HitRecord& hitRecord) const = 0;
+
+        /// @brief Gets the color of the primitive
+        /// @return The color vector of the primitive
+        [[nodiscard]] inline const Math::Vector3D<double>& getColor() const { return _color; }
+
+        /// @brief Sets the color of the primitive
+        /// @param color The color vector to set for the primitive
+        inline void setColor(const Math::Vector3D<double>& color) { _color = color; }
+
+        protected:
+        /// @brief Color of the primitive, used for rendering
+        Math::Vector3D<double> _color;
     };
 }  // namespace RayTracer
