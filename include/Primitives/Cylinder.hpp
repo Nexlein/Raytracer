@@ -23,13 +23,6 @@ namespace RayTracer {
     class Cylinder : public IPrimitive {
         public:
         Cylinder() = default;
-        /// @brief Constructs a cylinder object
-        /// @param base The base point of the cylinder in 3D space
-        /// @param axis The orientation of the cylinder
-        /// @param radius The radius of the cylinder
-        /// @param height The height of the cylinder
-        /// if the height isn't set, it will be considered as an infinite heigth
-        Cylinder(const Point3D& base, Vector3D& axis, double radius, std::optional<double> height);
 
         /// @brief Center of the cylinder's base
         Point3D _base;

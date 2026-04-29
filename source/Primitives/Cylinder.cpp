@@ -19,16 +19,6 @@
 /// @brief Namespace for the RayTracer project
 namespace RayTracer {
 
-Cylinder::Cylinder(const Point3D& base, Vector3D& axis, double radius, std::optional<double> height)
-: _base(base), _axis(axis), _radius(radius), _height(height)
-{
-    if (radius < 0)
-        throw RayTracerException("Cylinder: Radius cannot be negative.");
-
-    if (height && height < 0)
-        throw RayTracerException("Cylinder: Height cannot be negative.");
-}
-
 bool Cylinder::hits(const Ray& ray, HitRecord& rec) const
 {
     const double EPS = 1e-6;
@@ -54,8 +44,7 @@ bool Cylinder::hits(const Ray& ray, HitRecord& rec) const
         double t2 = (-b + sqrtd) / (2 * a);
 
         for (double t : {t1, t2}) {
-            if (t < EPS)
-                continue;
+            if (t < EPS) continue;
 
             Point3D P = ray._origin + ray._direction * t;
             double h = (P - _base).dot(axis);
@@ -75,7 +64,6 @@ bool Cylinder::hits(const Ray& ray, HitRecord& rec) const
         double denom = ray._direction.dot(axis);
 
         if (std::abs(denom) > EPS) {
-
             double t = (_base - ray._origin).dot(axis) / denom;
             if (t > EPS && t < closest) {
                 Point3D P = ray._origin + ray._direction * t;
@@ -104,8 +92,7 @@ bool Cylinder::hits(const Ray& ray, HitRecord& rec) const
         }
     }
 
-    if (!hit)
-        return false;
+    if (!hit) return false;
 
     rec.distance = closest;
     rec.p = ray._origin + ray._direction * closest;
@@ -135,13 +122,16 @@ void Cylinder::init(const libconfig::Setting& setting)
     _radius = 1.0;
     ConfigUtils::getAsDouble(setting, "r", _radius);
 
+    if (_radius < 0) throw RayTracerException("Cylinder: Radius cannot be negative.");
+
     if (setting.exists("h")) {
         double h = 0.0;
         ConfigUtils::getAsDouble(setting, "h", h);
         _height = h;
-    } else {
-        _height = std::nullopt;
-    }
+    } else _height = std::nullopt;
+
+    if (_height.has_value() && _height.value() < 0)
+        throw RayTracerException("Cylinder: Height cannot be negative.");
 
     if (setting.exists("color")) {
         const libconfig::Setting& c = setting["color"];
@@ -158,7 +148,6 @@ void Cylinder::init(const libconfig::Setting& setting)
 }
 
 extern "C" {
-    IPrimitive* entryPoint() { return new Cylinder(); }
+IPrimitive* entryPoint() { return new Cylinder(); }
 }
-
 }  // namespace RayTracer
