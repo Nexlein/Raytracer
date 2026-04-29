@@ -107,6 +107,8 @@ namespace Math {
             return Vector3D(_x - other._x, _y - other._y, _z - other._z);
         }
 
+        [[nodiscard]] inline Math::Vector3D<double> operator-() const { return {-_x, -_y, -_z}; }
+
         /// @brief Multiplies two vectors element-wise
         /// @param other The vector to multiply
         /// @return The resulting vector

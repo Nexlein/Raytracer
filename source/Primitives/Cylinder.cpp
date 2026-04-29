@@ -134,17 +134,9 @@ namespace RayTracer {
         if (_height.has_value() && _height.value() < 0)
             throw RayTracerException("Cylinder: Height cannot be negative.");
 
-        if (setting.exists("color")) {
-            const libconfig::Setting& c = setting["color"];
-            double r = 255.0;
-            double g = 255.0;
-            double b = 255.0;
-            ConfigUtils::getAsDouble(c, "r", r);
-            ConfigUtils::getAsDouble(c, "g", g);
-            ConfigUtils::getAsDouble(c, "b", b);
-            _color._x = static_cast<int>(r);
-            _color._y = static_cast<int>(g);
-            _color._z = static_cast<int>(b);
+        if (setting.exists("material")) {
+            std::string name = setting["material"];
+            materialName = name;
         }
     }
 

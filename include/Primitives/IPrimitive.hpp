@@ -11,7 +11,9 @@
 #pragma once
 
 #include <libconfig.h++>
+#include <memory>
 
+#include "IMaterial.hpp"
 #include "Ray.hpp"
 
 /// @brief Namespace for the Ray Tracer project
@@ -24,6 +26,8 @@ namespace RayTracer {
         Math::Point3D<double> p;
         /// @brief Normal vector at the point of intersection
         Math::Vector3D<double> normal;
+        /// @brief Material of the primitive that was hit
+        IMaterial* material;
     };
 
     /// @brief Interface for geometric primitives that can be intersected by rays
@@ -31,6 +35,13 @@ namespace RayTracer {
         public:
         virtual ~IPrimitive() = default;
 
+
+
+        /// @brief Name of the material associated with the primitive, used to link the material
+        std::string materialName;
+
+        /// @brief Shared pointer to the material associated with the primitive, used for rendering
+        std::shared_ptr<IMaterial> material;
         /// @brief Initializes the primitive with settings from a configuration file
         /// @param setting The configuration settings for the primitive
         virtual void init(const libconfig::Setting& setting) = 0;
@@ -45,14 +56,10 @@ namespace RayTracer {
 
         /// @brief Gets the color of the primitive
         /// @return The color vector of the primitive
-        [[nodiscard]] inline const Math::Vector3D<double>& getColor() const { return _color; }
+        [[nodiscard]] inline const Math::Vector3D<double> getColor() const { return material->getColor(); }
 
         /// @brief Sets the color of the primitive
         /// @param color The color vector to set for the primitive
-        inline void setColor(const Math::Vector3D<double>& color) { _color = color; }
-
-        protected:
-        /// @brief Color of the primitive, used for rendering
-        Math::Vector3D<double> _color;
+        inline void setColor(const Math::Vector3D<double>& color) { material->setColor(color); }
     };
 }  // namespace RayTracer

@@ -8,6 +8,8 @@
 #pragma once
 
 #include "IMaterial.hpp"
+#include "IPrimitive.hpp"
+#include "Ray.hpp"
 #include "Vector3D.hpp"
 
 namespace RayTracer {
@@ -24,8 +26,7 @@ namespace RayTracer {
         /// @param setting The configuration settings for the material
         void init(const libconfig::Setting& setting) override;
 
-        private:
-        /// @brief Color of the lambertian material
-        Math::Vector3D<double> _color;
+        bool scatter(const Ray& rayIn, const HitRecord& rec, Math::Vector3D<double>& attenuation,
+                     Ray& scattered) const;
     };
-}
+}  // namespace RayTracer

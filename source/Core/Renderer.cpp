@@ -52,7 +52,7 @@ void RayTracer::Renderer::render(const Camera& camera,
             double v = static_cast<double>(y) / (_height - 1);
 
             Ray r = camera.ray(u, v, ratio);
-            Math::Vector3D<double> pixelColor = computeRayColor(r, primitives, lights);
+            Math::Vector3D<double> pixelColor = computeRayColor(r, 10, primitives, lights);
             writeColor(outFile, pixelColor);
         }
     }
