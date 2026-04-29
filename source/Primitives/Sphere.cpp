@@ -44,18 +44,10 @@ bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
 
 void RayTracer::Sphere::init(const libconfig::Setting& setting)
 {
-    double x = 0.0;
-    double y = 0.0;
-    double z = 0.0;
+    ConfigUtils::parsePoint3D(setting, "position", _center, true);
 
-    ConfigUtils::getAsDouble(setting, "x", x);
-    ConfigUtils::getAsDouble(setting, "y", y);
-    ConfigUtils::getAsDouble(setting, "z", z);
-
-    _center = Math::Point3D<double>(x, y, z);
-
-    _radius = 1.0;
-    ConfigUtils::getAsDouble(setting, "r", _radius);
+    if (!ConfigUtils::getAsDouble(setting, "r", _radius))
+        throw RayTracer::RayTracerException("Sphere: Missing required parameter 'r'.");
 
     if (_radius < 0) throw RayTracer::RayTracerException("Sphere: Radius cannot be negative.");
 
