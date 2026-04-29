@@ -46,7 +46,8 @@ namespace RayTracer {
         /// @param setting The libconfig setting to extract the value from
         /// @param key The key of the value to extract
         /// @param value The variable to store the extracted value
-        /// @param required Whether the parameter is required (throws an exception if true and the parameter is missing)
+        /// @param required Whether the parameter is required (throws an exception if true and the
+        /// parameter is missing)
         inline void parseVector3D(const libconfig::Setting& setting, const std::string& key,
                                   Math::Vector3D<double>& value, bool required = false)
         {
@@ -67,7 +68,8 @@ namespace RayTracer {
         /// @param setting The libconfig setting to extract the value from
         /// @param key The key of the value to extract
         /// @param value The variable to store the extracted value
-        /// @param required Whether the parameter is required (throws an exception if true and the parameter is missing)
+        /// @param required Whether the parameter is required (throws an exception if true and the
+        /// parameter is missing)
         inline void parsePoint3D(const libconfig::Setting& setting, const std::string& key,
                                  Math::Point3D<double>& value, bool required)
         {
