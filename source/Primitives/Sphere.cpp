@@ -16,11 +16,6 @@
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
-RayTracer::Sphere::Sphere(const Point3D& center, double radius) : _center(center), _radius(radius)
-{
-    if (radius < 0) throw RayTracer::RayTracerException("Sphere: Radius cannot be negative.");
-}
-
 bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
 {
     Vector3D originToCenter = ray._origin - _center;
@@ -61,6 +56,8 @@ void RayTracer::Sphere::init(const libconfig::Setting& setting)
 
     _radius = 1.0;
     ConfigUtils::getAsDouble(setting, "r", _radius);
+
+    if (_radius < 0) throw RayTracer::RayTracerException("Sphere: Radius cannot be negative.");
 
     if (setting.exists("color")) {
         const libconfig::Setting& c = setting["color"];

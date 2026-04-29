@@ -22,10 +22,6 @@ namespace RayTracer {
     class Sphere : public IPrimitive {
         public:
         Sphere() = default;
-        /// @brief Constructs a Sphere object
-        /// @param center The center point of the sphere in 3D space
-        /// @param radius The radius of the sphere
-        Sphere(const Point3D& center, double radius);
 
         /// @brief Center point of the sphere
         Point3D _center;
