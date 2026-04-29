@@ -7,6 +7,8 @@
 
 #include "SceneParser.hpp"
 
+#include <string>
+
 #include "AmbientLight.hpp"
 #include "ConfigUtils.hpp"
 #include "PluginFactory.hpp"
@@ -32,6 +34,22 @@ void RayTracer::SceneParser::parseDirectionalLights(std::vector<std::unique_ptr<
     }
 }
 
+void RayTracer::SceneParser::setMaterialstoPrimitives(
+    std::vector<std::unique_ptr<IPrimitive>>& primitives,
+    const std::map<std::string, std::shared_ptr<IMaterial>>& materials)
+{
+    for (auto& primitive : primitives) {
+        if (!primitive->materialName.empty()) {
+            auto it = materials.find(primitive->materialName);
+            if (it != materials.end())
+                primitive->material = it->second;
+            else
+                throw RayTracerException("SceneParser: Material '" + primitive->materialName +
+                                         "' not found for primitive.");
+        }
+    }
+}
+
 RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
 {
     try {
@@ -51,8 +69,24 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
         Renderer renderer;
         renderer.init(root["renderer"]);
 
+        std::map<std::string, std::shared_ptr<IMaterial>> materials;
         std::vector<std::unique_ptr<IPrimitive>> primitives;
         std::vector<std::unique_ptr<ILight>> lights;
+
+        if (root.exists("materials")) {
+            const libconfig::Setting& materialsSetting = root["materials"];
+
+            for (int i = 0; i < materialsSetting.getLength(); ++i) {
+                const libconfig::Setting& mat = materialsSetting[i];
+                std::string typeName = mat.getName();
+
+                for (int j = 0; j < mat.getLength(); ++j) {
+                    std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
+                    materials[std::string(mat[j]["name"])] =
+                        std::move(PluginFactory<IMaterial>::create(pluginPath, mat[j]));
+                }
+            }
+        }
 
         if (root.exists("primitives")) {
             const libconfig::Setting& primitivesSetting = root["primitives"];
@@ -77,8 +111,9 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
             if (lightSetting.exists("ambient")) parseAmbientLight(lights, lightSetting);
             if (lightSetting.exists("directional")) parseDirectionalLights(lights, lightSetting);
         }
+        setMaterialstoPrimitives(primitives, materials);
         return SceneData{std::move(cam), std::move(renderer), std::move(primitives),
-                         std::move(lights)};
+                         std::move(lights), std::move(materials)};
 
     } catch (const libconfig::FileIOException& fioex) {
         throw RayTracerException("I/O error while reading file: " + filePath);
