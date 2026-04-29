@@ -61,27 +61,34 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
                     edge1._z * edge2._x - edge1._x * edge2._z,
                     edge1._x * edge2._y - edge1._y * edge2._x);
     rec.normal = normal.normalized();
+    rec.material = _material.get();
 
     return true;
 }
 
 void RayTracer::Triangle::init(const libconfig::Setting& setting)
 {
-    auto loadVertex = [](const libconfig::Setting& vertex, Point3D& point) {
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
+    ConfigUtils::parsePoint3D(setting, "v0", _v0, true);
+    ConfigUtils::parsePoint3D(setting, "v1", _v1, true);
+    ConfigUtils::parsePoint3D(setting, "v2", _v2, true);
 
-        ConfigUtils::getAsDouble(vertex, "x", x);
-        ConfigUtils::getAsDouble(vertex, "y", y);
-        ConfigUtils::getAsDouble(vertex, "z", z);
+    Math::Vector3D<double> translation;
+    ConfigUtils::parseVector3D(setting, "translation", translation, false);
 
-        point = Point3D(x, y, z);
+    Math::Vector3D<double> rotation;
+    ConfigUtils::parseVector3D(setting, "rotation", rotation, false);
+
+    auto applyTransform = [&](Point3D& p) {
+        Vector3D vec(p._x, p._y, p._z);
+        vec.rotateX(rotation._x);
+        vec.rotateY(rotation._y);
+        vec.rotateZ(rotation._z);
+        p = Point3D(vec._x, vec._y, vec._z) + translation;
     };
 
-    loadVertex(setting["v0"], _v0);
-    loadVertex(setting["v1"], _v1);
-    loadVertex(setting["v2"], _v2);
+    applyTransform(_v0);
+    applyTransform(_v1);
+    applyTransform(_v2);
 
     if ((_v0._x == _v1._x && _v0._y == _v1._y && _v0._z == _v1._z) ||
         (_v0._x == _v2._x && _v0._y == _v2._y && _v0._z == _v2._z) ||
