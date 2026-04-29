@@ -112,6 +112,16 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
             if (lightSetting.exists("directional")) parseDirectionalLights(lights, lightSetting);
         }
         setMaterialstoPrimitives(primitives, materials);
+
+        if (!renderer.getBackgroundMaterialName().empty()) {
+            auto it = materials.find(renderer.getBackgroundMaterialName());
+            if (it != materials.end())
+                renderer.setBackgroundMaterial(it->second);
+            else
+                throw RayTracerException("SceneParser: Background Material '" +
+                                         renderer.getBackgroundMaterialName() + "' not found.");
+        }
+
         return SceneData{std::move(cam), std::move(renderer), std::move(primitives),
                          std::move(lights), std::move(materials)};
 

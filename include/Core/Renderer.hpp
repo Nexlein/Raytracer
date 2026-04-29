@@ -20,6 +20,7 @@
 
 #include "Camera.hpp"
 #include "ILight.hpp"
+#include "IMaterial.hpp"
 #include "IPrimitive.hpp"
 #include "Vector3D.hpp"
 
@@ -45,13 +46,25 @@ namespace RayTracer {
                     const std::vector<std::unique_ptr<ILight>>& lights,
                     const std::string& filename) const;
 
+        [[nodiscard]] inline const std::string& getBackgroundMaterialName() const
+        {
+            return _backgroundMaterialName;
+        }
+
+        inline void setBackgroundMaterial(const std::shared_ptr<IMaterial>& material)
+        {
+            _backgroundMaterial = material;
+        }
+
         private:
         /// @brief Width of the output image
         int _width;
         /// @brief Height of the output image
         int _height;
-        /// @brief Background color of the scene
-        Math::Vector3D<double> _backgroundColor;
+        /// @brief Name of the background material
+        std::string _backgroundMaterialName;
+        /// @brief Background material of the scene
+        std::shared_ptr<IMaterial> _backgroundMaterial;
 
         /// @brief Checks if a point is in shadow
         /// @param hit The hit record
@@ -121,7 +134,8 @@ namespace RayTracer {
                 return baseColor * 255.0;
             }
 
-            return _backgroundColor;
+            if (_backgroundMaterial) return _backgroundMaterial->getColor();
+            return {0.0, 0.0, 0.0};
         }
 
         /// @brief Writes the color of a pixel to the output stream
