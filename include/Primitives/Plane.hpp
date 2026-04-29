@@ -24,9 +24,7 @@ namespace RayTracer {
     class Plane : public IPrimitive {
         public:
         /// @brief Constructs a plane object
-        /// @param axis The axis along which the plane is oriented (X, Y, or Z)
-        /// @param position The position of the plane along the specified axis
-        Plane(std::string axis, double position);
+        Plane() = default;
 
         /// @brief Normal vector of the plane
         Vector3D _normal;

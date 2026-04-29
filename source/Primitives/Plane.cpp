@@ -16,19 +16,6 @@
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
-RayTracer::Plane::Plane(std::string axis, double position) : _position(position)
-{
-    if (axis != "X" && axis != "Y" && axis != "Z")
-        throw RayTracer::RayTracerException("Plane: Axis must be 'X', 'Y', or 'Z'.");
-
-    if (axis == "X")
-        _normal = Vector3D(1, 0, 0);
-    else if (axis == "Y")
-        _normal = Vector3D(0, 1, 0);
-    else
-        _normal = Vector3D(0, 0, 1);
-}
-
 bool RayTracer::Plane::hits(const Ray& ray, HitRecord& rec) const
 {
     double denom = ray._direction.dot(_normal);
@@ -54,8 +41,10 @@ void RayTracer::Plane::init(const libconfig::Setting& setting)
             _normal = Vector3D(1, 0, 0);
         else if (axis == "Y")
             _normal = Vector3D(0, 1, 0);
-        else
+        else if (axis == "Z")
             _normal = Vector3D(0, 0, 1);
+        else
+            throw RayTracer::RayTracerException("Plane: Axis must be 'X', 'Y', or 'Z'.");
     }
 
     ConfigUtils::getAsDouble(setting, "position", _position);
@@ -75,8 +64,5 @@ void RayTracer::Plane::init(const libconfig::Setting& setting)
 }
 
 extern "C" {
-RayTracer::IPrimitive* entryPoint()
-{
-    return new RayTracer::Plane("Z", 0.0);
-}
+RayTracer::IPrimitive* entryPoint() { return new RayTracer::Plane(); }
 }
