@@ -20,18 +20,10 @@ bool RayTracer::AmbientLight::castsShadow() const { return false; }
 
 void RayTracer::AmbientLight::init(const libconfig::Setting& setting)
 {
-    _intensity = 0.0;
-    ConfigUtils::getAsDouble(setting, "ambient", _intensity);
+    if (!ConfigUtils::getAsDouble(setting, "ambient", _intensity))
+        throw RayTracerException("AmbientLight: Missing required parameter 'ambient'.");
 
-    _color = Math::Vector3D<double>(255.0, 255.0, 255.0);
-    if (setting.exists("color")) {
-        const libconfig::Setting& colorSetting = setting["color"];
-        double r = 255.0, g = 255.0, b = 255.0;
-        ConfigUtils::getAsDouble(colorSetting, "r", r);
-        ConfigUtils::getAsDouble(colorSetting, "g", g);
-        ConfigUtils::getAsDouble(colorSetting, "b", b);
-        _color = Math::Vector3D<double>(r, g, b);
-    }
+    ConfigUtils::parseColor(setting, "color", _color);
 }
 
 extern "C" {
