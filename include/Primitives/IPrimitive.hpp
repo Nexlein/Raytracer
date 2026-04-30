@@ -51,6 +51,7 @@ namespace RayTracer {
         /// @return The color vector of the primitive
         [[nodiscard]] inline const Math::Vector3D<double> getColor() const
         {
+            if (!_material) return Math::Vector3D<double>(0, 0, 0);
             return _material->getColor();
         }
 

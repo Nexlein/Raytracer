@@ -97,30 +97,27 @@ namespace RayTracer {
         rec.distance = closest;
         rec.p = ray._origin + ray._direction * closest;
         rec.normal = normal;
+        rec.material = _material.get();
 
         return true;
     }
 
     void Cylinder::init(const libconfig::Setting& setting)
     {
-        double x = 0.0;
-        double y = 0.0;
-        double z = 0.0;
+        ConfigUtils::parsePoint3D(setting, "position", _base, true);
 
-        ConfigUtils::getAsDouble(setting, "x", x);
-        ConfigUtils::getAsDouble(setting, "y", y);
-        ConfigUtils::getAsDouble(setting, "z", z);
+        Math::Vector3D<double> rotation;
+        ConfigUtils::parseVector3D(setting, "rotation", rotation, false);
 
-        _base = Math::Point3D<double>(x, y, z);
+        // Default axis is pointing up (Y axis)
+        _axis = Math::Vector3D<double>(0.0, 1.0, 0.0);
+        _axis.rotateX(rotation._x);
+        _axis.rotateY(rotation._y);
+        _axis.rotateZ(rotation._z);
+        _axis = _axis.normalized();
 
-        ConfigUtils::getAsDouble(setting, "ox", x);
-        ConfigUtils::getAsDouble(setting, "oy", y);
-        ConfigUtils::getAsDouble(setting, "oz", z);
-
-        _axis = Math::Vector3D(x, y, z);
-
-        _radius = 1.0;
-        ConfigUtils::getAsDouble(setting, "r", _radius);
+        if (!ConfigUtils::getAsDouble(setting, "r", _radius))
+            throw RayTracerException("Cylinder: Missing required parameter 'r'.");
 
         if (_radius < 0) throw RayTracerException("Cylinder: Radius cannot be negative.");
 

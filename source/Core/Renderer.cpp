@@ -22,15 +22,11 @@ void RayTracer::Renderer::init(const libconfig::Setting& setting)
     if (!res.lookupValue("width", _width) || !res.lookupValue("height", _height))
         throw RayTracerException("Renderer: Invalid or missing resolution width/height.");
 
-    _backgroundColor = Math::Vector3D<double>(0, 0, 255);
-    if (setting.exists("backgroundColor")) {
-        const libconfig::Setting& colorSetting = setting["backgroundColor"];
-        double r = 0, g = 0, b = 255;
-        ConfigUtils::getAsDouble(colorSetting, "r", r);
-        ConfigUtils::getAsDouble(colorSetting, "g", g);
-        ConfigUtils::getAsDouble(colorSetting, "b", b);
-        _backgroundColor = Math::Vector3D<double>(r, g, b);
-    }
+    if (setting.exists("background")) {
+        std::string bgName = setting["background"];
+        _backgroundMaterialName = bgName;
+    } else
+        _backgroundMaterialName = "";
 }
 
 void RayTracer::Renderer::render(const Camera& camera,

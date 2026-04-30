@@ -22,37 +22,36 @@ bool RayTracer::Plane::hits(const Ray& ray, HitRecord& rec) const
 
     if (std::abs(denom) < 1e-6) return false;
 
-    double t = (_position - ray._origin.dot(_normal)) / denom;
+    Math::Vector3D<double> originToPlane = _position - ray._origin;
+    double t = originToPlane.dot(_normal) / denom;
 
     if (t <= 0.001) return false;
 
     rec.distance = t;
     rec.p = ray._origin + (ray._direction * t);
     rec.normal = _normal;
+    rec.material = _material.get();
 
     return true;
 }
 
 void RayTracer::Plane::init(const libconfig::Setting& setting)
 {
-    if (setting.exists("axis")) {
-        std::string axis = setting["axis"];
-        if (axis == "X")
-            _normal = Vector3D(1, 0, 0);
-        else if (axis == "Y")
-            _normal = Vector3D(0, 1, 0);
-        else if (axis == "Z")
-            _normal = Vector3D(0, 0, 1);
-        else
-            throw RayTracer::RayTracerException("Plane: Axis must be 'X', 'Y', or 'Z'.");
-    }
+    ConfigUtils::parsePoint3D(setting, "position", _position, true);
 
-    ConfigUtils::getAsDouble(setting, "position", _position);
+    Math::Vector3D<double> rotation;
+    ConfigUtils::parseVector3D(setting, "rotation", rotation, false);
 
     if (setting.exists("material")) {
         std::string name = setting["material"];
         _materialName = name;
     }
+    // Default normal is pointing up (Y axis)
+    _normal = Vector3D(0.0, 1.0, 0.0);
+    _normal.rotateX(rotation._x);
+    _normal.rotateY(rotation._y);
+    _normal.rotateZ(rotation._z);
+    _normal = _normal.normalized();
 }
 
 extern "C" {
