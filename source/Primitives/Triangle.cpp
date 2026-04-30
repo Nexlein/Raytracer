@@ -59,9 +59,15 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
 
     // Calculer la normale du triangle
     Vector3D normal(edge1._y * edge2._z - edge1._z * edge2._y,
-                    edge1._z * edge2._x - edge1._x * edge2._z,
-                    edge1._x * edge2._y - edge1._y * edge2._x);
-    rec.normal = normal.normalized();
+                edge1._z * edge2._x - edge1._x * edge2._z,
+                edge1._x * edge2._y - edge1._y * edge2._x);
+    normal = normal.normalized();
+
+    // Orienter vers le rayon entrant
+    if (ray._direction.dot(normal) > 0)
+        normal = -normal;
+
+    rec.normal = normal;
 
     return true;
 }
