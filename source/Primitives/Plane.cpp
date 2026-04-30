@@ -40,6 +40,10 @@ void RayTracer::Plane::init(const libconfig::Setting& setting)
 {
     ConfigUtils::parsePoint3D(setting, "position", _position, true);
 
+    Math::Vector3D<double> translation;
+    ConfigUtils::parseVector3D(setting, "translation", translation, false);
+    _position = _position + translation;
+
     Math::Vector3D<double> rotation;
     ConfigUtils::parseVector3D(setting, "rotation", rotation, false);
 
