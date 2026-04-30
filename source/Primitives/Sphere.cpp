@@ -50,6 +50,9 @@ void RayTracer::Sphere::init(const libconfig::Setting& setting)
     ConfigUtils::parseVector3D(setting, "translation", translation, false);
     _center = _center + translation;
 
+    Math::Vector3D<double> rotation;
+    ConfigUtils::parseVector3D(setting, "rotation", rotation, false);
+
     if (!ConfigUtils::getAsDouble(setting, "r", _radius))
         throw RayTracer::RayTracerException("Sphere: Missing required parameter 'r'.");
 

@@ -20,8 +20,8 @@ bool RayTracer::AmbientLight::castsShadow() const { return false; }
 
 void RayTracer::AmbientLight::init(const libconfig::Setting& setting)
 {
-    if (!ConfigUtils::getAsDouble(setting, "ambient", _intensity))
-        throw RayTracerException("AmbientLight: Missing required parameter 'ambient'.");
+    _intensity = 0.0;
+    ConfigUtils::getAsDouble(setting, "ambient", _intensity);
 
     ConfigUtils::parseColor(setting, "color", _color);
 }
