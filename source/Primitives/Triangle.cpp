@@ -20,6 +20,7 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
 {
     const double epsilon = 1e-6;
 
+    rec.material = _material.get();
     // Calcul des arêtes
     Vector3D edge1 = _v1 - _v0;
     Vector3D edge2 = _v2 - _v0;
@@ -61,7 +62,6 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
                     edge1._z * edge2._x - edge1._x * edge2._z,
                     edge1._x * edge2._y - edge1._y * edge2._x);
     rec.normal = normal.normalized();
-    rec.material = _material.get();
 
     return true;
 }

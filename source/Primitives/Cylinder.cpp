@@ -92,6 +92,7 @@ namespace RayTracer {
             }
         }
 
+        rec.material = _material.get();
         if (!hit) return false;
 
         rec.distance = closest;

@@ -20,6 +20,7 @@ bool RayTracer::Plane::hits(const Ray& ray, HitRecord& rec) const
 {
     double denom = ray._direction.dot(_normal);
 
+    rec.material = _material.get();
     if (std::abs(denom) < 1e-6) return false;
 
     Math::Vector3D<double> originToPlane = _position - ray._origin;
