@@ -96,7 +96,7 @@ triangles = (
         v0 = { x = -1.0; y = -1.0; z = -5.0; };
         v1 = { x =  1.0; y = -1.0; z = -5.0; };
         v2 = { x =  0.0; y =  1.0; z = -5.0; };
-        position = { x = 2.0; y = 0.0; z = 0.0; }; # Final translation
+        translation = { x = 2.0; y = 0.0; z = 0.0; };
         material = "blue_glass";
     }
 );
@@ -118,7 +118,7 @@ objs = (
     {
         file = "models/cube.obj";
         scale = 2.0;
-        position = { x = 0.0; y = 0.0; z = -5.0; };
+        translation = { x = 0.0; y = 0.0; z = -5.0; };
         rotation = { x = 45.0; y = 45.0; z = 0.0; };
         material = "gold_metal";
     }
