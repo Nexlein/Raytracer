@@ -9,9 +9,9 @@ This document lists all the available parameters for each plugin (Primitives and
 To simplify scene creation, **all** primitives now use this unified parameter base:
 
 - `position` *(block)*: Object coordinates `{x=..., y=..., z=...}`. **(Required for Sphere, Plane, Cylinder)**.
-- `translation` *(block)*: Global offset of the object `{x=..., y=..., z=...}`. *(Optional, default: `{x=0, y=0, z=0}`)*. **(Specific to Triangle and Obj)**.
+- `translation` *(block)*: Global offset of the object `{x=..., y=..., z=...}`. *(Optional, default: `{x=0, y=0, z=0}`)*.
 - `rotation` *(block)*: Euler rotation in degrees `{x=..., y=..., z=...}`. *(Optional, default: `{x=0, y=0, z=0}`)*.
-- `material` *(string)*: Name of the material to apply to the object. *(Optional, default: the object will appear black or will not react to light)*.
+- `material` *(string)*: Name of the material to apply to the object. *(Optional, default: BLACK)*.
 
 > **Note:** Materials must be declared in a `materials = { ... };` block at the root of the configuration before being referenced by their name in the `material` parameter of a primitive.
 
@@ -36,7 +36,9 @@ spheres = (
     {
         position = { x = 0.0; y = 0.0; z = -10.0; };
         r = 2.0;
-        material = "my_red_material";
+        translation = { x = 1.0; y = 0.0; z = 0.0; }; # Optional
+        rotation = { x = 0.0; y = 45.0; z = 0.0; }; # Optional
+        material = "my_red_material"; # Optional
     }
 );
 ```
@@ -51,8 +53,9 @@ Represents an infinite plane. The plane is oriented upwards by default (Y axis: 
 planes = (
     {
         position = { x = 0.0; y = -2.0; z = 0.0; };
-        rotation = { x = 90.0; y = 0.0; z = 0.0; }; # Rotated to face Z
-        material = "floor_material";
+        rotation = { x = 90.0; y = 0.0; z = 0.0; }; # Optional
+        translation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+        material = "floor_material"; # Optional
     }
 );
 ```
@@ -72,10 +75,11 @@ Represents a cylinder (infinite or limited). By default, the cylinder axis point
 cylinders = (
     {
         position = { x = 0.0; y = -2.0; z = -5.0; };
-        rotation = { x = 0.0; y = 0.0; z = 45.0; }; # Tilted
         r = 1.5;
         h = 5.0; # Remove for infinite
-        material = "column_material";
+        rotation = { x = 0.0; y = 0.0; z = 45.0; }; # Optional
+        translation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+        material = "column_material"; # Optional
     }
 );
 ```
@@ -96,8 +100,9 @@ triangles = (
         v0 = { x = -1.0; y = -1.0; z = -5.0; };
         v1 = { x =  1.0; y = -1.0; z = -5.0; };
         v2 = { x =  0.0; y =  1.0; z = -5.0; };
-        translation = { x = 2.0; y = 0.0; z = 0.0; };
-        material = "blue_glass";
+        translation = { x = 2.0; y = 0.0; z = 0.0; }; # Optional
+        rotation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+        material = "blue_glass"; # Optional
     }
 );
 ```
@@ -110,6 +115,7 @@ Loads a 3D model from an `.obj` file.
 
 - `file` *(string)*: File path to the `.obj` file. **(Required)**
 - `scale` *(float, optional)*: Scale factor to resize the model. Default: 1.0.
+- `position` is defined in the `.obj` file.
 
 **Example:**
 
@@ -118,9 +124,9 @@ objs = (
     {
         file = "models/cube.obj";
         scale = 2.0;
-        translation = { x = 0.0; y = 0.0; z = -5.0; };
-        rotation = { x = 45.0; y = 45.0; z = 0.0; };
-        material = "gold_metal";
+        translation = { x = 0.0; y = 0.0; z = -5.0; }; # Optional
+        rotation = { x = 45.0; y = 45.0; z = 0.0; }; # Optional
+        material = "gold_metal"; # Optional
     }
 );
 ```
@@ -153,15 +159,6 @@ materials = {
 };
 ```
 
-### 2.2. Transparency (`transparency`)
-
-*(Under development by your team)*. Represents a transparent material with refraction (like glass or water).
-
-**Planned parameters:**
-
-- `name` *(string)*: The material's unique identifier. **(Required)**
-- `color` *(block, optional)*: The transparency tint.
-
 ---
 
 ## 3. Lights
@@ -174,15 +171,15 @@ Global ambient light that uniformly illuminates all objects.
 
 **Parameters:**
 
-- `ambient` *(float)*: Intensity. **(Required)**
-- `color` *(block, optional)*: Tint `{r, g, b}`.
+- `ambient` *(float, optional)*: Intensity of the ambient light (0.0 to 1.0). Default: 0.
+- `color` *(block, optional)*: Tint `{r, g, b}`. Default: white.
 
 **Example:**
 
 ```cfg
 lights = {
     ambient = 0.2;
-    color = { r = 255.0; g = 255.0; b = 255.0; };
+    color = { r = 255.0; g = 255.0; b = 255.0; }; # Optional
 };
 ```
 
@@ -194,7 +191,7 @@ Directional light.
 
 - `intensity` *(float)*: Light intensity. **(Required)**
 - `direction` *(block)*: Direction vector `{x, y, z}`. Will be normalized. **(Required)**
-- `color` *(block, optional)*: Light color.
+- `color` *(block, optional)*: Light color. Default: white.
 
 **Example:**
 
@@ -204,7 +201,7 @@ lights = {
         {
             intensity = 0.8;
             direction = { x = -1.0; y = -1.0; z = -1.0; };
-            color = { r = 255.0; g = 255.0; b = 255.0; };
+            color = { r = 255.0; g = 255.0; b = 255.0; }; # Optional
         }
     );
 };
