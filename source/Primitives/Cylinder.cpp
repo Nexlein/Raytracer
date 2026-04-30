@@ -107,6 +107,10 @@ namespace RayTracer {
     {
         ConfigUtils::parsePoint3D(setting, "position", _base, true);
 
+        Math::Vector3D<double> translation;
+        ConfigUtils::parseVector3D(setting, "translation", translation, false);
+        _base = _base + translation;
+
         Math::Vector3D<double> rotation;
         ConfigUtils::parseVector3D(setting, "rotation", rotation, false);
 
