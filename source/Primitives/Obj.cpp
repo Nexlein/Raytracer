@@ -62,6 +62,8 @@ bool RayTracer::ObjTriangle::hits(const Ray& ray, HitRecord& rec) const
     // 6. Valid hit -> Save the hit info
     rec.distance = t;
     rec.p = ray._origin + (ray._direction * t);
+    rec.u = u;
+    rec.v = v;
 
     // Calculate the face normal using cross product of edges
     Math::Vector3D<double> normal(edge1._y * edge2._z - edge1._z * edge2._y,

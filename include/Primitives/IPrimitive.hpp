@@ -26,6 +26,10 @@ namespace RayTracer {
         Math::Point3D<double> p;
         /// @brief Normal vector at the point of intersection
         Math::Vector3D<double> normal;
+        /// @brief U texture coordinate
+        double u = 0.0;
+        /// @brief V texture coordinate
+        double v = 0.0;
         /// @brief Material of the primitive that was hit
         IMaterial* material;
     };

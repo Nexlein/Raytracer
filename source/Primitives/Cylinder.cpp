@@ -98,6 +98,14 @@ namespace RayTracer {
         rec.distance = closest;
         rec.p = ray._origin + ray._direction * closest;
         rec.normal = normal;
+
+        // UV Mapping
+        double phi = std::atan2(normal._z, normal._x);
+        if (phi < 0) phi += 2 * std::acos(-1.0);
+        rec.u = phi / (2 * std::acos(-1.0));
+        double h = (rec.p - _base).dot(_axis.normalized());
+        rec.v = h * 0.1;  // scale factor
+
         rec.material = _material.get();
 
         return true;
