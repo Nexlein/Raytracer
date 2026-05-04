@@ -12,11 +12,11 @@
 #include <memory>
 #include <string>
 
-#include "IMaterial.hpp"
+#include "AMaterial.hpp"
 
 namespace RayTracer {
     /// @brief Material that applies a texture to a primitive using UV mapping
-    class Texture : public IMaterial {
+    class Texture : public AMaterial {
         public:
         /// @brief Initializes the texture material with settings from a configuration file
         /// @param setting The configuration settings for the texture material
