@@ -181,6 +181,32 @@ materials = {
 };
 ```
 
+### 2.3. Transparent (`transparent`)
+
+Represents a transparent material that allows light to pass through, simulating glass or water.
+
+**Parameters:**
+
+- `name` *(string)*: The material's unique identifier. **(Required)**
+- `color` *(block, optional)*: The base color of the material `{r, g, b}`. *(Default: white)*
+- `transparency` *(float)*: The material's transparency level (0.0 to 1.0). **(Required)**
+- `refractiveIndex` *(float)*: The material's refractive index. **(Required)**
+
+**Example:**
+
+```cfg
+materials = {
+    transparent = (
+        {
+            name = "MyTransparentMaterial";
+            color = { r = 255.0; g = 255.0; b = 255.0; }; # Optional
+            transparency = 0.5;
+            refractiveIndex = 1.5;
+        }
+    );
+};
+```
+
 ---
 
 ## 3. Lights
