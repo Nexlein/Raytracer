@@ -38,6 +38,13 @@ bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
     rec.distance = root;
     rec.p = ray._origin + (ray._direction * rec.distance);
     rec.normal = (rec.p - _center) / _radius;
+
+    // UV Mapping
+    double theta = std::acos(-rec.normal._y);
+    double phi = std::atan2(-rec.normal._z, rec.normal._x) + std::acos(-1.0);
+    rec.u = phi / (2.0 * std::acos(-1.0));
+    rec.v = theta / std::acos(-1.0);
+
     rec.material = _material.get();
     return true;
 }
