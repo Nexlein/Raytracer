@@ -11,6 +11,7 @@
 #include "Obj.hpp"
 
 #include <cmath>
+#include <numbers>
 #include <fstream>
 #include <limits>
 #include <sstream>
@@ -125,7 +126,7 @@ void RayTracer::Obj::parseVertex(std::istringstream& iss,
     z *= scale;
 
     // Convert rotation to radians
-    double pi = std::acos(-1.0);
+    double pi = std::numbers::pi;
     double rotX = rotation._x * (pi / 180.0);
     double rotY = rotation._y * (pi / 180.0);
     double rotZ = rotation._z * (pi / 180.0);

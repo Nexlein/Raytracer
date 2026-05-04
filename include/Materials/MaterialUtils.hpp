@@ -2,10 +2,15 @@
 ** EPITECH PROJECT, 2026
 ** Raytracer
 ** File description:
-** f
+** MaterialUtils
 */
 
+#pragma once
+
 #include <algorithm>
+#include <cmath>
+#include <numbers>
+#include <random>
 
 #include "Vector3D.hpp"
 
@@ -38,7 +43,7 @@ namespace RayTracer {
 
         static Math::Vector3D<double> randomUnitVector()
         {
-            double a = randomDouble() * 2.0 * M_PI;
+            double a = randomDouble() * 2.0 * std::numbers::pi;
             double z = randomDouble() * 2.0 - 1.0;
             double r = std::sqrt(1.0 - z * z);
             return {r * std::cos(a), r * std::sin(a), z};

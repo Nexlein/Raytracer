@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cmath>
+#include <numbers>
 
 #include "RayTracerException.hpp"
 
@@ -57,7 +58,7 @@ namespace Math {
         /// @param angle The angle of rotation in radians
         inline void rotateX(double angle)
         {
-            double radians = angle * (std::acos(-1.0) / 180.0);
+            double radians = angle * (std::numbers::pi / 180.0);
             double cos_a = std::cos(radians);
             double sin_a = std::sin(radians);
             T old_y = _y;
@@ -69,7 +70,7 @@ namespace Math {
         /// @param angle The angle of rotation in radians
         inline void rotateY(double angle)
         {
-            double radians = angle * (std::acos(-1.0) / 180.0);
+            double radians = angle * (std::numbers::pi / 180.0);
             double cos_a = std::cos(radians);
             double sin_a = std::sin(radians);
             T old_x = _x;
@@ -81,7 +82,7 @@ namespace Math {
         /// @param angle The angle of rotation in radians
         inline void rotateZ(double angle)
         {
-            double radians = angle * (std::acos(-1.0) / 180.0);
+            double radians = angle * (std::numbers::pi / 180.0);
             double cos_a = std::cos(radians);
             double sin_a = std::sin(radians);
             T old_x = _x;
