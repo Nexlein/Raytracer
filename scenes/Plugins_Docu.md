@@ -159,6 +159,28 @@ materials = {
 };
 ```
 
+### 2.2. Texture (`texture`)
+
+Represents an image-based material mapped onto a primitive using UV coordinates.
+
+**Parameters:**
+
+- `name` *(string)*: The material's unique identifier. **(Required)**
+- `filepath` *(string)*: Path to the texture image file. **(Required)**
+
+**Example:**
+
+```cfg
+materials = {
+    texture = (
+        {
+            name = "MyTextureName";
+            filepath = "texture/MyTexture.jpg";
+        }
+    );
+};
+```
+
 ---
 
 ## 3. Lights
