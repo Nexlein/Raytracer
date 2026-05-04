@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "IMaterial.hpp"
+#include "AMaterial.hpp"
 #include "Vector3D.hpp"
 
 namespace RayTracer {
-    class Transparency : public IMaterial {
+    class Transparency : public AMaterial {
         public:
         Transparency() = default;
 
@@ -25,6 +25,13 @@ namespace RayTracer {
         /// @brief Initializes the material with settings from a configuration file
         /// @param setting The configuration settings for the material
         void init(const libconfig::Setting& setting) override;
+
+        bool scatter(const Ray& rayIn, const HitRecord& rec, Math::Vector3D<double>& attenuation,
+                     Ray& scattered) const override;
+
+        bool isTransparent() const override { return true; }
+
+        double getTransparency() const override { return _transparency; };
 
         private:
         /// @brief Transparency of the glass

@@ -121,15 +121,19 @@ namespace RayTracer {
                 totalLight._y = std::clamp(totalLight._y, 0.0, 1.0);
                 totalLight._z = std::clamp(totalLight._z, 0.0, 1.0);
 
+                Math::Vector3D<double> baseColor = (hitPrimitive->getColor() / 255.0) * totalLight;
                 if (closestRec.material) {
                     Ray scattered;
                     Math::Vector3D<double> attenuation;
-                    if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
+                    if (closestRec.material->isTransparent()) {
+                        if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
+                            auto transparentColor = computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
+                            double t = closestRec.material->getTransparency();
+                            return transparentColor * t + baseColor * 255.0 * (1.0 - t);
+                        }
+                    } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered))
                         return attenuation * totalLight * 255.0;
-                    }
                 }
-
-                Math::Vector3D<double> baseColor = (hitPrimitive->getColor() / 255.0) * totalLight;
                 return baseColor * 255.0;
             }
 
