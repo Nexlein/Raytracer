@@ -56,6 +56,8 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     // Remplir le HitRecord
     rec.distance = t;
     rec.p = ray._origin + (ray._direction * t);
+    rec.u = u;
+    rec.v = v;
 
     // Calculer la normale du triangle
     Vector3D normal(edge1._y * edge2._z - edge1._z * edge2._y,
