@@ -47,6 +47,15 @@ namespace Math {
             return _x * other._x + _y * other._y + _z * other._z;
         }
 
+        /// @brief Computes the cross product of this vector and another vector
+        /// @param other The other vector
+        /// @return The cross product
+        [[nodiscard]] inline Vector3D cross(const Vector3D& other) const
+        {
+            return Vector3D(_y * other._z - _z * other._y, _z * other._x - _x * other._z,
+                            _x * other._y - _y * other._x);
+        }
+
         [[nodiscard]] inline Vector3D normalized() const
         {
             T len = std::sqrt(_x * _x + _y * _y + _z * _z);

@@ -25,9 +25,7 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     Vector3D edge1 = _v1 - _v0;
     Vector3D edge2 = _v2 - _v0;
 
-    Vector3D pvec(ray._direction._y * edge2._z - ray._direction._z * edge2._y,
-                  ray._direction._z * edge2._x - ray._direction._x * edge2._z,
-                  ray._direction._x * edge2._y - ray._direction._y * edge2._x);
+    Vector3D pvec = ray._direction.cross(edge2);
 
     double det = edge1.dot(pvec);
 
@@ -42,8 +40,7 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     // "u" en dehors du triangle
     if (u < 0.0 || u > 1.0) return false;
 
-    Vector3D qvec(tvec._y * edge1._z - tvec._z * edge1._y, tvec._z * edge1._x - tvec._x * edge1._z,
-                  tvec._x * edge1._y - tvec._y * edge1._x);
+    Vector3D qvec = tvec.cross(edge1);
     double v = ray._direction.dot(qvec) * invDet;
     // "v" en dehors du triangle
     if (v < 0.0 || u + v > 1.0) return false;
@@ -60,10 +57,7 @@ bool RayTracer::Triangle::hits(const Ray& ray, HitRecord& rec) const
     rec.v = v;
 
     // Calculer la normale du triangle
-    Vector3D normal(edge1._y * edge2._z - edge1._z * edge2._y,
-                    edge1._z * edge2._x - edge1._x * edge2._z,
-                    edge1._x * edge2._y - edge1._y * edge2._x);
-    normal = normal.normalized();
+    Vector3D normal = edge1.cross(edge2).normalized();
 
     // Orienter vers le rayon entrant
     if (ray._direction.dot(normal) > 0) normal = -normal;
@@ -105,9 +99,7 @@ void RayTracer::Triangle::init(const libconfig::Setting& setting)
 
     Vector3D edge1 = _v1 - _v0;
     Vector3D edge2 = _v2 - _v0;
-    Vector3D normal(edge1._y * edge2._z - edge1._z * edge2._y,
-                    edge1._z * edge2._x - edge1._x * edge2._z,
-                    edge1._x * edge2._y - edge1._y * edge2._x);
+    Vector3D normal = edge1.cross(edge2);
 
     if (normal._x == 0.0 && normal._y == 0.0 && normal._z == 0.0)
         throw RayTracer::RayTracerException("Triangle: Vertices cannot be collinear.");
