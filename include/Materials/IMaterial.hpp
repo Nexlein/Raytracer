@@ -40,8 +40,11 @@ namespace RayTracer {
         [[nodiscard]] virtual inline std::string getName() const = 0;
 
         /// @brief returns the color of the material
+        /// @param u The u texture coordinate (default 0.0)
+        /// @param v The v texture coordinate (default 0.0)
         /// @return the color of the material
-        [[nodiscard]] virtual inline Math::Vector3D<double> getColor() const = 0;
+        [[nodiscard]] virtual Math::Vector3D<double> getColor(double u = 0.0,
+                                                              double v = 0.0) const = 0;
 
         virtual void setColor(const Math::Vector3D<double>& color) = 0;
 

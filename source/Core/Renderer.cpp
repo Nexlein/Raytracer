@@ -125,6 +125,15 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
         return baseColor * 255.0;
     }
 
-    if (_backgroundMaterial) return _backgroundMaterial->getColor();
+    if (_backgroundMaterial) {
+        Math::Vector3D<double> unitDir = ray._direction.normalized();
+        double theta = std::acos(-unitDir._y);
+        double phi = std::atan2(-unitDir._z, unitDir._x) + std::numbers::pi;
+        
+        double u = phi / (2.0 * std::numbers::pi);
+        double v = theta / std::numbers::pi;
+        
+        return _backgroundMaterial->getColor(u, v);
+    }
     return {0.0, 0.0, 0.0};
 }

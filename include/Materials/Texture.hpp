@@ -32,6 +32,13 @@ namespace RayTracer {
         bool scatter(const Ray& /*rayIn*/, const HitRecord& rec,
                      Math::Vector3D<double>& attenuation, Ray& scattered) const override;
 
+        /// @brief Gets the color of the texture at given UV coordinates
+        /// @param u U coordinate
+        /// @param v V coordinate
+        /// @return Color from the texture scaled 0-255
+        [[nodiscard]] Math::Vector3D<double> getColor(double u = 0.0,
+                                                      double v = 0.0) const override;
+
         private:
         /// @brief File path to the texture image
         std::string _filepath;

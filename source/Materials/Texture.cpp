@@ -65,6 +65,26 @@ bool RayTracer::Texture::scatter(const Ray& /*rayIn*/, const HitRecord& rec,
     return true;
 }
 
+Math::Vector3D<double> RayTracer::Texture::getColor(double u, double v) const
+{
+    if (_width > 0 && _height > 0) {
+        u = std::fmod(u, 1.0);
+        v = std::fmod(v, 1.0);
+        if (u < 0) u += 1.0;
+        if (v < 0) v += 1.0;
+
+        unsigned int i = static_cast<unsigned int>(u * _width);
+        unsigned int j = static_cast<unsigned int>((1.0 - v) * _height - 0.001);
+
+        if (i >= static_cast<unsigned int>(_width)) i = _width - 1;
+        if (j >= static_cast<unsigned int>(_height)) j = _height - 1;
+
+        sf::Color pixel = _image.getPixel(i, j);
+        return Math::Vector3D<double>(pixel.r, pixel.g, pixel.b);
+    }
+    return Math::Vector3D<double>(255, 0, 255);
+}
+
 extern "C" {
 RayTracer::IMaterial* entryPoint() { return new RayTracer::Texture(); }
 }

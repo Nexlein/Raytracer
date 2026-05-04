@@ -20,7 +20,11 @@ namespace RayTracer {
 
         [[nodiscard]] inline std::string getName() const { return _name; }
 
-        [[nodiscard]] inline Math::Vector3D<double> getColor() const { return _color; }
+        [[nodiscard]] inline Math::Vector3D<double> getColor(
+            [[maybe_unused]] double u = 0.0, [[maybe_unused]] double v = 0.0) const override
+        {
+            return _color;
+        }
 
         inline void setColor(const Math::Vector3D<double>& color) { _color = color; }
 
