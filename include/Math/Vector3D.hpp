@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cmath>
+#include <numbers>
 
 #include "RayTracerException.hpp"
 
@@ -46,6 +47,15 @@ namespace Math {
             return _x * other._x + _y * other._y + _z * other._z;
         }
 
+        /// @brief Computes the cross product of this vector and another vector
+        /// @param other The other vector
+        /// @return The cross product
+        [[nodiscard]] inline Vector3D cross(const Vector3D& other) const
+        {
+            return Vector3D(_y * other._z - _z * other._y, _z * other._x - _x * other._z,
+                            _x * other._y - _y * other._x);
+        }
+
         [[nodiscard]] inline Vector3D normalized() const
         {
             T len = std::sqrt(_x * _x + _y * _y + _z * _z);
@@ -57,7 +67,7 @@ namespace Math {
         /// @param angle The angle of rotation in radians
         inline void rotateX(double angle)
         {
-            double radians = angle * (std::acos(-1.0) / 180.0);
+            double radians = angle * (std::numbers::pi / 180.0);
             double cos_a = std::cos(radians);
             double sin_a = std::sin(radians);
             T old_y = _y;
@@ -69,7 +79,7 @@ namespace Math {
         /// @param angle The angle of rotation in radians
         inline void rotateY(double angle)
         {
-            double radians = angle * (std::acos(-1.0) / 180.0);
+            double radians = angle * (std::numbers::pi / 180.0);
             double cos_a = std::cos(radians);
             double sin_a = std::sin(radians);
             T old_x = _x;
@@ -81,7 +91,7 @@ namespace Math {
         /// @param angle The angle of rotation in radians
         inline void rotateZ(double angle)
         {
-            double radians = angle * (std::acos(-1.0) / 180.0);
+            double radians = angle * (std::numbers::pi / 180.0);
             double cos_a = std::cos(radians);
             double sin_a = std::sin(radians);
             T old_x = _x;

@@ -4,7 +4,55 @@ This document lists all the available parameters for each plugin (Primitives and
 
 ---
 
-## Common Parameters (Standardized)
+## 1. Global Setup (Camera & Renderer)
+
+Before defining primitives and materials, the `.cfg` file must contain mandatory sections for the `camera` and `renderer` settings.
+
+### 1.1. Camera (`camera`)
+
+The camera block defines the viewpoint from which the scene is rendered.
+
+**Parameters:**
+
+- `position` *(block)*: The 3D coordinates of the camera `{x=..., y=..., z=...}`. *(Optional, default: `{x=0, y=0, z=0}`)*
+- `rotation` *(block)*: Euler rotation of the camera in degrees `{x=..., y=..., z=...}`. *(Optional, default: `{x=0, y=0, z=0}`)*
+- `fieldOfView` *(float)*: The vertical Field of View (FOV) in degrees. *(Optional, default: 90.0)*
+
+**Example:**
+
+```cfg
+camera = {
+    position = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+    rotation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+    fieldOfView = 70.0; # Optional
+};
+```
+
+### 1.2. Renderer (`renderer`)
+
+The renderer block sets up the global rendering engine parameters.
+
+**Parameters:**
+
+- `resolution` *(block)*: The dimensions of the output image `{width=..., height=...}`. **(Required)**
+- `samples` *(int)*: The number of rays to cast per pixel (anti-aliasing and soft shadows). A higher value reduces noise but increases render time. *(Optional, default: 50)*
+- `maxDepth` *(int)*: The maximum number of bounces a ray can make (for reflections/refractions). *(Optional, default: 10)*
+- `background` *(string)*: Name of the material to use as the background/skybox when a ray hits nothing. *(Optional, default: none/black)*
+
+**Example:**
+
+```cfg
+renderer = {
+    resolution = { width = 1920; height = 1080; };
+    samples = 100; # Optional
+    maxDepth = 15; # Optional
+    background = "sky_material"; # Optional (Needs to be defined in materials)
+};
+```
+
+---
+
+## 2. Common Parameters (Standardized)
 
 To simplify scene creation, **all** primitives now use this unified parameter base:
 
@@ -17,11 +65,11 @@ To simplify scene creation, **all** primitives now use this unified parameter ba
 
 ---
 
-## 1. Primitives
+## 3. Primitives
 
 Primitives must be declared inside the main `primitives = { ... };` block. Each primitive type is a list bearing the plural name of the plugin (e.g., `spheres`, `planes`).
 
-### 1.1. Sphere (`spheres`)
+### 3.1. Sphere (`spheres`)
 
 Represents a 3D sphere.
 
@@ -43,7 +91,7 @@ spheres = (
 );
 ```
 
-### 1.2. Plane (`planes`)
+### 3.2. Plane (`planes`)
 
 Represents an infinite plane. The plane is oriented upwards by default (Y axis: `0, 1, 0`). Use `rotation` to tilt it.
 
@@ -60,7 +108,7 @@ planes = (
 );
 ```
 
-### 1.3. Cylinder (`cylinders`)
+### 3.3. Cylinder (`cylinders`)
 
 Represents a cylinder (infinite or limited). By default, the cylinder axis points upwards (Y axis: `0, 1, 0`). Use `rotation` to tilt it.
 
@@ -84,7 +132,7 @@ cylinders = (
 );
 ```
 
-### 1.4. Triangle (`triangles`)
+### 3.4. Triangle (`triangles`)
 
 Represents a triangle defined by 3 vertices. The `position` and `rotation` apply to the vertices.
 
@@ -107,7 +155,7 @@ triangles = (
 );
 ```
 
-### 1.5. Obj (`objs`)
+### 3.5. Obj (`objs`)
 
 Loads a 3D model from an `.obj` file.
 
@@ -133,13 +181,13 @@ objs = (
 
 ---
 
-## 2. Materials
+## 4. Materials
 
 Materials define the appearance and light reaction of primitives. They must be declared in a `materials = { ... };` block at the root of the configuration file, before the primitives.
 
 Each material must have a unique name (`name = "..."`) which will then be used by primitives via the `material` property.
 
-### 2.1. Lambertian (`lambertian`)
+### 4.1. Lambertian (`lambertian`)
 
 Represents a classic matte (diffuse) material. It scatters light equally in all directions.
 
@@ -159,7 +207,7 @@ materials = {
 };
 ```
 
-### 2.2. Texture (`texture`)
+### 4.2. Texture (`texture`)
 
 Represents an image-based material mapped onto a primitive using UV coordinates.
 
@@ -181,7 +229,7 @@ materials = {
 };
 ```
 
-### 2.3. Transparent (`transparent`)
+### 4.3. Transparent (`transparent`)
 
 Represents a transparent material that allows light to pass through, simulating glass or water.
 
@@ -209,11 +257,11 @@ materials = {
 
 ---
 
-## 3. Lights
+## 5. Lights
 
 *Note: Unlike primitives which now use materials, lights continue to use the `color` parameter directly.*
 
-### 3.1. AmbientLight
+### 5.1. AmbientLight
 
 Global ambient light that uniformly illuminates all objects.
 
@@ -231,7 +279,7 @@ lights = {
 };
 ```
 
-### 3.2. DirectionalLight (`directional`)
+### 5.2. DirectionalLight (`directional`)
 
 Directional light.
 

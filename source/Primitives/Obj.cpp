@@ -11,6 +11,7 @@
 #include "Obj.hpp"
 
 #include <cmath>
+#include <numbers>
 #include <fstream>
 #include <limits>
 #include <sstream>
@@ -27,9 +28,7 @@ bool RayTracer::ObjTriangle::hits(const Ray& ray, HitRecord& rec) const
     Math::Vector3D<double> edge2 = _v2 - _v0;
 
     // 2. Calculate determinant to check if ray is parallel to the triangle
-    Math::Vector3D<double> pvec(ray._direction._y * edge2._z - ray._direction._z * edge2._y,
-                                ray._direction._z * edge2._x - ray._direction._x * edge2._z,
-                                ray._direction._x * edge2._y - ray._direction._y * edge2._x);
+    Math::Vector3D<double> pvec = ray._direction.cross(edge2);
 
     double det = edge1.dot(pvec);
     // If determinant is close to 0, ray is parallel to the triangle
@@ -45,9 +44,7 @@ bool RayTracer::ObjTriangle::hits(const Ray& ray, HitRecord& rec) const
     if (u < 0.0 || u > 1.0) return false;
 
     // 4. Calculate V parameter and test bounds
-    Math::Vector3D<double> qvec(tvec._y * edge1._z - tvec._z * edge1._y,
-                                tvec._z * edge1._x - tvec._x * edge1._z,
-                                tvec._x * edge1._y - tvec._y * edge1._x);
+    Math::Vector3D<double> qvec = tvec.cross(edge1);
     double v = ray._direction.dot(qvec) * invDet;
 
     // If V is outside or U+V > 1, the hit is outside the triangle
@@ -66,9 +63,7 @@ bool RayTracer::ObjTriangle::hits(const Ray& ray, HitRecord& rec) const
     rec.v = v;
 
     // Calculate the face normal using cross product of edges
-    Math::Vector3D<double> normal(edge1._y * edge2._z - edge1._z * edge2._y,
-                                  edge1._z * edge2._x - edge1._x * edge2._z,
-                                  edge1._x * edge2._y - edge1._y * edge2._x);
+    Math::Vector3D<double> normal = edge1.cross(edge2);
     rec.normal = normal.normalized();
 
     return true;
@@ -125,7 +120,7 @@ void RayTracer::Obj::parseVertex(std::istringstream& iss,
     z *= scale;
 
     // Convert rotation to radians
-    double pi = std::acos(-1.0);
+    double pi = std::numbers::pi;
     double rotX = rotation._x * (pi / 180.0);
     double rotY = rotation._y * (pi / 180.0);
     double rotZ = rotation._z * (pi / 180.0);

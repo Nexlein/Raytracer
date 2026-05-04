@@ -13,8 +13,8 @@
 #include <fstream>
 
 #include "ConfigUtils.hpp"
-#include "RayTracerException.hpp"
 #include "MaterialUtils.hpp"
+#include "RayTracerException.hpp"
 
 void RayTracer::Renderer::init(const libconfig::Setting& setting)
 {
@@ -28,6 +28,9 @@ void RayTracer::Renderer::init(const libconfig::Setting& setting)
         _backgroundMaterialName = bgName;
     } else
         _backgroundMaterialName = "";
+
+    setting.lookupValue("samples", _samples);
+    setting.lookupValue("maxDepth", _maxDepth);
 }
 
 void RayTracer::Renderer::render(const Camera& camera,
@@ -46,18 +49,91 @@ void RayTracer::Renderer::render(const Camera& camera,
     for (int y = _height - 1; y >= 0; y--) {
         for (int x = 0; x < _width; x++) {
             Math::Vector3D<double> pixelColor(0.0, 0.0, 0.0);
-            int samples = 50; // ajuste selon perf
 
-            for (int s = 0; s < samples; s++) {
+            for (int s = 0; s < _samples; s++) {
                 double u = (x + MaterialUtils::randomDouble()) / (_width - 1);
                 double v = (y + MaterialUtils::randomDouble()) / (_height - 1);
                 Ray r = camera.ray(u, v, ratio);
-                pixelColor += computeRayColor(r, 10, primitives, lights);
+                pixelColor += computeRayColor(r, _maxDepth, primitives, lights);
             }
-            pixelColor = pixelColor / static_cast<double>(samples);
+            pixelColor = pixelColor / static_cast<double>(_samples);
             writeColor(outFile, pixelColor);
         }
     }
 
     outFile.close();
+}
+
+bool RayTracer::Renderer::isInShadow(
+    const HitRecord& hit, const Math::Vector3D<double>& lightDir,
+    const std::vector<std::unique_ptr<IPrimitive>>& primitives) const
+{
+    Ray shadowRay(hit.p + hit.normal * 0.001, lightDir);
+    HitRecord tempRec;
+    for (const auto& primitive : primitives) {
+        if (primitive->hits(shadowRay, tempRec) && tempRec.distance > 0.001) return true;
+    }
+    return false;
+}
+
+Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
+    const Ray& ray, int depth, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+    const std::vector<std::unique_ptr<ILight>>& lights) const
+{
+    if (depth <= 0) return {0.0, 0.0, 0.0};
+    bool hitAnything = false;
+    HitRecord tempRec;
+    HitRecord closestRec;
+    double closest = std::numeric_limits<double>::infinity();
+    const IPrimitive* hitPrimitive = nullptr;
+
+    for (const auto& primitive : primitives) {
+        if (primitive->hits(ray, tempRec)) {
+            if (tempRec.distance < closest && tempRec.distance > 0.001) {
+                closest = tempRec.distance;
+                closestRec = tempRec;
+                hitPrimitive = primitive.get();
+                hitAnything = true;
+            }
+        }
+    }
+
+    if (hitAnything) {
+        Math::Vector3D<double> totalLight(0.0, 0.0, 0.0);
+        for (const auto& light : lights) {
+            if (!light->castsShadow() || !isInShadow(closestRec, light->getDirection(), primitives))
+                totalLight += light->computeLight(closestRec);
+        }
+        totalLight._x = std::clamp(totalLight._x, 0.0, 1.0);
+        totalLight._y = std::clamp(totalLight._y, 0.0, 1.0);
+        totalLight._z = std::clamp(totalLight._z, 0.0, 1.0);
+
+        Math::Vector3D<double> baseColor = (hitPrimitive->getColor() / 255.0) * totalLight;
+        if (closestRec.material) {
+            Ray scattered;
+            Math::Vector3D<double> attenuation;
+            if (closestRec.material->isTransparent()) {
+                if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
+                    auto transparentColor =
+                        computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
+                    double t = closestRec.material->getTransparency();
+                    return transparentColor * t + baseColor * 255.0 * (1.0 - t);
+                }
+            } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered))
+                return attenuation * totalLight * 255.0;
+        }
+        return baseColor * 255.0;
+    }
+
+    if (_backgroundMaterial) {
+        Math::Vector3D<double> unitDir = ray._direction.normalized();
+        double theta = std::acos(-unitDir._y);
+        double phi = std::atan2(-unitDir._z, unitDir._x) + std::numbers::pi;
+        
+        double u = phi / (2.0 * std::numbers::pi);
+        double v = theta / std::numbers::pi;
+        
+        return _backgroundMaterial->getColor(u, v);
+    }
+    return {0.0, 0.0, 0.0};
 }

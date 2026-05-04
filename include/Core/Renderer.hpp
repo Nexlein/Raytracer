@@ -61,6 +61,10 @@ namespace RayTracer {
         int _width;
         /// @brief Height of the output image
         int _height;
+        /// @brief Number of samples per pixel
+        int _samples{50};
+        /// @brief Maximum ray bounce depth
+        int _maxDepth{10};
         /// @brief Name of the background material
         std::string _backgroundMaterialName;
         /// @brief Background material of the scene
@@ -71,75 +75,18 @@ namespace RayTracer {
         /// @param lightDir The direction to the light
         /// @param primitives The list of primitives in the scene
         /// @return True if the point is in shadow, false otherwise
-        [[nodiscard]] inline bool isInShadow(
+        [[nodiscard]] bool isInShadow(
             const HitRecord& hit, const Math::Vector3D<double>& lightDir,
-            const std::vector<std::unique_ptr<IPrimitive>>& primitives) const
-        {
-            Ray shadowRay(hit.p + hit.normal * 0.001, lightDir);
-            HitRecord tempRec;
-            for (const auto& primitive : primitives) {
-                if (primitive->hits(shadowRay, tempRec) && tempRec.distance > 0.001) return true;
-            }
-            return false;
-        }
+            const std::vector<std::unique_ptr<IPrimitive>>& primitives) const;
 
         /// @brief Computes the color for a given ray based on the scene's primitives
         /// @param ray The ray to trace
         /// @param primitives The list of primitives in the scene
         /// @param lights The list of lights in the scene
         /// @return The computed color for the ray
-        [[nodiscard]] inline Math::Vector3D<double> computeRayColor(
+        [[nodiscard]] Math::Vector3D<double> computeRayColor(
             const Ray& ray, int depth, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
-            const std::vector<std::unique_ptr<ILight>>& lights) const
-        {
-            if (depth <= 0) return {0.0, 0.0, 0.0};
-            bool hitAnything = false;
-            HitRecord tempRec;
-            HitRecord closestRec;
-            double closest = std::numeric_limits<double>::infinity();
-            const IPrimitive* hitPrimitive = nullptr;
-
-            for (const auto& primitive : primitives) {
-                if (primitive->hits(ray, tempRec)) {
-                    if (tempRec.distance < closest && tempRec.distance > 0.001) {
-                        closest = tempRec.distance;
-                        closestRec = tempRec;
-                        hitPrimitive = primitive.get();
-                        hitAnything = true;
-                    }
-                }
-            }
-
-            if (hitAnything) {
-                Math::Vector3D<double> totalLight(0.0, 0.0, 0.0);
-                for (const auto& light : lights) {
-                    if (!light->castsShadow() ||
-                        !isInShadow(closestRec, light->getDirection(), primitives))
-                        totalLight += light->computeLight(closestRec);
-                }
-                totalLight._x = std::clamp(totalLight._x, 0.0, 1.0);
-                totalLight._y = std::clamp(totalLight._y, 0.0, 1.0);
-                totalLight._z = std::clamp(totalLight._z, 0.0, 1.0);
-
-                Math::Vector3D<double> baseColor = (hitPrimitive->getColor() / 255.0) * totalLight;
-                if (closestRec.material) {
-                    Ray scattered;
-                    Math::Vector3D<double> attenuation;
-                    if (closestRec.material->isTransparent()) {
-                        if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-                            auto transparentColor = computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
-                            double t = closestRec.material->getTransparency();
-                            return transparentColor * t + baseColor * 255.0 * (1.0 - t);
-                        }
-                    } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered))
-                        return attenuation * totalLight * 255.0;
-                }
-                return baseColor * 255.0;
-            }
-
-            if (_backgroundMaterial) return _backgroundMaterial->getColor();
-            return {0.0, 0.0, 0.0};
-        }
+            const std::vector<std::unique_ptr<ILight>>& lights) const;
 
         /// @brief Writes the color of a pixel to the output stream
         /// @param out The output stream to write the color to

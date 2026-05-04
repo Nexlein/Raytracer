@@ -12,6 +12,7 @@
 
 #include <cmath>
 #include <memory>
+#include <numbers>
 
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
@@ -41,9 +42,9 @@ bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
 
     // UV Mapping
     double theta = std::acos(-rec.normal._y);
-    double phi = std::atan2(-rec.normal._z, rec.normal._x) + std::acos(-1.0);
-    rec.u = phi / (2.0 * std::acos(-1.0));
-    rec.v = theta / std::acos(-1.0);
+    double phi = std::atan2(-rec.normal._z, rec.normal._x) + std::numbers::pi;
+    rec.u = phi / (2.0 * std::numbers::pi);
+    rec.v = theta / std::numbers::pi;
 
     rec.material = _material.get();
     return true;
