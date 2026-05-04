@@ -122,7 +122,6 @@ namespace RayTracer {
                 totalLight._z = std::clamp(totalLight._z, 0.0, 1.0);
 
                 Math::Vector3D<double> baseColor = (hitPrimitive->getColor() / 255.0) * totalLight;
-
                 if (closestRec.material) {
                     Ray scattered;
                     Math::Vector3D<double> attenuation;
@@ -135,7 +134,6 @@ namespace RayTracer {
                     } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered))
                         return attenuation * totalLight * 255.0;
                 }
-
                 return baseColor * 255.0;
             }
 
