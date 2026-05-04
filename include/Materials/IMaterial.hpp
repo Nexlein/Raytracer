@@ -33,7 +33,7 @@ namespace RayTracer {
         virtual bool scatter(const Ray& rayIn, const HitRecord& rec,
                              Math::Vector3D<double>& attenuation, Ray& scattered) const = 0;
 
-        virtual bool isTransparent() const = 0;
+        virtual bool isRefractive() const = 0;
 
         /// @brief returns the name of the material
         /// @return The name of the material
@@ -48,7 +48,7 @@ namespace RayTracer {
 
         virtual void setColor(const Math::Vector3D<double>& color) = 0;
 
-        virtual double getTransparency() const = 0;
+        virtual double getRefractive() const = 0;
 
         protected:
         /// @brief Name of the material

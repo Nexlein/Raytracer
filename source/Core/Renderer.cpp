@@ -112,12 +112,12 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
         if (closestRec.material) {
             Ray scattered;
             Math::Vector3D<double> attenuation;
-            if (closestRec.material->isTransparent()) {
+            if (closestRec.material->isRefractive()) {
                 if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-                    auto transparentColor =
+                    auto refractiveColor =
                         computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
-                    double t = closestRec.material->getTransparency();
-                    return transparentColor * t + baseColor * 255.0 * (1.0 - t);
+                    double t = closestRec.material->getRefractive();
+                    return refractiveColor * t + baseColor * 255.0 * (1.0 - t);
                 }
             } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered))
                 return attenuation * totalLight * 255.0;
@@ -129,10 +129,10 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
         Math::Vector3D<double> unitDir = ray._direction.normalized();
         double theta = std::acos(-unitDir._y);
         double phi = std::atan2(-unitDir._z, unitDir._x) + std::numbers::pi;
-        
+
         double u = phi / (2.0 * std::numbers::pi);
         double v = theta / std::numbers::pi;
-        
+
         return _backgroundMaterial->getColor(u, v);
     }
     return {0.0, 0.0, 0.0};

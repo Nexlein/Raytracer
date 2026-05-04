@@ -2,25 +2,17 @@
 ** EPITECH PROJECT, 2026
 ** Raytracer
 ** File description:
-** Transparency
+** Refractive
 */
 
-#include "Transparency.hpp"
+#include "Refractive.hpp"
 
-#include "IPrimitive.hpp"
 #include "ConfigUtils.hpp"
+#include "IPrimitive.hpp"
 #include "MaterialUtils.hpp"
 #include "RayTracerException.hpp"
 
-RayTracer::Transparency::Transparency(std::string name, Math::Vector3D<double> color,
-                                      double transparency, double refractiveIndex)
-    : _transparency(transparency), _refractiveIndex(refractiveIndex)
-{
-    _name = name;
-    _color = color;
-}
-
-void RayTracer::Transparency::init(const libconfig::Setting& setting)
+void RayTracer::Refractive::init(const libconfig::Setting& setting)
 {
     if (!setting.lookupValue("name", _name))
         throw RayTracerException("Lambertian material must have a name");
@@ -28,18 +20,16 @@ void RayTracer::Transparency::init(const libconfig::Setting& setting)
     ConfigUtils::parseColor(setting, "color", _color);
 
     if (!ConfigUtils::getAsDouble(setting, "transparency", _transparency))
-        throw RayTracerException("Transparent material must have a transparency parameter");
+        throw RayTracerException("Refractive material must have a refractive parameter");
 
     if (!ConfigUtils::getAsDouble(setting, "refractiveIndex", _refractiveIndex))
-        throw RayTracerException("Transparent material must have a refraction parameter");
+        throw RayTracerException("Refractive material must have a refraction parameter");
 }
 
-bool RayTracer::Transparency::scatter(const Ray& rayIn, const HitRecord& rec,
-                                      Math::Vector3D<double>& attenuation, Ray& scattered) const
+bool RayTracer::Refractive::scatter(const Ray& rayIn, const HitRecord& rec,
+                                    Math::Vector3D<double>& attenuation, Ray& scattered) const
 {
-    // Si transparency = 0 -> comportement opaque, on ne scatter pas
-    if (_transparency <= 0.0)
-        return false;
+    if (_transparency <= 0.0) return false;
 
     attenuation = Math::Vector3D<double>(1.0, 1.0, 1.0);
 
@@ -60,11 +50,11 @@ bool RayTracer::Transparency::scatter(const Ray& rayIn, const HitRecord& rec,
     else
         _direction = MaterialUtils::refract(unitDir, normal, ratio);
 
-    attenuation = _color / 255.0; // dans scatter()
+    attenuation = _color / 255.0;  // dans scatter()
     scattered = Ray(rec.p + _direction * 0.01, _direction);
     return true;
 }
 
 extern "C" {
-RayTracer::IMaterial* entryPoint() { return new RayTracer::Transparency(); }
+RayTracer::IMaterial* entryPoint() { return new RayTracer::Refractive(); }
 }

@@ -16,7 +16,7 @@ namespace RayTracer {
         public:
         virtual ~AMaterial() = default;
 
-        virtual bool isTransparent() const { return false; }
+        virtual bool isRefractive() const { return false; }
 
         [[nodiscard]] inline std::string getName() const { return _name; }
 
@@ -28,6 +28,6 @@ namespace RayTracer {
 
         inline void setColor(const Math::Vector3D<double>& color) { _color = color; }
 
-        virtual double getTransparency() const { return 0.0; };
+        virtual double getRefractive() const { return 0.0; };
     };
 }  // namespace RayTracer

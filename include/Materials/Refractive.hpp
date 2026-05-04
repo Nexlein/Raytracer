@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2026
 ** Raytracer
 ** File description:
-** Transparency
+** Refractive
 */
 
 #pragma once
@@ -11,16 +11,9 @@
 #include "Vector3D.hpp"
 
 namespace RayTracer {
-    class Transparency : public AMaterial {
+    class Refractive : public AMaterial {
         public:
-        Transparency() = default;
-
-        /// @brief Create a transparent material
-        /// @param name Name of the material
-        /// @param transparency Transparency index of the material
-        /// @param refractiveIndex refrative index of the material
-        Transparency(std::string name, Math::Vector3D<double> color, double transparency,
-                     double refractiveIndex);
+        Refractive() = default;
 
         /// @brief Initializes the material with settings from a configuration file
         /// @param setting The configuration settings for the material
@@ -29,9 +22,9 @@ namespace RayTracer {
         bool scatter(const Ray& rayIn, const HitRecord& rec, Math::Vector3D<double>& attenuation,
                      Ray& scattered) const override;
 
-        bool isTransparent() const override { return true; }
+        bool isRefractive() const override { return true; }
 
-        double getTransparency() const override { return _transparency; };
+        double getRefractive() const override { return _transparency; };
 
         private:
         /// @brief Transparency of the glass
