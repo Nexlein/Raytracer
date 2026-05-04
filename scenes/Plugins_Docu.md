@@ -179,6 +179,32 @@ objs = (
 );
 ```
 
+### 1.6. Box (`boxes`)
+
+Represents a 3D box (rectangular cuboid), defined by a `position`, a `rotation` and it's size along the three axes.
+
+**Additional parameters:**
+
+- `dimension` *(blocks)*: Size of the box along each axis `{x, y, z}`. **(Required)**
+    - `x`: width
+    - `y`: height
+    - `z`: depth
+    - All values must be **strictly positive**
+
+**Example:**
+
+```cfg
+boxes = (
+    {
+        position = { x = -1.0; y = 0.0; z = 2.0; };
+        dimension = { x =  1.5; y = 1.0; z = 1.0; };
+        rotation = { x =  2.0; y =  0.0; z = 0.0; }; # Optional
+        translation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+        material = "red"; # Optional
+    }
+);
+```
+
 ---
 
 ## 4. Materials
