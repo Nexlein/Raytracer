@@ -42,23 +42,26 @@ void RayTracer::Renderer::render(const Camera& camera,
     if (!outFile.is_open())
         throw RayTracerException("Renderer: Cannot open output file " + filename);
 
-    outFile << "P3\n" << _width << ' ' << _height << "\n255\n";
+    outFile << "P6\n" << _width << ' ' << _height << "\n255\n";
 
     double ratio = static_cast<double>(_width) / _height;
+
+    std::vector<Math::Vector3D<double>> rowBuffer(_width);
 
     for (int y = _height - 1; y >= 0; y--) {
         for (int x = 0; x < _width; x++) {
             Math::Vector3D<double> pixelColor(0.0, 0.0, 0.0);
-
             for (int s = 0; s < _samples; s++) {
                 double u = (x + MaterialUtils::randomDouble()) / (_width - 1);
                 double v = (y + MaterialUtils::randomDouble()) / (_height - 1);
                 Ray r = camera.ray(u, v, ratio);
                 pixelColor += computeRayColor(r, _maxDepth, primitives, lights);
             }
-            pixelColor = pixelColor / static_cast<double>(_samples);
-            writeColor(outFile, pixelColor);
+            rowBuffer[x] = pixelColor / static_cast<double>(_samples);
         }
+
+        for (const auto& pixel : rowBuffer)
+            writeColor(outFile, pixel);
     }
 
     outFile.close();

@@ -93,8 +93,12 @@ namespace RayTracer {
         /// @param color The color to write
         inline void writeColor(std::ostream& out, const Math::Vector3D<double>& color) const
         {
-            out << static_cast<int>(color._x) << ' ' << static_cast<int>(color._y) << ' '
-                << static_cast<int>(color._z) << '\n';
+            unsigned char r = static_cast<unsigned char>(std::clamp(color._x, 0.0, 255.0));
+            unsigned char g = static_cast<unsigned char>(std::clamp(color._y, 0.0, 255.0));
+            unsigned char b = static_cast<unsigned char>(std::clamp(color._z, 0.0, 255.0));
+            out.write(reinterpret_cast<const char*>(&r), 1);
+            out.write(reinterpret_cast<const char*>(&g), 1);
+            out.write(reinterpret_cast<const char*>(&b), 1);
         }
     };
 }  // namespace RayTracer
