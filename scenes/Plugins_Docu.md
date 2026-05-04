@@ -186,10 +186,10 @@ Represents a 3D box (rectangular cuboid), defined by a `position`, a `rotation` 
 **Additional parameters:**
 
 - `dimension` *(blocks)*: Size of the box along each axis `{x, y, z}`. **(Required)**
-    - `x`: width
-    - `y`: height
-    - `z`: depth
-    - All values must be **strictly positive**
+  - `x`: width
+  - `y`: height
+  - `z`: depth
+  - All values must be **strictly positive**
 
 **Example:**
 
@@ -255,9 +255,9 @@ materials = {
 };
 ```
 
-### 4.3. Transparent (`transparent`)
+### 4.3. Refractive (`refractive`)
 
-Represents a transparent material that allows light to pass through, simulating glass or water.
+Represents a refractive material that allows light to pass through, simulating glass or water.
 
 **Parameters:**
 
@@ -270,9 +270,9 @@ Represents a transparent material that allows light to pass through, simulating 
 
 ```cfg
 materials = {
-    transparent = (
+    refractive = (
         {
-            name = "MyTransparentMaterial";
+            name = "MyRefractiveMaterial";
             color = { r = 255.0; g = 255.0; b = 255.0; }; # Optional
             transparency = 0.5;
             refractiveIndex = 1.5;
