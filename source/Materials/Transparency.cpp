@@ -25,18 +25,7 @@ void RayTracer::Transparency::init(const libconfig::Setting& setting)
     if (!setting.lookupValue("name", _name))
         throw RayTracerException("Lambertian material must have a name");
 
-    if (setting.exists("color")) {
-        const libconfig::Setting& c = setting["color"];
-        double r = 255.0;
-        double g = 255.0;
-        double b = 255.0;
-        if (!ConfigUtils::getAsDouble(c, "r", r)) r = 0.0;
-        if (!ConfigUtils::getAsDouble(c, "g", g)) g = 0.0;
-        if (!ConfigUtils::getAsDouble(c, "b", b)) b = 0.0;
-        _color._x = static_cast<int>(r);
-        _color._y = static_cast<int>(g);
-        _color._z = static_cast<int>(b);
-    }
+    ConfigUtils::parseColor(setting, "color", _color);
 
     if (!ConfigUtils::getAsDouble(setting, "transparency", _transparency))
         throw RayTracerException("Transparent material must have a transparency parameter");
