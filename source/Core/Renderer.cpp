@@ -15,7 +15,6 @@
 #include "ConfigUtils.hpp"
 #include "MaterialUtils.hpp"
 #include "RayTracerException.hpp"
-#include "MaterialUtils.hpp"
 
 void RayTracer::Renderer::init(const libconfig::Setting& setting)
 {
@@ -61,8 +60,7 @@ void RayTracer::Renderer::render(const Camera& camera,
             rowBuffer[x] = pixelColor / static_cast<double>(_samples);
         }
 
-        for (const auto& pixel : rowBuffer)
-            writeColor(outFile, pixel);
+        for (const auto& pixel : rowBuffer) writeColor(outFile, pixel);
     }
 
     outFile.close();

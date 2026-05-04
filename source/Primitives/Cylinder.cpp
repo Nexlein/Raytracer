@@ -11,8 +11,8 @@
 #include "Cylinder.hpp"
 
 #include <cmath>
-#include <numbers>
 #include <memory>
+#include <numbers>
 
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"

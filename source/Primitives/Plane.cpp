@@ -39,7 +39,7 @@ bool RayTracer::Plane::hits(const Ray& ray, HitRecord& rec) const
 
     Math::Vector3D<double> edgeDirectionY = rec.normal.cross(edgeDirectionX).normalized();
     edgeDirectionX = rec.normal.cross(edgeDirectionY).normalized();
-    
+
     rec.u = rec.p.dot(edgeDirectionX) * 0.1;
     rec.v = rec.p.dot(edgeDirectionY) * 0.1;
 
