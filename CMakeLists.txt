@@ -83,10 +83,45 @@ else()
     target_include_directories(raytracerGlobal INTERFACE ${libconfig_SOURCE_DIR}/lib)
 endif()
 
+# === DEPENDENCIES: SFML ===
+if(PKG_CONFIG_FOUND)
+    pkg_check_modules(SFML QUIET IMPORTED_TARGET sfml-graphics)
+endif()
+
+if(NOT SFML_FOUND)
+    message(STATUS "SFML not found, fetching from GitHub...")
+
+    set(SFML_BUILD_DOC OFF CACHE BOOL "" FORCE)
+    set(SFML_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(SFML_BUILD_TEST_SUITE OFF CACHE BOOL "" FORCE)
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+    set(SFML_BUILD_AUDIO OFF CACHE BOOL "" FORCE)
+    set(SFML_BUILD_NETWORK OFF CACHE BOOL "" FORCE)
+
+    fetchcontent_declare(SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 2.6.1
+        GIT_SHALLOW TRUE
+    )
+
+    fetchcontent_makeavailable(SFML)
+else()
+    message(STATUS "SFML found via PkgConfig: ${SFML_VERSION}")
+endif()
+
+# Add SFML to the global interface target
+if(TARGET PkgConfig::SFML)
+    target_link_libraries(raytracerGlobal INTERFACE PkgConfig::SFML)
+else()
+    # SFML target from FetchContent
+    target_link_libraries(raytracerGlobal INTERFACE sfml-graphics)
+endif()
+
 # === PROJECT CORE ===
 file(GLOB_RECURSE CORE_FILES CONFIGURE_DEPENDS "source/*.cpp")
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Primitives/.*\\.cpp$")
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Light/.*\\.cpp$")
+list(FILTER CORE_FILES EXCLUDE REGEX "source/Materials/.*\\.cpp$")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
@@ -119,3 +154,4 @@ add_raytracer_plugin(raytracer_obj source/Primitives/Obj.cpp)
 add_raytracer_plugin(raytracer_ambientlight source/Light/AmbientLight.cpp)
 add_raytracer_plugin(raytracer_directionallight source/Light/DirectionalLight.cpp)
 add_raytracer_plugin(raytracer_lambertian source/Materials/Lambertian.cpp)
+add_raytracer_plugin(raytracer_texture source/Materials/Texture.cpp)
