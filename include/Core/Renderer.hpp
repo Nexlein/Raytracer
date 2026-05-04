@@ -61,6 +61,10 @@ namespace RayTracer {
         int _width;
         /// @brief Height of the output image
         int _height;
+        /// @brief Number of samples per pixel
+        int _samples{50};
+        /// @brief Maximum ray bounce depth
+        int _maxDepth{10};
         /// @brief Name of the background material
         std::string _backgroundMaterialName;
         /// @brief Background material of the scene

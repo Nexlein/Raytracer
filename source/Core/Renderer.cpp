@@ -13,8 +13,8 @@
 #include <fstream>
 
 #include "ConfigUtils.hpp"
-#include "RayTracerException.hpp"
 #include "MaterialUtils.hpp"
+#include "RayTracerException.hpp"
 
 void RayTracer::Renderer::init(const libconfig::Setting& setting)
 {
@@ -28,6 +28,9 @@ void RayTracer::Renderer::init(const libconfig::Setting& setting)
         _backgroundMaterialName = bgName;
     } else
         _backgroundMaterialName = "";
+
+    setting.lookupValue("samples", _samples);
+    setting.lookupValue("maxDepth", _maxDepth);
 }
 
 void RayTracer::Renderer::render(const Camera& camera,
@@ -46,15 +49,14 @@ void RayTracer::Renderer::render(const Camera& camera,
     for (int y = _height - 1; y >= 0; y--) {
         for (int x = 0; x < _width; x++) {
             Math::Vector3D<double> pixelColor(0.0, 0.0, 0.0);
-            int samples = 50; // ajuste selon perf
 
-            for (int s = 0; s < samples; s++) {
+            for (int s = 0; s < _samples; s++) {
                 double u = (x + MaterialUtils::randomDouble()) / (_width - 1);
                 double v = (y + MaterialUtils::randomDouble()) / (_height - 1);
                 Ray r = camera.ray(u, v, ratio);
-                pixelColor += computeRayColor(r, 10, primitives, lights);
+                pixelColor += computeRayColor(r, _maxDepth, primitives, lights);
             }
-            pixelColor = pixelColor / static_cast<double>(samples);
+            pixelColor = pixelColor / static_cast<double>(_samples);
             writeColor(outFile, pixelColor);
         }
     }
