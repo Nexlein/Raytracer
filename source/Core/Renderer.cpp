@@ -14,6 +14,7 @@
 
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
+#include "MaterialUtils.hpp"
 
 void RayTracer::Renderer::init(const libconfig::Setting& setting)
 {
@@ -44,11 +45,16 @@ void RayTracer::Renderer::render(const Camera& camera,
 
     for (int y = _height - 1; y >= 0; y--) {
         for (int x = 0; x < _width; x++) {
-            double u = static_cast<double>(x) / (_width - 1);
-            double v = static_cast<double>(y) / (_height - 1);
+            Math::Vector3D<double> pixelColor(0.0, 0.0, 0.0);
+            int samples = 50; // ajuste selon perf
 
-            Ray r = camera.ray(u, v, ratio);
-            Math::Vector3D<double> pixelColor = computeRayColor(r, 10, primitives, lights);
+            for (int s = 0; s < samples; s++) {
+                double u = (x + MaterialUtils::randomDouble()) / (_width - 1);
+                double v = (y + MaterialUtils::randomDouble()) / (_height - 1);
+                Ray r = camera.ray(u, v, ratio);
+                pixelColor += computeRayColor(r, 10, primitives, lights);
+            }
+            pixelColor = pixelColor / static_cast<double>(samples);
             writeColor(outFile, pixelColor);
         }
     }

@@ -7,6 +7,7 @@
 
 #include "Lambertian.hpp"
 
+#include "IPrimitive.hpp"
 #include "ConfigUtils.hpp"
 #include "MaterialUtils.hpp"
 #include "RayTracerException.hpp"

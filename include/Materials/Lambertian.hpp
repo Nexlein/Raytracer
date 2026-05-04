@@ -7,13 +7,11 @@
 
 #pragma once
 
-#include "IMaterial.hpp"
-#include "IPrimitive.hpp"
-#include "Ray.hpp"
+#include "AMaterial.hpp"
 #include "Vector3D.hpp"
 
 namespace RayTracer {
-    class Lambertian : public IMaterial {
+    class Lambertian : public AMaterial {
         public:
         Lambertian() = default;
 

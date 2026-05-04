@@ -87,6 +87,7 @@ endif()
 file(GLOB_RECURSE CORE_FILES CONFIGURE_DEPENDS "source/*.cpp")
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Primitives/.*\\.cpp$")
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Light/.*\\.cpp$")
+list(FILTER CORE_FILES EXCLUDE REGEX "source/Materials/.*\\.cpp$")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
@@ -119,3 +120,4 @@ add_raytracer_plugin(raytracer_obj source/Primitives/Obj.cpp)
 add_raytracer_plugin(raytracer_ambientlight source/Light/AmbientLight.cpp)
 add_raytracer_plugin(raytracer_directionallight source/Light/DirectionalLight.cpp)
 add_raytracer_plugin(raytracer_lambertian source/Materials/Lambertian.cpp)
+add_raytracer_plugin(raytracer_transparency source/Materials/Transparency.cpp)

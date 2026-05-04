@@ -126,9 +126,14 @@ namespace RayTracer {
                 if (closestRec.material) {
                     Ray scattered;
                     Math::Vector3D<double> attenuation;
-                    if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-                        // baseColor porte déjà la lumière directe, on l'utilise tel quel
-                        return baseColor * 255.0;
+                    if (closestRec.material->isTransparent()) {
+                        if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
+                            // auto transparentColor = computeRayColor(scattered, depth - 1, primitives, lights);
+                            // return transparentColor * t + baseColor * 255.0 * (1.0 - t);
+                            auto transparentColor = computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
+                            double t = closestRec.material->getTransparency();
+                            return transparentColor * t + baseColor * 255.0 * (1.0 - t);
+                        }
                     }
                 }
                 return baseColor * 255.0;

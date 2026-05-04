@@ -33,15 +33,19 @@ namespace RayTracer {
         virtual bool scatter(const Ray& rayIn, const HitRecord& rec,
                              Math::Vector3D<double>& attenuation, Ray& scattered) const = 0;
 
+        virtual bool isTransparent() const = 0;
+
         /// @brief returns the name of the material
         /// @return The name of the material
-        [[nodiscard]] inline std::string getName() const { return _name; }
+        [[nodiscard]] virtual inline std::string getName() const = 0;
 
         /// @brief returns the color of the material
         /// @return the color of the material
-        [[nodiscard]] inline Math::Vector3D<double> getColor() const { return _color; }
+        [[nodiscard]] virtual inline Math::Vector3D<double> getColor() const = 0;
 
-        inline void setColor(const Math::Vector3D<double>& color) { _color = color; }
+        virtual void setColor(const Math::Vector3D<double>& color) = 0;
+
+        virtual double getTransparency() const = 0;
 
         protected:
         /// @brief Name of the material
