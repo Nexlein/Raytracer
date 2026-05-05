@@ -28,6 +28,12 @@ namespace RayTracer {
 
         void setColor(const Math::Vector3D<double>& color) override { _color = color; }
 
-        double getRefractive() const override { return 0.0; }
+        virtual bool isRefractive() const { return false; }
+
+        virtual double getRefractive() const { return 0.0; };
+
+        virtual bool isReflective() const { return false; };
+
+        virtual double getReflective() const { return 0.0; };
     };
 }  // namespace RayTracer

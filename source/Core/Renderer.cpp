@@ -120,7 +120,12 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
         if (closestRec.material) {
             Ray scattered;
             Math::Vector3D<double> attenuation;
-            if (closestRec.material->isRefractive()) {
+            if (closestRec.material->isReflective()) {
+                if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
+                    auto reflectedColor = computeRayColor(scattered, depth - 1, primitives, lights);
+                    return reflectedColor * attenuation;
+                }
+            } else if (closestRec.material->isRefractive()) {
                 if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
                     auto refractiveColor =
                         computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;

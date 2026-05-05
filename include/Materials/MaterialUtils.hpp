@@ -53,5 +53,18 @@ namespace RayTracer {
             double r = std::sqrt(1.0 - z * z);
             return {r * std::cos(a), r * std::sin(a), z};
         }
+
+        static Math::Vector3D<double> randomInUnitSphere()
+        {
+            while (true) {
+                Math::Vector3D<double> p(
+                    randomDouble() * 2.0 - 1.0,
+                    randomDouble() * 2.0 - 1.0,
+                    randomDouble() * 2.0 - 1.0
+                );
+                if (p.dot(p) < 1.0)
+                    return p;
+            }
+        }
     };
 }  // namespace RayTracer
