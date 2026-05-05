@@ -179,7 +179,7 @@ objs = (
 );
 ```
 
-### 1.6. Box (`boxes`)
+### 3.6. Box (`boxes`)
 
 Represents a 3D box (rectangular cuboid), defined by a `position`, a `rotation` and it's size along the three axes.
 
@@ -201,6 +201,47 @@ boxes = (
         rotation = { x =  2.0; y =  0.0; z = 0.0; }; # Optional
         translation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
         material = "red"; # Optional
+    }
+);
+```
+
+### 3.7. Cone (`cones`)
+
+Represents a cone (infinite or limited). By default, the cone axis points upwards (Y axis: `0, 1, 0`). Use `rotation` to tilt it.
+
+**Additional parameters:**
+
+- `r` *(float)*: Cone radius. Must be positive. **(Required)**
+- `h` *(float, optional)*: Cone height *(for a limited cone)*.
+- `d` *(float, optional)*: Distance along the cone axis from the apex, at which the cone reaches the specified radius `r` *(for an infinite cone)*.
+- You must call either `h` or `d`. **(Required)**
+
+**Example:**
+
+Infinite:
+```cfg
+cones = (
+    {
+        position = { x = 0.0; y = -2.0; z = -5.0; };
+        r = 1.0;
+        d = 5.0; # Replace by `h` for limited
+        rotation = { x = 0.0; y = 0.0; z = 45.0; }; # Optional
+        translation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+        material = "column_material"; # Optional
+    }
+);
+```
+
+Limited:
+```cfg
+cones = (
+    {
+        position = { x = 0.0; y = -2.0; z = -5.0; };
+        r = 1.0;
+        h = 3.0; # Replace by `d` for infinite
+        rotation = { x = 0.0; y = 0.0; z = 45.0; }; # Optional
+        translation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+        material = "column_material"; # Optional
     }
 );
 ```
