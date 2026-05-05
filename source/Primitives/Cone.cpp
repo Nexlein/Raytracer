@@ -31,6 +31,17 @@ namespace RayTracer {
         Vector3D axis = _axis.normalized();
         Vector3D originToApex = ray._origin - _apex;
 
+<<<<<<< HEAD
+=======
+        // if (_height.has_value()) {
+        //     originToApex = ray._origin - (_apex + axis * _height.value());
+        // } else if (_distance.has_value()) {
+        //     originToApex = ray._origin - (_apex + axis * _distance.value());
+        // } else {
+        //     throw RayTracerException("Cone: Missing parameter: distance or height.");
+        // }
+
+>>>>>>> 98617aa592214463bf581f5ad539d535184900a6
         double dv = ray._direction.dot(axis);
         double ov = originToApex.dot(axis);
 
