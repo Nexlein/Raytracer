@@ -25,6 +25,6 @@ namespace RayTracer {
         void init(const libconfig::Setting& setting) override;
 
         bool scatter(const Ray& rayIn, const HitRecord& rec, Math::Vector3D<double>& attenuation,
-                     Ray& scattered) const;
+                     Ray& scattered) const override;
     };
 }  // namespace RayTracer

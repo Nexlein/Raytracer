@@ -90,7 +90,7 @@ double RayTracer::BVHNode::hitBounds(const Ray& ray) const
     double t1y = (_boundsMax._y - ray._origin._y) * invDy;
     if (invDy < 0.0) std::swap(t0y, t1y);
 
-    if (t0x > t1y || t0y > t1x) return std::numeric_limits<double>::infinity();
+    if (t0x > t1y || t0y > t1x) return std::numeric_limits<double>::max();
     if (t0y > t0x) t0x = t0y;
     if (t1y < t1x) t1x = t1y;
 
@@ -98,23 +98,22 @@ double RayTracer::BVHNode::hitBounds(const Ray& ray) const
     double t1z = (_boundsMax._z - ray._origin._z) * invDz;
     if (invDz < 0.0) std::swap(t0z, t1z);
 
-    if (t0x > t1z || t0z > t1x) return std::numeric_limits<double>::infinity();
+    if (t0x > t1z || t0z > t1x) return std::numeric_limits<double>::max();
     if (t0z > t0x) t0x = t0z;
     if (t1z < t1x) t1x = t1z;
 
-    if (t1x < 0.0) return std::numeric_limits<double>::infinity();
+    if (t1x < 0.0) return std::numeric_limits<double>::max();
     return t0x > 0.0 ? t0x : t1x;
 }
 
 void RayTracer::Obj::updateNodeBounds(int nodeIdx)
 {
     BVHNode& node = _bvhNodes[nodeIdx];
-    node._boundsMin = {std::numeric_limits<double>::infinity(),
-                       std::numeric_limits<double>::infinity(),
-                       std::numeric_limits<double>::infinity()};
-    node._boundsMax = {-std::numeric_limits<double>::infinity(),
-                       -std::numeric_limits<double>::infinity(),
-                       -std::numeric_limits<double>::infinity()};
+    node._boundsMin = {std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),
+                       std::numeric_limits<double>::max()};
+    node._boundsMax = {std::numeric_limits<double>::lowest(),
+                       std::numeric_limits<double>::lowest(),
+                       std::numeric_limits<double>::lowest()};
 
     for (int i = 0; i < node._triangleCount; ++i) {
         const ObjTriangle& leafTri = _triangles[node._firstTriangleIdx + i];
@@ -247,7 +246,7 @@ bool RayTracer::Obj::hits(const Ray& ray, HitRecord& hitRecord) const
 {
     if (_triangles.empty() || _bvhNodes.empty()) return false;
 
-    double closestSoFar = std::numeric_limits<double>::infinity();
+    double closestSoFar = std::numeric_limits<double>::max();
 
     if (_bvhNodes[_rootNodeIdx].hitBounds(ray) >= closestSoFar) {
         return false;

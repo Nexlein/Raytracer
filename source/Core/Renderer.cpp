@@ -90,7 +90,7 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
     bool hitAnything = false;
     HitRecord tempRec;
     HitRecord closestRec;
-    double closest = std::numeric_limits<double>::infinity();
+    double closest = std::numeric_limits<double>::max();
     const IPrimitive* hitPrimitive = nullptr;
 
     for (const auto& primitive : primitives) {

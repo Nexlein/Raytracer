@@ -106,6 +106,10 @@ if(NOT SFML_FOUND)
     )
 
     fetchcontent_makeavailable(SFML)
+
+    if(APPLE AND TARGET sfml-window)
+        target_compile_options(sfml-window PRIVATE -Wno-incompatible-pointer-types)
+    endif()
 else()
     message(STATUS "SFML found via PkgConfig: ${SFML_VERSION}")
 endif()

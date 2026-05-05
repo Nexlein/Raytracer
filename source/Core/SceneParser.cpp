@@ -65,7 +65,7 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
                 for (int j = 0; j < mat.getLength(); ++j) {
                     std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
                     materials[std::string(mat[j]["name"])] =
-                        std::move(PluginFactory<IMaterial>::create(pluginPath, mat[j]));
+                        PluginFactory<IMaterial>::create(pluginPath, mat[j]);
                 }
             }
         }
