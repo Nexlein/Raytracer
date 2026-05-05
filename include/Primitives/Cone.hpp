@@ -38,6 +38,7 @@ namespace RayTracer {
         std::optional<double> _distance;
         /// @brief Orientation of the cone
         Vector3D _axis;
+        /// @brief Slope factor of the cone used for ray-cone intersection.
         double _k;
 
         /// @brief Determines if a ray intersects the cone and fills the hit record with
