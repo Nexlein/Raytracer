@@ -16,24 +16,6 @@
 #include "RayTracerException.hpp"
 #include "Vector3D.hpp"
 
-void RayTracer::SceneParser::parseAmbientLight(std::vector<std::unique_ptr<ILight>>& lights,
-                                               const libconfig::Setting& lightSetting)
-{
-    lights.push_back(
-        PluginFactory<ILight>::create("./plugins/raytracer_ambientlight.so", lightSetting));
-}
-
-void RayTracer::SceneParser::parseDirectionalLights(std::vector<std::unique_ptr<ILight>>& lights,
-                                                    const libconfig::Setting& lightSetting)
-{
-    const libconfig::Setting& directionalLights = lightSetting["directional"];
-
-    for (int i = 0; i < directionalLights.getLength(); i++) {
-        lights.push_back(PluginFactory<ILight>::create("./plugins/raytracer_directionallight.so",
-                                                       directionalLights[i]));
-    }
-}
-
 void RayTracer::SceneParser::setMaterialstoPrimitives(
     std::vector<std::unique_ptr<IPrimitive>>& primitives,
     const std::map<std::string, std::shared_ptr<IMaterial>>& materials)
@@ -95,8 +77,6 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
                 const libconfig::Setting& listSetting = primitivesSetting[i];
                 std::string typeName = listSetting.getName();
 
-                if (!typeName.empty() && typeName.back() == 's') typeName.pop_back();
-
                 for (int j = 0; j < listSetting.getLength(); ++j) {
                     std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
                     primitives.push_back(
@@ -106,10 +86,23 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
         }
 
         if (root.exists("lights")) {
-            const libconfig::Setting& lightSetting = root["lights"];
+            const libconfig::Setting& lightsSetting = root["lights"];
 
-            if (lightSetting.exists("ambient")) parseAmbientLight(lights, lightSetting);
-            if (lightSetting.exists("directional")) parseDirectionalLights(lights, lightSetting);
+            for (int i = 0; i < lightsSetting.getLength(); ++i) {
+                const libconfig::Setting& lightSetting = lightsSetting[i];
+                std::string typeName = lightSetting.getName();
+
+                if (lightSetting.isList() || lightSetting.isArray() || lightSetting.isGroup()) {
+                    for (int j = 0; j < lightSetting.getLength(); ++j) {
+                        std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
+                        lights.push_back(
+                            PluginFactory<ILight>::create(pluginPath, lightSetting[j]));
+                    }
+                } else {
+                    std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
+                    lights.push_back(PluginFactory<ILight>::create(pluginPath, lightsSetting));
+                }
+            }
         }
         setMaterialstoPrimitives(primitives, materials);
 
