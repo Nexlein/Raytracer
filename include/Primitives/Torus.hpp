@@ -33,6 +33,9 @@ namespace RayTracer {
         /// @brief Position of the torus in 3D space
         Point3D _position;
 
+        /// @brief Rotation of the torus in 3D space
+        Math::Vector3D<double> _rotation;
+
         /// @brief Outer (length between center and center tube) radius of the torus
         double _outer_radius;
 

@@ -121,8 +121,17 @@ bool RayTracer::Torus::hits(const Ray& ray, HitRecord& rec) const
 {
     rec.primitive = this;
     rec.material = _material.get();
+
     Vector3D orig = ray._origin - _position;
     Vector3D dir  = ray._direction;
+
+    // Rotation inverse
+    orig.rotateX(-_rotation._x);
+    orig.rotateY(-_rotation._y);
+    orig.rotateZ(-_rotation._z);
+    dir.rotateX(-_rotation._x);
+    dir.rotateY(-_rotation._y);
+    dir.rotateZ(-_rotation._z);
 
     double ox = orig._x, oy = orig._y, oz = orig._z;
     double dx = dir._x,  dy = dir._y,  dz = dir._z;
@@ -159,24 +168,25 @@ bool RayTracer::Torus::hits(const Ray& ray, HitRecord& rec) const
     rec.distance = closest;
     rec.p        = ray._origin + ray._direction * closest;
 
-    Vector3D p       = rec.p - _position;
+    Vector3D p = rec.p - _position;
+    p.rotateX(-_rotation._x);
+    p.rotateY(-_rotation._y);
+    p.rotateZ(-_rotation._z);
 
     double xz_dist = std::sqrt(p._x * p._x + p._z * p._z);
-    if (xz_dist < 1e-6) return false;  // évite div par zéro
+    if (xz_dist < 1e-6) return false;
+
     rec.normal = Vector3D(
         p._x * (1.0 - R / xz_dist),
         p._y,
         p._z * (1.0 - R / xz_dist)
     ).normalized();
 
-    // DEBUG
-    static int count = 0;
-    if (count++ < 20) {
-        printf("p.y: %f | normal.y: %f | dot.light: %f\n",
-            p._y,
-            rec.normal._y,
-            rec.normal.dot(Math::Vector3D<double>(0, 2, -1).normalized()));
-    }
+    // Rotation normale dans le sens normal
+    rec.normal.rotateX(_rotation._x);
+    rec.normal.rotateY(_rotation._y);
+    rec.normal.rotateZ(_rotation._z);
+    rec.normal = rec.normal.normalized();
 
     return true;
 }
@@ -185,11 +195,17 @@ void RayTracer::Torus::init(const libconfig::Setting& setting)
 {
     ConfigUtils::parsePoint3D(setting, "position", _position, true);
 
+    ConfigUtils::parseVector3D(setting, "rotation", _rotation, false);
+
+    Math::Vector3D<double> translation;
+    ConfigUtils::parseVector3D(setting, "translation", translation, false);
+    _position = _position + translation;
+
     if (!ConfigUtils::getAsDouble(setting, "outer_radius", _outer_radius))
-        _outer_radius = 1.5;
+        throw RayTracer::RayTracerException("Torus: Missing required parameter 'outer_radius'.");
 
     if (!ConfigUtils::getAsDouble(setting, "inner_radius", _inner_radius))
-        _inner_radius = 0.9;
+        throw RayTracer::RayTracerException("Torus: Missing required parameter 'outer_radius'.");
 
     if (setting.exists("material")) {
         std::string name = setting["material"];
