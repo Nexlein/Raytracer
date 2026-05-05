@@ -46,9 +46,11 @@ void RayTracer::Renderer::render(const Camera& camera,
 
     double ratio = static_cast<double>(_width) / _height;
 
-    std::vector<Math::Vector3D<double>> rowBuffer(_width);
+    std::vector<uint8_t> buffer;
+    buffer.reserve(_width * 3);
 
     for (int y = _height - 1; y >= 0; y--) {
+        buffer.clear();
         for (int x = 0; x < _width; x++) {
             Math::Vector3D<double> pixelColor(0.0, 0.0, 0.0);
             for (int s = 0; s < _samples; s++) {
@@ -57,10 +59,12 @@ void RayTracer::Renderer::render(const Camera& camera,
                 Ray r = camera.ray(u, v, ratio);
                 pixelColor += computeRayColor(r, _maxDepth, primitives, lights);
             }
-            rowBuffer[x] = pixelColor / static_cast<double>(_samples);
+            pixelColor = pixelColor / static_cast<double>(_samples);
+            buffer.push_back(static_cast<uint8_t>(std::clamp(pixelColor._x, 0.0, 255.0)));
+            buffer.push_back(static_cast<uint8_t>(std::clamp(pixelColor._y, 0.0, 255.0)));
+            buffer.push_back(static_cast<uint8_t>(std::clamp(pixelColor._z, 0.0, 255.0)));
         }
-
-        for (const auto& pixel : rowBuffer) writeColor(outFile, pixel);
+        outFile.write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
     }
 
     outFile.close();
