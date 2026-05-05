@@ -257,6 +257,7 @@ bool RayTracer::Obj::hits(const Ray& ray, HitRecord& hitRecord) const
     if (hitAnything) {
         hitRecord.normal = hitRecord.normal.normalized();
         hitRecord.material = _material.get();
+        hitRecord.primitive = this;
     }
 
     return hitAnything;
