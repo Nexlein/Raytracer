@@ -77,10 +77,10 @@ bool RayTracer::Renderer::isInShadow(
     Ray shadowRay(hit.p + hit.normal * 0.001, lightDir);
     HitRecord tempRec;
     for (const auto& primitive : primitives) {
-        if (primitive.get() == hit.primitive) continue; // skip self
-        if (primitive->hits(shadowRay, tempRec) 
-            && std::isfinite(tempRec.distance)
-            && tempRec.distance > 0.001) return true;
+        if (primitive.get() == hit.primitive) continue;  // skip self
+        if (primitive->hits(shadowRay, tempRec) && std::isfinite(tempRec.distance) &&
+            tempRec.distance > 0.001)
+            return true;
     }
     return false;
 }

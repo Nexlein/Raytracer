@@ -19,14 +19,12 @@ int RayTracer::Torus::solveQuadratic(const QuadraticCoeffs& coeffs, double roots
     double b = coeffs.b;
     double c = coeffs.c;
     if (std::abs(a) < 1e-9) {
-        if (std::abs(b) < 1e-9)
-            return 0;
+        if (std::abs(b) < 1e-9) return 0;
         roots[0] = -c / b;
         return 1;
     }
     double disc = b * b - 4 * a * c;
-    if (disc < 0)
-        return 0;
+    if (disc < 0) return 0;
     if (std::abs(disc) < 1e-12) {
         roots[0] = -b / (2 * a);
         return 1;
@@ -37,14 +35,13 @@ int RayTracer::Torus::solveQuadratic(const QuadraticCoeffs& coeffs, double roots
     return 2;
 }
 
-int RayTracer::Torus::solveCubic(const CubicCoeffs& coeffs, double roots[3])  const
+int RayTracer::Torus::solveCubic(const CubicCoeffs& coeffs, double roots[3]) const
 {
     double a = coeffs.a;
     double b = coeffs.b;
     double c = coeffs.c;
     double d = coeffs.d;
-    if (std::abs(a) < 1e-9)
-        return solveQuadratic({b, c, d}, roots);
+    if (std::abs(a) < 1e-9) return solveQuadratic({b, c, d}, roots);
 
     double A = b / a;
     double B = c / a;
@@ -123,7 +120,7 @@ bool RayTracer::Torus::hits(const Ray& ray, HitRecord& rec) const
     rec.material = _material.get();
 
     Vector3D orig = ray._origin - _position;
-    Vector3D dir  = ray._direction;
+    Vector3D dir = ray._direction;
 
     // Rotation inverse
     orig.rotateX(-_rotation._x);
@@ -134,39 +131,33 @@ bool RayTracer::Torus::hits(const Ray& ray, HitRecord& rec) const
     dir.rotateZ(-_rotation._z);
 
     double ox = orig._x, oy = orig._y, oz = orig._z;
-    double dx = dir._x,  dy = dir._y,  dz = dir._z;
+    double dx = dir._x, dy = dir._y, dz = dir._z;
 
     double R = _outer_radius, r = _inner_radius;
 
-    double sum_d_sq = dx*dx + dy*dy + dz*dz;
-    double od       = ox*dx + oy*dy + oz*dz;
-    double K        = ox*ox + oy*oy + oz*oz - R*R - r*r;
+    double sum_d_sq = dx * dx + dy * dy + dz * dz;
+    double od = ox * dx + oy * dy + oz * dz;
+    double K = ox * ox + oy * oy + oz * oz - R * R - r * r;
 
-    QuarticCoeffs coeffs = {
-        sum_d_sq * sum_d_sq,
-        4.0 * od * sum_d_sq,
-        2.0 * sum_d_sq * K + 4.0 * od * od + 4.0 * R*R * dy*dy,
-        4.0 * od * K + 8.0 * R*R * oy * dy,
-        K * K - 4.0 * R*R * (r*r - oy*oy)
-    };
+    QuarticCoeffs coeffs = {sum_d_sq * sum_d_sq, 4.0 * od * sum_d_sq,
+                            2.0 * sum_d_sq * K + 4.0 * od * od + 4.0 * R * R * dy * dy,
+                            4.0 * od * K + 8.0 * R * R * oy * dy,
+                            K * K - 4.0 * R * R * (r * r - oy * oy)};
 
     double roots[4];
     int num_roots = solveQuartic(coeffs, roots);
 
-    if (num_roots == 0)
-        return false;
+    if (num_roots == 0) return false;
 
     double closest = std::numeric_limits<double>::infinity();
     for (int i = 0; i < num_roots; i++) {
-        if (roots[i] > 0.001 && roots[i] < closest)
-            closest = roots[i];
+        if (roots[i] > 0.001 && roots[i] < closest) closest = roots[i];
     }
 
-    if (closest == std::numeric_limits<double>::infinity())
-        return false;
+    if (closest == std::numeric_limits<double>::infinity()) return false;
 
     rec.distance = closest;
-    rec.p        = ray._origin + ray._direction * closest;
+    rec.p = ray._origin + ray._direction * closest;
 
     Vector3D p = rec.p - _position;
     p.rotateX(-_rotation._x);
@@ -176,11 +167,8 @@ bool RayTracer::Torus::hits(const Ray& ray, HitRecord& rec) const
     double xz_dist = std::sqrt(p._x * p._x + p._z * p._z);
     if (xz_dist < 1e-6) return false;
 
-    rec.normal = Vector3D(
-        p._x * (1.0 - R / xz_dist),
-        p._y,
-        p._z * (1.0 - R / xz_dist)
-    ).normalized();
+    rec.normal =
+        Vector3D(p._x * (1.0 - R / xz_dist), p._y, p._z * (1.0 - R / xz_dist)).normalized();
 
     // Rotation normale dans le sens normal
     rec.normal.rotateX(_rotation._x);

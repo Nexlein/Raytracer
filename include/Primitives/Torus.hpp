@@ -15,9 +15,15 @@
 #include "IPrimitive.hpp"
 #include "Point3D.hpp"
 
-struct QuadraticCoeffs { double a, b, c; };
-struct CubicCoeffs     { double a, b, c, d; };
-struct QuarticCoeffs   { double a, b, c, d, e; };
+struct QuadraticCoeffs {
+    double a, b, c;
+};
+struct CubicCoeffs {
+    double a, b, c, d;
+};
+struct QuarticCoeffs {
+    double a, b, c, d, e;
+};
 
 /// @brief Namespace for the RayTracer project
 namespace RayTracer {
