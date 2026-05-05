@@ -226,7 +226,7 @@ Represents a classic matte (diffuse) material. It scatters light equally in all 
 
 ```cfg
 materials = {
-    lambertian = (
+    lambertians = (
         { name = "my_red_material"; color = { r = 255.0; g = 0.0; b = 0.0; }; },
         { name = "floor_material";  color = { r = 100.0; g = 100.0; b = 100.0; }; }
     );
@@ -246,7 +246,7 @@ Represents an image-based material mapped onto a primitive using UV coordinates.
 
 ```cfg
 materials = {
-    texture = (
+    textures = (
         {
             name = "MyTextureName";
             filepath = "texture/MyTexture.jpg";
@@ -270,7 +270,7 @@ Represents a refractive material that allows light to pass through, simulating g
 
 ```cfg
 materials = {
-    refractive = (
+    refractives = (
         {
             name = "MyRefractiveMaterial";
             color = { r = 255.0; g = 255.0; b = 255.0; }; # Optional
@@ -319,7 +319,7 @@ Directional light.
 
 ```cfg
 lights = {
-    directional = (
+    directionals = (
         {
             intensity = 0.8;
             direction = { x = -1.0; y = -1.0; z = -1.0; };

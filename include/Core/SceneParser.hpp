@@ -47,20 +47,6 @@ namespace RayTracer {
         SceneData parse(const std::string& filePath);
 
         private:
-        /// @brief parses an ambient light definition from the configuration file and adds it to the
-        /// list of lights
-        /// @param lights list of lights to which the parsed ambient light will be added
-        /// @param lightSetting libconfig setting containing the ambient light definition
-        void parseAmbientLight(std::vector<std::unique_ptr<ILight>>& lights,
-                               const libconfig::Setting& lightSetting);
-
-        /// @brief parses a list of directional lights from the configuration file and adds them to
-        /// the list of lights
-        /// @param lights list of lights to which the parsed directional light will be added
-        /// @param lightSetting libconfig setting containing the directional light definition
-        void parseDirectionalLights(std::vector<std::unique_ptr<ILight>>& lights,
-                                    const libconfig::Setting& lightSetting);
-
         void setMaterialstoPrimitives(
             std::vector<std::unique_ptr<IPrimitive>>& primitives,
             const std::map<std::string, std::shared_ptr<IMaterial>>& materials);
