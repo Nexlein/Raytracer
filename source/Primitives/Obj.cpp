@@ -10,6 +10,7 @@
 
 #include "Obj.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <limits>
@@ -69,25 +70,196 @@ bool RayTracer::ObjTriangle::hits(const Ray& ray, HitRecord& rec) const
     return true;
 }
 
-bool RayTracer::Obj::hits(const Ray& ray, HitRecord& hitRecord) const
+Math::Point3D<double> RayTracer::ObjTriangle::getCentroid() const
 {
-    bool hitAnything = false;
-    double closestSoFar = std::numeric_limits<double>::infinity();
-    HitRecord tempRec;
+    return {(_v0._x + _v1._x + _v2._x) / 3.0, (_v0._y + _v1._y + _v2._y) / 3.0,
+            (_v0._z + _v1._z + _v2._z) / 3.0};
+}
 
-    for (const auto& triangle : _triangles) {
-        if (triangle.hits(ray, tempRec)) {
-            if (tempRec.distance < closestSoFar) {
-                closestSoFar = tempRec.distance;
-                hitRecord = tempRec;
-                hitAnything = true;
-            }
-        }
+double RayTracer::BVHNode::hitBounds(const Ray& ray) const
+{
+    double invDx = 1.0 / ray._direction._x;
+    double invDy = 1.0 / ray._direction._y;
+    double invDz = 1.0 / ray._direction._z;
+
+    double t0x = (_boundsMin._x - ray._origin._x) * invDx;
+    double t1x = (_boundsMax._x - ray._origin._x) * invDx;
+    if (invDx < 0.0) std::swap(t0x, t1x);
+
+    double t0y = (_boundsMin._y - ray._origin._y) * invDy;
+    double t1y = (_boundsMax._y - ray._origin._y) * invDy;
+    if (invDy < 0.0) std::swap(t0y, t1y);
+
+    if (t0x > t1y || t0y > t1x) return std::numeric_limits<double>::infinity();
+    if (t0y > t0x) t0x = t0y;
+    if (t1y < t1x) t1x = t1y;
+
+    double t0z = (_boundsMin._z - ray._origin._z) * invDz;
+    double t1z = (_boundsMax._z - ray._origin._z) * invDz;
+    if (invDz < 0.0) std::swap(t0z, t1z);
+
+    if (t0x > t1z || t0z > t1x) return std::numeric_limits<double>::infinity();
+    if (t0z > t0x) t0x = t0z;
+    if (t1z < t1x) t1x = t1z;
+
+    if (t1x < 0.0) return std::numeric_limits<double>::infinity();
+    return t0x > 0.0 ? t0x : t1x;
+}
+
+void RayTracer::Obj::updateNodeBounds(int nodeIdx)
+{
+    BVHNode& node = _bvhNodes[nodeIdx];
+    node._boundsMin = {std::numeric_limits<double>::infinity(),
+                       std::numeric_limits<double>::infinity(),
+                       std::numeric_limits<double>::infinity()};
+    node._boundsMax = {-std::numeric_limits<double>::infinity(),
+                       -std::numeric_limits<double>::infinity(),
+                       -std::numeric_limits<double>::infinity()};
+
+    for (int i = 0; i < node._triangleCount; ++i) {
+        const ObjTriangle& leafTri = _triangles[node._firstTriangleIdx + i];
+
+        node._boundsMin._x =
+            std::min({node._boundsMin._x, leafTri._v0._x, leafTri._v1._x, leafTri._v2._x});
+        node._boundsMin._y =
+            std::min({node._boundsMin._y, leafTri._v0._y, leafTri._v1._y, leafTri._v2._y});
+        node._boundsMin._z =
+            std::min({node._boundsMin._z, leafTri._v0._z, leafTri._v1._z, leafTri._v2._z});
+
+        node._boundsMax._x =
+            std::max({node._boundsMax._x, leafTri._v0._x, leafTri._v1._x, leafTri._v2._x});
+        node._boundsMax._y =
+            std::max({node._boundsMax._y, leafTri._v0._y, leafTri._v1._y, leafTri._v2._y});
+        node._boundsMax._z =
+            std::max({node._boundsMax._z, leafTri._v0._z, leafTri._v1._z, leafTri._v2._z});
+    }
+}
+
+void RayTracer::Obj::subdivide(int nodeIdx)
+{
+    BVHNode& node = _bvhNodes[nodeIdx];
+    if (node._triangleCount <= 2) return;
+
+    Math::Vector3D<double> extent = {node._boundsMax._x - node._boundsMin._x,
+                                     node._boundsMax._y - node._boundsMin._y,
+                                     node._boundsMax._z - node._boundsMin._z};
+
+    int axis = 0;
+    if (extent._y > extent._x) axis = 1;
+    if (extent._z > extent._x && extent._z > extent._y) axis = 2;
+
+    double splitPos = 0;
+    if (axis == 0)
+        splitPos = node._boundsMin._x + extent._x * 0.5;
+    else if (axis == 1)
+        splitPos = node._boundsMin._y + extent._y * 0.5;
+    else
+        splitPos = node._boundsMin._z + extent._z * 0.5;
+
+    int i = node._firstTriangleIdx;
+    int j = i + node._triangleCount - 1;
+    while (i <= j) {
+        Math::Point3D<double> centroid = _triangles[i].getCentroid();
+        double centroidAxis = (axis == 0) ? centroid._x : ((axis == 1) ? centroid._y : centroid._z);
+
+        if (centroidAxis < splitPos)
+            i++;
+        else
+            std::swap(_triangles[i], _triangles[j--]);
     }
 
-    if (hitAnything) hitRecord.normal = hitRecord.normal.normalized();
+    int leftCount = i - node._firstTriangleIdx;
+    if (leftCount == 0 || leftCount == node._triangleCount) return;
 
-    hitRecord.material = _material.get();
+    int leftChildIdx = _nodesUsed++;
+    int rightChildIdx = _nodesUsed++;
+
+    _bvhNodes[leftChildIdx]._firstTriangleIdx = node._firstTriangleIdx;
+    _bvhNodes[leftChildIdx]._triangleCount = leftCount;
+    _bvhNodes[rightChildIdx]._firstTriangleIdx = i;
+    _bvhNodes[rightChildIdx]._triangleCount = node._triangleCount - leftCount;
+
+    node._leftNode = leftChildIdx;
+    node._rightNode = rightChildIdx;
+    node._triangleCount = 0;
+
+    updateNodeBounds(leftChildIdx);
+    updateNodeBounds(rightChildIdx);
+
+    subdivide(leftChildIdx);
+    subdivide(rightChildIdx);
+}
+
+void RayTracer::Obj::buildBVH()
+{
+    if (_triangles.empty()) return;
+
+    _bvhNodes.resize(_triangles.size() * 2 - 1);
+    _rootNodeIdx = 0;
+    _nodesUsed = 1;
+
+    _bvhNodes[_rootNodeIdx]._firstTriangleIdx = 0;
+    _bvhNodes[_rootNodeIdx]._triangleCount = _triangles.size();
+
+    updateNodeBounds(_rootNodeIdx);
+    subdivide(_rootNodeIdx);
+}
+
+bool RayTracer::Obj::hitBVHNode(int nodeIdx, const Ray& ray, HitRecord& hitRecord,
+                                double& closestSoFar) const
+{
+    const BVHNode& node = _bvhNodes[nodeIdx];
+
+    if (node.isLeaf()) {
+        bool hitAnything = false;
+        HitRecord tempRec;
+        for (int i = 0; i < node._triangleCount; ++i) {
+            if (_triangles[node._firstTriangleIdx + i].hits(ray, tempRec)) {
+                if (tempRec.distance < closestSoFar) {
+                    closestSoFar = tempRec.distance;
+                    hitRecord = tempRec;
+                    hitAnything = true;
+                }
+            }
+        }
+        return hitAnything;
+    }
+
+    double tLeft = _bvhNodes[node._leftNode].hitBounds(ray);
+    double tRight = _bvhNodes[node._rightNode].hitBounds(ray);
+
+    int first = node._leftNode;
+    int second = node._rightNode;
+
+    if (tLeft > tRight) {
+        std::swap(tLeft, tRight);
+        std::swap(first, second);
+    }
+
+    bool hitAnything = false;
+    if (tLeft < closestSoFar) hitAnything |= hitBVHNode(first, ray, hitRecord, closestSoFar);
+    if (tRight < closestSoFar) hitAnything |= hitBVHNode(second, ray, hitRecord, closestSoFar);
+
+    return hitAnything;
+}
+
+bool RayTracer::Obj::hits(const Ray& ray, HitRecord& hitRecord) const
+{
+    if (_triangles.empty() || _bvhNodes.empty()) return false;
+
+    double closestSoFar = std::numeric_limits<double>::infinity();
+
+    if (_bvhNodes[_rootNodeIdx].hitBounds(ray) >= closestSoFar) {
+        return false;
+    }
+
+    bool hitAnything = hitBVHNode(_rootNodeIdx, ray, hitRecord, closestSoFar);
+
+    if (hitAnything) {
+        hitRecord.normal = hitRecord.normal.normalized();
+        hitRecord.material = _material.get();
+    }
+
     return hitAnything;
 }
 
@@ -207,6 +379,8 @@ void RayTracer::Obj::loadObjFile(const std::string& filepath, double scale,
         else if (type == "f")
             parseFace(iss, vertices);
     }
+
+    buildBVH();
 }
 
 void RayTracer::Obj::init(const libconfig::Setting& setting)
