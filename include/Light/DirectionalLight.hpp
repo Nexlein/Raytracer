@@ -22,7 +22,7 @@ namespace RayTracer {
 
         /// @brief Gets the direction of the light
         /// @return Returns the direction of the light
-        Math::Vector3D<double> getDirection() const override;
+        Math::Vector3D<double> getDirection() const;
 
         /// @brief Computes the light contribution at a given hit point
         /// @param hit The hit record for which to compute the light

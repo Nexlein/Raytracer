@@ -58,7 +58,7 @@ void RayTracer::Renderer::render(const Camera& camera,
                 double v = (y + MaterialUtils::randomDouble()) / (_height - 1);
                 Ray r = camera.ray(u, v, ratio);
                 pixelColor += computeRayColor(r, _maxDepth, primitives, lights);
-            }
+            }   
             pixelColor = pixelColor / static_cast<double>(_samples);
             buffer.push_back(static_cast<uint8_t>(std::clamp(pixelColor._x, 0.0, 255.0)));
             buffer.push_back(static_cast<uint8_t>(std::clamp(pixelColor._y, 0.0, 255.0)));
