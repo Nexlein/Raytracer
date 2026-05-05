@@ -4,12 +4,6 @@
 
 #include "ConfigUtils.hpp"
 
-RayTracer::AmbientLight::AmbientLight(double intensity, Math::Vector3D<double> color)
-{
-    _intensity = intensity;
-    _color = color;
-}
-
 Math::Vector3D<double> RayTracer::AmbientLight::computeLight(
     [[maybe_unused]] const HitRecord& hit) const
 {

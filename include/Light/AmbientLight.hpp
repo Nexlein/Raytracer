@@ -16,11 +16,6 @@ namespace RayTracer {
         /// @brief Default constructor for AmbientLight
         AmbientLight() = default;
 
-        /// @brief Constructor for AmbientLight
-        /// @param intensity intensity of the light
-        /// @param color color of the light
-        AmbientLight(double intensity, Math::Vector3D<double> color);
-
         /// @brief Checks if the light casts shadows
         /// @return True if the light casts shadows, false otherwise
         bool castsShadow() const override;
