@@ -236,7 +236,7 @@ cones = (
 Limited:
 
 ```cfg
-cones = (
+torus = (
     {
         position = { x = 0.0; y = -2.0; z = -5.0; };
         r = 1.0;
