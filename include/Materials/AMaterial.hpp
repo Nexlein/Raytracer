@@ -16,8 +16,6 @@ namespace RayTracer {
         public:
         virtual ~AMaterial() = default;
 
-        bool isRefractive() const override { return false; }
-
         [[nodiscard]] inline std::string getName() const override { return _name; }
 
         [[nodiscard]] inline Math::Vector3D<double> getColor(
@@ -28,12 +26,12 @@ namespace RayTracer {
 
         void setColor(const Math::Vector3D<double>& color) override { _color = color; }
 
-        virtual bool isRefractive() const { return false; }
+        bool isRefractive() const override { return false; };
 
-        virtual double getRefractive() const { return 0.0; };
+        double getRefractive() const override { return 0.0; };
 
-        virtual bool isReflective() const { return false; };
+        bool isReflective() const override { return false; };
 
-        virtual double getReflective() const { return 0.0; };
+        double getReflective() const override { return 0.0; };
     };
 }  // namespace RayTracer
