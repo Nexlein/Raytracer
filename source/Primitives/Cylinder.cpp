@@ -22,6 +22,8 @@ namespace RayTracer {
 
     bool Cylinder::hits(const Ray& ray, HitRecord& rec) const
     {
+        rec.primitive = this;
+        rec.material = _material.get();
         const double EPS = 1e-6;
 
         Vector3D originToBase = ray._origin - _base;
@@ -92,8 +94,6 @@ namespace RayTracer {
                 }
             }
         }
-
-        rec.material = _material.get();
         if (!hit) return false;
 
         rec.distance = closest;
@@ -106,8 +106,6 @@ namespace RayTracer {
         rec.u = phi / (2 * std::numbers::pi);
         double h = (rec.p - _base).dot(_axis.normalized());
         rec.v = h * 0.1;  // scale factor
-
-        rec.material = _material.get();
 
         return true;
     }

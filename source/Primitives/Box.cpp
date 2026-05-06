@@ -42,6 +42,7 @@ namespace RayTracer {
 
     bool Box::hits(const Ray& ray, HitRecord& rec) const
     {
+        rec.primitive = this;
         rec.material = _material.get();
 
         Math::Point3D<double> center = {(_min._x + _max._x) * 0.5, (_min._y + _max._y) * 0.5,

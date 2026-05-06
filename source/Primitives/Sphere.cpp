@@ -19,6 +19,8 @@
 
 bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
 {
+    rec.primitive = this;
+    rec.material = _material.get();
     Vector3D originToCenter = ray._origin - _center;
 
     double a = ray._direction.dot(ray._direction);
@@ -46,7 +48,6 @@ bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
     rec.u = phi / (2.0 * std::numbers::pi);
     rec.v = theta / std::numbers::pi;
 
-    rec.material = _material.get();
     return true;
 }
 

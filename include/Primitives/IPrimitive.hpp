@@ -18,6 +18,7 @@
 
 /// @brief Namespace for the Ray Tracer project
 namespace RayTracer {
+    class IPrimitive;
     /// @brief Struct to hold hit record information when a ray intersects a primitive
     struct HitRecord {
         /// @brief Distance from the ray origin to the hit point
@@ -30,6 +31,7 @@ namespace RayTracer {
         double u = 0.0;
         /// @brief V texture coordinate
         double v = 0.0;
+        const IPrimitive* primitive;
         /// @brief Material of the primitive that was hit
         IMaterial* material;
     };
