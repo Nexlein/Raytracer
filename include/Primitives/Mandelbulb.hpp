@@ -22,10 +22,13 @@ namespace RayTracer {
 
         void init(const libconfig::Setting& setting) override;
 
-        [[nodiscard]] double distanceEstimate(
-            const Math::Vector3D<double>& p) const;
+        [[nodiscard]] double distanceEstimate(const Math::Vector3D<double>& p) const;
 
         private:
-            double _power;
+        /// @brief mon vier
+        double _power;
+
+        /// @brief Escape radius threshold — iteration stops when the orbit exceeds this value
+        double _bailout;
     };
-}
+}  // namespace RayTracer

@@ -6,43 +6,31 @@
 */
 
 #include "AFractal.hpp"
+
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
-void RayTracer::AFractal::init(const libconfig::Setting& setting)
-{
-    ConfigUtils::parsePoint3D(setting, "position", _position, true);
-
-    if (!ConfigUtils::getAsDouble(setting, "scale", _scale))
-        _scale = 1.0;
-
-    if (!ConfigUtils::getAsDouble(setting, "iterations", _iterations))
-        throw RayTracerException("Fractal: Invalid or missing required parameter 'iterations'");
-
-    if (!ConfigUtils::getAsDouble(setting, "bailout", _bailout))
-        throw RayTracerException("Fractal: Invalid or missing required parameter 'bailout'");
-
-    if (setting.exists("material")) {
-        std::string name = setting["material"];
-        _materialName = name;
-    }
-}
-
 bool RayTracer::AFractal::hits(const Ray& ray, HitRecord& hitRecord) const
 {
+    hitRecord.primitive = this;
+    hitRecord.material = _material.get();
+    Math::Vector3D<double> origin = ray._origin - _position;
+    Math::Vector3D<double> dir = rotateInverse(ray._direction);
+    origin = rotateInverse(origin);
+
     double t = 0.001;
     constexpr int MAX_STEPS = 300;
-    constexpr double MAX_DIST = 100.0;
-    constexpr double EPSILON  = 0.0001;
+    constexpr double MAX_DIST = 20.0;  // au lieu de 100
+    constexpr double EPSILON = 0.001;  // au lieu de 0.0001
 
     for (int i = 0; i < MAX_STEPS; ++i) {
-        Math::Point3D<double> p = ray._origin + ray._direction * t;
-        double d = distanceEstimate(p - _position);
+        Math::Vector3D<double> p = origin + dir * t;
+        double d = distanceEstimate(p);
 
         if (d < EPSILON) {
             hitRecord.distance = t;
-            hitRecord.p = p;
-            hitRecord.normal = computeNormal(p - _position);
+            hitRecord.p = ray._origin + ray._direction * t;
+            hitRecord.normal = rotate(computeNormal(p));
             hitRecord.material->setColor(_material->getColor());
             return true;
         }
@@ -55,11 +43,56 @@ bool RayTracer::AFractal::hits(const Ray& ray, HitRecord& hitRecord) const
 Math::Vector3D<double> RayTracer::AFractal::computeNormal(const Math::Vector3D<double>& p) const
 {
     constexpr double H = 0.0001;
-    double dx = distanceEstimate({p._x+H, p._y,   p._z  })
-              - distanceEstimate({p._x-H, p._y,   p._z  });
-    double dy = distanceEstimate({p._x,   p._y+H, p._z  })
-              - distanceEstimate({p._x,   p._y-H, p._z  });
-    double dz = distanceEstimate({p._x,   p._y,   p._z+H})
-              - distanceEstimate({p._x,   p._y,   p._z-H});
+    double dx = distanceEstimate({p._x + H, p._y, p._z}) - distanceEstimate({p._x - H, p._y, p._z});
+    double dy = distanceEstimate({p._x, p._y + H, p._z}) - distanceEstimate({p._x, p._y - H, p._z});
+    double dz = distanceEstimate({p._x, p._y, p._z + H}) - distanceEstimate({p._x, p._y, p._z - H});
     return Math::Vector3D<double>(dx, dy, dz).normalized();
+}
+
+Math::Vector3D<double> RayTracer::AFractal::rotateInverse(const Math::Vector3D<double>& v) const
+{
+    double rx = _rotation._x * M_PI / 180.0;
+    double ry = _rotation._y * M_PI / 180.0;
+    double rz = _rotation._z * M_PI / 180.0;
+
+    // X
+    double y1 = std::cos(rx) * v._y + std::sin(rx) * v._z;
+    double z1 = -std::sin(rx) * v._y + std::cos(rx) * v._z;
+    double x1 = v._x;
+
+    // Y
+    double x2 = std::cos(ry) * x1 + std::sin(ry) * z1;
+    double z2 = -std::sin(ry) * x1 + std::cos(ry) * z1;
+    double y2 = y1;
+
+    // Z
+    double x3 = std::cos(rz) * x2 - std::sin(rz) * y2;
+    double y3 = std::sin(rz) * x2 + std::cos(rz) * y2;
+    double z3 = z2;
+
+    return {x3, y3, z3};
+}
+
+Math::Vector3D<double> RayTracer::AFractal::rotate(const Math::Vector3D<double>& v) const
+{
+    double rx = _rotation._x * M_PI / 180.0;
+    double ry = _rotation._y * M_PI / 180.0;
+    double rz = _rotation._z * M_PI / 180.0;
+
+    // Z inverse
+    double x1 = std::cos(rz) * v._x + std::sin(rz) * v._y;
+    double y1 = -std::sin(rz) * v._x + std::cos(rz) * v._y;
+    double z1 = v._z;
+
+    // Y inverse
+    double x2 = std::cos(ry) * x1 - std::sin(ry) * z1;
+    double z2 = std::sin(ry) * x1 + std::cos(ry) * z1;
+    double y2 = y1;
+
+    // X inverse
+    double y3 = std::cos(rx) * y2 - std::sin(rx) * z2;
+    double z3 = std::sin(rx) * y2 + std::cos(rx) * z2;
+    double x3 = x2;
+
+    return {x3, y3, z3};
 }
