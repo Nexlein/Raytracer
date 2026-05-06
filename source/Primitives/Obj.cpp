@@ -111,8 +111,7 @@ void RayTracer::Obj::updateNodeBounds(int nodeIdx)
     BVHNode& node = _bvhNodes[nodeIdx];
     node._boundsMin = {std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),
                        std::numeric_limits<double>::max()};
-    node._boundsMax = {std::numeric_limits<double>::lowest(),
-                       std::numeric_limits<double>::lowest(),
+    node._boundsMax = {std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(),
                        std::numeric_limits<double>::lowest()};
 
     for (int i = 0; i < node._triangleCount; ++i) {

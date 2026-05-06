@@ -13,7 +13,10 @@ Math::Vector3D<double> RayTracer::DirectionalLight::computeLight(const HitRecord
     return (_color / 255.0) * intensity;
 }
 
-Math::Vector3D<double> RayTracer::DirectionalLight::getDirection() const { return (-_direction).normalized(); }
+Math::Vector3D<double> RayTracer::DirectionalLight::getDirection() const
+{
+    return (-_direction).normalized();
+}
 
 void RayTracer::DirectionalLight::init(const libconfig::Setting& setting)
 {

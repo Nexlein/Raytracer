@@ -25,6 +25,7 @@ namespace RayTracer {
         bool isReflective() const { return true; };
 
         double getReflective() const { return _reflectiveIndex; };
+
         private:
         /// @brief reflective index of the glass
         double _reflectiveIndex;

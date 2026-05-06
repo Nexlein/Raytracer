@@ -24,14 +24,13 @@ void RayTracer::Reflective::init(const libconfig::Setting& setting)
 }
 
 bool RayTracer::Reflective::scatter(const Ray& rayIn, const HitRecord& rec,
-                                     Math::Vector3D<double>& attenuation, Ray& scattered) const
+                                    Math::Vector3D<double>& attenuation, Ray& scattered) const
 {
     Math::Vector3D<double> normal = rec.normal;
-    if (normal.dot(rayIn._direction) > 0)
-        normal = -normal;
+    if (normal.dot(rayIn._direction) > 0) normal = -normal;
 
-    Math::Vector3D<double> reflected = MaterialUtils::reflect(
-        rayIn._direction.normalized(), normal);
+    Math::Vector3D<double> reflected =
+        MaterialUtils::reflect(rayIn._direction.normalized(), normal);
 
     reflected = reflected + MaterialUtils::randomInUnitSphere() * (1.0 - _reflectiveIndex);
 

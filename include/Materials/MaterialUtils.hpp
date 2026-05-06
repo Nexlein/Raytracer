@@ -57,13 +57,9 @@ namespace RayTracer {
         static Math::Vector3D<double> randomInUnitSphere()
         {
             while (true) {
-                Math::Vector3D<double> p(
-                    randomDouble() * 2.0 - 1.0,
-                    randomDouble() * 2.0 - 1.0,
-                    randomDouble() * 2.0 - 1.0
-                );
-                if (p.dot(p) < 1.0)
-                    return p;
+                Math::Vector3D<double> p(randomDouble() * 2.0 - 1.0, randomDouble() * 2.0 - 1.0,
+                                         randomDouble() * 2.0 - 1.0);
+                if (p.dot(p) < 1.0) return p;
             }
         }
     };
