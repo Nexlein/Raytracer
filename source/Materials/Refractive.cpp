@@ -15,7 +15,7 @@
 void RayTracer::Refractive::init(const libconfig::Setting& setting)
 {
     if (!setting.lookupValue("name", _name))
-        throw RayTracerException("Lambertian material must have a name");
+        throw RayTracerException("Refractive material must have a name");
 
     ConfigUtils::parseColor(setting, "color", _color);
 

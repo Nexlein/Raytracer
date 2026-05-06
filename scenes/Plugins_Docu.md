@@ -219,6 +219,7 @@ Represents a cone (infinite or limited). By default, the cone axis points upward
 **Example:**
 
 Infinite:
+
 ```cfg
 cones = (
     {
@@ -233,6 +234,7 @@ cones = (
 ```
 
 Limited:
+
 ```cfg
 cones = (
     {
@@ -258,6 +260,7 @@ Represents a torus in 3D space.
 **Example:**
 
 Infinite:
+
 ```cfg
 cones = (
     {

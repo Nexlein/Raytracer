@@ -29,7 +29,7 @@ namespace RayTracer {
         Point3D _apex;
         /// @brief Radius of the cone
         /// if the cone is infinite the radius is base on a point (defined by the '_distance')
-        /// if the cone is finished the radius is base on the cone's base 
+        /// if the cone is finished the radius is base on the cone's base
         double _radius;
         /// @brief The height of the cone (distance between apex and base)
         std::optional<double> _height;

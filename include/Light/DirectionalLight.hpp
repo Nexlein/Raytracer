@@ -5,10 +5,10 @@
 ** DirectionalLight
 */
 
+#pragma once
+
 #include "ILight.hpp"
 #include "math.h"
-
-#pragma once
 
 namespace RayTracer {
     class DirectionalLight : public ILight {

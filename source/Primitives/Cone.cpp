@@ -11,13 +11,12 @@
 #include "Cone.hpp"
 
 #include <cmath>
-#include <numbers>
+#include <iostream>
 #include <memory>
+#include <numbers>
 
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
-
-#include <iostream>
 
 /// @brief Namespace for the RayTracer project
 namespace RayTracer {
@@ -53,13 +52,11 @@ namespace RayTracer {
             double t2 = (-b + sqrtd) / (2 * a);
 
             for (double t : {t1, t2}) {
-                if (t <= EPS)
-                    continue;
+                if (t <= EPS) continue;
 
                 Point3D P = ray._origin + ray._direction * t;
                 double h = (P - _apex).dot(axis);
-                if (h < 0.0 || (_height.has_value() && h > _height.value()))
-                    continue;
+                if (h < 0.0 || (_height.has_value() && h > _height.value())) continue;
 
                 if (t < closest) {
                     closest = t;
@@ -79,12 +76,10 @@ namespace RayTracer {
             if (std::abs(denom) > EPS) {
                 Point3D baseCenter = _apex + axis * _height.value();
                 double tbase = (baseCenter - ray._origin).dot(axis) / denom;
-                if (tbase > EPS && tbase < closest)
-                {
+                if (tbase > EPS && tbase < closest) {
                     Point3D P = ray._origin + ray._direction * tbase;
                     Vector3D v = P - baseCenter;
-                    if (v.dot(v) <= _radius * _radius)
-                    {
+                    if (v.dot(v) <= _radius * _radius) {
                         closest = tbase;
                         hit = true;
                         normal = -axis;
@@ -105,8 +100,7 @@ namespace RayTracer {
         Vector3D radial = p - axis * h;
 
         double phi = std::atan2(radial._z, radial._x);
-        if (phi < 0)
-            phi += 2 * std::numbers::pi;
+        if (phi < 0) phi += 2 * std::numbers::pi;
 
         rec.u = phi / (2 * std::numbers::pi);
         rec.v = h * 0.1;
@@ -142,8 +136,7 @@ namespace RayTracer {
             ConfigUtils::getAsDouble(setting, "h", h);
             _height = h;
             _k = (_radius * _radius) / (h * h);
-            if (h < 0)
-                throw RayTracerException("Cone: Height cannot be negative.");
+            if (h < 0) throw RayTracerException("Cone: Height cannot be negative.");
         } else {
             _height = std::nullopt;
         }
@@ -153,8 +146,7 @@ namespace RayTracer {
             ConfigUtils::getAsDouble(setting, "d", d);
             _distance = d;
             _k = (_radius * _radius) / (d * d);
-            if (d < 0)
-                throw RayTracerException("Cone: Distance cannot be negative.");
+            if (d < 0) throw RayTracerException("Cone: Distance cannot be negative.");
         } else {
             _distance = std::nullopt;
         }
@@ -163,7 +155,8 @@ namespace RayTracer {
             throw RayTracerException("Cone: Missing parameter: distance or height.");
 
         if (_distance.has_value() && _height.has_value())
-            throw RayTracerException("Cone: Too many parameters: you must choose between distance or height.");
+            throw RayTracerException(
+                "Cone: Too many parameters: you must choose between distance or height.");
 
         if (setting.exists("material")) {
             std::string name = setting["material"];
