@@ -246,6 +246,31 @@ cones = (
 );
 ```
 
+### 3.8. Torus (`torus`)
+
+Represents a torus in 3D space.
+
+**Additional parameters:**
+
+- `outer_radius` *(float)*: Torus outer radius. Must be positive. **(Required)**
+- `inner_radius` *(float)*: Torus inner radius. Must be positive. **(Required)**
+
+**Example:**
+
+Infinite:
+```cfg
+cones = (
+    {
+        position = { x = 0.0; y = -2.0; z = -5.0; };
+        outer_radius = 1.4;
+        inner_radius = 0.8;
+        rotation = { x = 0.0; y = 0.0; z = 45.0; }; # Optional
+        translation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+        material = "column_material"; # Optional
+    }
+);
+```
+
 ---
 
 ## 4. Materials

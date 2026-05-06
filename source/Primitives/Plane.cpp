@@ -18,9 +18,10 @@
 
 bool RayTracer::Plane::hits(const Ray& ray, HitRecord& rec) const
 {
+    rec.primitive = this;
+    rec.material = _material.get();
     double denom = ray._direction.dot(_normal);
 
-    rec.material = _material.get();
     if (std::abs(denom) < 1e-6) return false;
 
     Math::Vector3D<double> originToPlane = _position - ray._origin;
@@ -42,8 +43,6 @@ bool RayTracer::Plane::hits(const Ray& ray, HitRecord& rec) const
 
     rec.u = rec.p.dot(edgeDirectionX) * 0.1;
     rec.v = rec.p.dot(edgeDirectionY) * 0.1;
-
-    rec.material = _material.get();
 
     return true;
 }
