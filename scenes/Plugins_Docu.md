@@ -350,6 +350,38 @@ materials = {
 };
 ```
 
+### 4.4. Reflective (`reflective`)
+
+Represents a reflective/metallic material that mirrors its surroundings.
+
+**Parameters:**
+
+- `name` *(string)*: The material's unique identifier. **(Required)**
+- `color` *(block, optional)*: The material's color tint `{r, g, b}`. *(Default: white)*
+- `reflectiveIndex` *(float)*: Controls the surface smoothness/reflectivity. **(Required)**
+  - Higher values: Smoother, more mirror-like reflections
+  - Lower values: Rougher reflections with more diffusion
+  - Can be any positive value (not limited to 0-1 range)
+
+**Example:**
+
+```cfg
+materials = {
+    reflectives = (
+        {
+            name = "polished_gold";
+            color = { r = 255.0; g = 200.0; b = 0.0; };
+            reflectiveIndex = 0.9;
+        },
+        {
+            name = "brushed_steel";
+            color = { r = 200.0; g = 200.0; b = 200.0; };
+            reflectiveIndex = 0.6;
+        }
+    );
+};
+```
+
 ---
 
 ## 5. Lights
