@@ -10,6 +10,8 @@
 
 #include "Torus.hpp"
 
+#include <iostream>
+
 #include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
@@ -123,12 +125,12 @@ bool RayTracer::Torus::hits(const Ray& ray, HitRecord& rec) const
     Vector3D dir = ray._direction;
 
     // Rotation inverse
-    orig.rotateX(-_rotation._x);
-    orig.rotateY(-_rotation._y);
     orig.rotateZ(-_rotation._z);
-    dir.rotateX(-_rotation._x);
-    dir.rotateY(-_rotation._y);
+    orig.rotateY(-_rotation._y);
+    orig.rotateX(-_rotation._x);
     dir.rotateZ(-_rotation._z);
+    dir.rotateY(-_rotation._y);
+    dir.rotateX(-_rotation._x);
 
     double ox = orig._x, oy = orig._y, oz = orig._z;
     double dx = dir._x, dy = dir._y, dz = dir._z;
@@ -149,26 +151,47 @@ bool RayTracer::Torus::hits(const Ray& ray, HitRecord& rec) const
 
     if (num_roots == 0) return false;
 
-    double closest = std::numeric_limits<double>::infinity();
+    // Newton-Raphson root polishing to fix self-shadowing acne
+    for (int i = 0; i < num_roots; ++i) {
+        double t = roots[i];
+        for (int j = 0; j < 3; ++j) {
+            double f = coeffs.e + t * (coeffs.d + t * (coeffs.c + t * (coeffs.b + t * coeffs.a)));
+            double df = coeffs.d + t * (2.0 * coeffs.c + t * (3.0 * coeffs.b + t * 4.0 * coeffs.a));
+            if (std::abs(df) < 1e-9) break;
+            t -= f / df;
+        }
+        roots[i] = t;
+    }
+
+    double closest = std::numeric_limits<double>::max();
     for (int i = 0; i < num_roots; i++) {
         if (roots[i] > 0.001 && roots[i] < closest) closest = roots[i];
     }
 
-    if (closest == std::numeric_limits<double>::infinity()) return false;
+    if (closest == std::numeric_limits<double>::max()) return false;
 
     rec.distance = closest;
     rec.p = ray._origin + ray._direction * closest;
 
     Vector3D p = rec.p - _position;
-    p.rotateX(-_rotation._x);
-    p.rotateY(-_rotation._y);
     p.rotateZ(-_rotation._z);
+    p.rotateY(-_rotation._y);
+    p.rotateX(-_rotation._x);
 
     double xz_dist = std::sqrt(p._x * p._x + p._z * p._z);
     if (xz_dist < 1e-6) return false;
 
     rec.normal =
         Vector3D(p._x * (1.0 - R / xz_dist), p._y, p._z * (1.0 - R / xz_dist)).normalized();
+
+    // UV Mapping
+    double phi = std::atan2(p._z, p._x);
+    if (phi < 0) phi += 2.0 * std::numbers::pi;
+    rec.u = phi / (2.0 * std::numbers::pi);
+
+    double theta = std::atan2(p._y, xz_dist - R);
+    if (theta < 0) theta += 2.0 * std::numbers::pi;
+    rec.v = theta / (2.0 * std::numbers::pi);
 
     // Rotation normale dans le sens normal
     rec.normal.rotateX(_rotation._x);
