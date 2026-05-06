@@ -193,7 +193,7 @@ void RayTracer::Torus::init(const libconfig::Setting& setting)
         throw RayTracer::RayTracerException("Torus: Missing required parameter 'outer_radius'.");
 
     if (!ConfigUtils::getAsDouble(setting, "inner_radius", _inner_radius))
-        throw RayTracer::RayTracerException("Torus: Missing required parameter 'outer_radius'.");
+        throw RayTracer::RayTracerException("Torus: Missing required parameter 'inner_radius'.");
 
     if (setting.exists("material")) {
         std::string name = setting["material"];
