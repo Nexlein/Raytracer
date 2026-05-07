@@ -10,6 +10,8 @@
 
 #include "Renderer.hpp"
 
+#include <omp.h>
+
 #include <fstream>
 
 #include "ConfigUtils.hpp"
@@ -33,24 +35,15 @@ void RayTracer::Renderer::init(const libconfig::Setting& setting)
     setting.lookupValue("maxDepth", _maxDepth);
 }
 
-void RayTracer::Renderer::render(const Camera& camera,
-                                 const std::vector<std::unique_ptr<IPrimitive>>& primitives,
-                                 const std::vector<std::unique_ptr<ILight>>& lights,
-                                 const std::string& filename) const
+void RayTracer::Renderer::computeRows(const Camera& camera,
+                                      const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+                                      const std::vector<std::unique_ptr<ILight>>& lights,
+                                      std::vector<uint8_t>& fullBuffer) const
 {
-    std::ofstream outFile(filename);
-    if (!outFile.is_open())
-        throw RayTracerException("Renderer: Cannot open output file " + filename);
-
-    outFile << "P6\n" << _width << ' ' << _height << "\n255\n";
-
     double ratio = static_cast<double>(_width) / _height;
 
-    std::vector<uint8_t> buffer;
-    buffer.reserve(_width * 3);
-
+#pragma omp parallel for schedule(dynamic, 8) collapse(2)
     for (int y = _height - 1; y >= 0; y--) {
-        buffer.clear();
         for (int x = 0; x < _width; x++) {
             Math::Vector3D<double> pixelColor(0.0, 0.0, 0.0);
             for (int s = 0; s < _samples; s++) {
@@ -60,13 +53,31 @@ void RayTracer::Renderer::render(const Camera& camera,
                 pixelColor += computeRayColor(r, _maxDepth, primitives, lights);
             }
             pixelColor = pixelColor / static_cast<double>(_samples);
-            buffer.push_back(static_cast<uint8_t>(std::clamp(pixelColor._x, 0.0, 255.0)));
-            buffer.push_back(static_cast<uint8_t>(std::clamp(pixelColor._y, 0.0, 255.0)));
-            buffer.push_back(static_cast<uint8_t>(std::clamp(pixelColor._z, 0.0, 255.0)));
-        }
-        outFile.write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
-    }
 
+            int row = (_height - 1 - y);
+            int idx = (row * _width + x) * 3;
+            fullBuffer[idx] = static_cast<uint8_t>(std::clamp(pixelColor._x, 0.0, 255.0));
+            fullBuffer[idx + 1] = static_cast<uint8_t>(std::clamp(pixelColor._y, 0.0, 255.0));
+            fullBuffer[idx + 2] = static_cast<uint8_t>(std::clamp(pixelColor._z, 0.0, 255.0));
+        }
+    }
+}
+
+void RayTracer::Renderer::render(const Camera& camera,
+                                 const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+                                 const std::vector<std::unique_ptr<ILight>>& lights,
+                                 const std::string& filename) const
+{
+    std::vector<uint8_t> fullBuffer(_width * _height * 3);
+    std::ofstream outFile(filename);
+
+    if (!outFile.is_open())
+        throw RayTracerException("Renderer: Cannot open output file " + filename);
+
+    outFile << "P6\n" << _width << ' ' << _height << "\n255\n";
+    computeRows(camera, primitives, lights, fullBuffer);
+
+    outFile.write(reinterpret_cast<const char*>(fullBuffer.data()), fullBuffer.size());
     outFile.close();
 }
 
