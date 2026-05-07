@@ -134,11 +134,17 @@ add_executable(raytracer ${CORE_FILES})
 target_link_libraries(raytracer PRIVATE raytracerGlobal)
 set_target_properties(raytracer PROPERTIES ENABLE_EXPORTS TRUE)
 
+# === AFRACTAL STATIC LIB ===
+add_library(afractal_static STATIC
+    source/Primitives/AFractal.cpp
+)
+target_link_libraries(afractal_static PUBLIC raytracerGlobal)
+
 # === PLUGINS ===
 set(PLUGIN_OUTPUT_DIR ${PROJECT_SOURCE_DIR}/plugins)
 
 function(add_raytracer_plugin target_name source_file)
-    add_library(${target_name} MODULE ${source_file})
+    add_library(${target_name} MODULE ${source_file} ${ARGN})
     target_link_libraries(${target_name} PRIVATE raytracerGlobal)
 
     set_target_properties(${target_name} PROPERTIES
@@ -165,3 +171,9 @@ add_raytracer_plugin(raytracer_lambertians source/Materials/Lambertian.cpp)
 add_raytracer_plugin(raytracer_textures source/Materials/Texture.cpp)
 add_raytracer_plugin(raytracer_refractives source/Materials/Refractive.cpp)
 add_raytracer_plugin(raytracer_reflectives source/Materials/Reflective.cpp)
+
+add_raytracer_plugin(raytracer_mandelbulbs source/Primitives/Mandelbulb.cpp)
+target_link_libraries(raytracer_mandelbulbs PRIVATE afractal_static)
+
+add_raytracer_plugin(raytracer_sierpinskis source/Primitives/Sierpinski.cpp)
+target_link_libraries(raytracer_sierpinskis PRIVATE afractal_static)

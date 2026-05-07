@@ -274,6 +274,56 @@ cones = (
 );
 ```
 
+### 3.9. Mandelbulb (`mandelbulbs`)
+
+Represents a 3D Mandelbulb fractal, generated via ray marching and a spherical coordinate distance estimator.
+
+**Additional parameters:**
+
+- `scale`: Uniform size of the bulb in world space. (1.0 by default)
+- `iterations`: Controls detail level. `10` is standard. Below `6` the surface becomes blurry, above `20` yields diminishing returns. **(Required)**
+- `power` *(float)*: Exponent applied during orbit iteration. `8.0` is the classic Mandelbulb. Higher values produce spikier geometry, lower values produce more organic shapes. **(Required)**
+- `bailout` *(float)*: Escape radius threshold — iteration stops when the orbit exceeds this value. `2.0` is the mathematically correct value. **(Required)**
+
+**Example:**
+
+```cfg
+mandelbulbs = (
+    {
+        position = { x = 0.0; y = 0.0; z = 0.0 };
+        rotation = { x = 90.0; y = 0.0; z = 0.0 }; # Optional
+        scale = 1.0; # Optional
+        iterations = 20;
+        power = 10.0;
+        bailout = 2.0;
+        material = "mat_0_255_0"; # Optional
+    }
+);
+```
+
+### 3.10. Sierpinski Tetrahedron (`sierpinskis`)
+
+Represents a 3D Sierpinski tetrahedron fractal, generated via ray marching and an IFS (Iterated Function System) distance estimator folding space toward the four vertices of a regular tetrahedron.
+
+**Additional parameters:**
+
+- `scale`: Uniform size of the tetrahedron in world space. (1.0 by default)
+- `iterations`: Controls recursion depth and detail level. **(Required)**
+
+**Example:**
+
+```cfg
+sierpinskis = (
+    {
+        position = { x = 0.0; y = 0.0; z = 0.0 };
+        rotation = { x = -45.0; y = 0.0; z = -45.0 }; # Optional
+        scale = 2.0; # Optional
+        iterations = 8;
+        material = "mat_255_100_0"; # Optional
+    }
+);
+```
+
 ---
 
 ## 4. Materials
