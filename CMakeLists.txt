@@ -30,6 +30,10 @@ target_include_directories(raytracerGlobal INTERFACE
     ${PROJECT_SOURCE_DIR}/include/Loader
 )
 
+# === Add OpenMP library ===
+find_package(OpenMP REQUIRED)
+target_link_libraries(raytracerGlobal INTERFACE OpenMP::OpenMP_CXX)
+
 # === DEPENDENCIES: LIBCONFIG++ ===
 if(PKG_CONFIG_FOUND)
     pkg_check_modules(LIBCONFIGXX QUIET IMPORTED_TARGET libconfig++)

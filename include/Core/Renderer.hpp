@@ -88,6 +88,11 @@ namespace RayTracer {
             const Ray& ray, int depth, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
             const std::vector<std::unique_ptr<ILight>>& lights) const;
 
+        void computeRows(const Camera& camera,
+                         const std::vector<std::unique_ptr<IPrimitive>>& primitives,
+                         const std::vector<std::unique_ptr<ILight>>& lights,
+                         std::vector<uint8_t>& fullBuffer) const;
+
         /// @brief Writes the color of a pixel to the output stream
         /// @param out The output stream to write the color to
         /// @param color The color to write
