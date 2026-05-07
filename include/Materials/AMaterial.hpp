@@ -20,9 +20,7 @@ namespace RayTracer {
 
         [[nodiscard]] inline Math::Vector3D<double> getColor(
             [[maybe_unused]] double u = 0.0, [[maybe_unused]] double v = 0.0) const override
-        {
-            return _color;
-        }
+        { return _color; }
 
         void setColor(const Math::Vector3D<double>& color) override { _color = color; }
 
@@ -33,5 +31,11 @@ namespace RayTracer {
         bool isReflective() const override { return false; };
 
         double getReflective() const override { return 0.0; };
+
+        virtual bool hasSpecular() const { return false; }
+
+        virtual double getShininess() const { return 0.0; }
+
+        virtual double getSpecularStrength() const { return 0.0; }
     };
 }  // namespace RayTracer

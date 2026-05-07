@@ -56,6 +56,12 @@ namespace RayTracer {
 
         virtual double getReflective() const = 0;
 
+        virtual bool hasSpecular() const = 0;
+
+        virtual double getShininess() const = 0;
+
+        virtual double getSpecularStrength() const = 0;
+
         protected:
         /// @brief Name of the material
         std::string _name;

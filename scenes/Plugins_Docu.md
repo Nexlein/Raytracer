@@ -340,6 +340,8 @@ Represents a classic matte (diffuse) material. It scatters light equally in all 
 
 - `name` *(string)*: The material's unique identifier. **(Required)**
 - `color` *(block, optional)*: The object's color `{r, g, b}`. *(Default: white)*
+- `shininess` *(double)*: The material's unique identifier. **(Required)**
+- `color` *(block, optional)*: The object's color `{r, g, b}`. *(Default: white)*
 
 **Example:**
 
@@ -365,6 +367,9 @@ Represents an image-based material mapped onto a primitive using UV coordinates.
   - Values above `3.0` may produce visual artifacts (doubled or blurred appearance)
 - `step` *(int, optional)*: Pixel offset used to compute the luminance gradient. A larger value captures low-frequency relief; a smaller value captures fine detail. *(Default: `1`)*
   - Recommended range: `1` – `3`
+- `shininess` *(double, optional)*: Sharpness of the specular highlight. Higher values produce a tighter, more focused reflection. *(Default: 32.0)*
+- `specular_strength` *(double, optional)*: Intensity of the specular highlight. *(Default: 0.5)*
+
 
 **Example:**
 
@@ -375,6 +380,8 @@ materials = {
             # Texture with default bump mapping
             name = "earth";
             filepath = "textures/earth.jpg";
+            shininess = 32;
+            specular_strength = 0.5;
         },
         {
             # Texture with custom bump intensity

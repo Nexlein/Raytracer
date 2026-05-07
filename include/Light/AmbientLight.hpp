@@ -29,5 +29,7 @@ namespace RayTracer {
         /// @return Retourne la couleur de la lumière
         [[nodiscard]] Math::Vector3D<double> computeLight(
             [[maybe_unused]] const HitRecord& hit) const override;
+
+        bool hasDirection() const override { return false; }
     };
 }  // namespace RayTracer

@@ -39,6 +39,12 @@ namespace RayTracer {
         [[nodiscard]] Math::Vector3D<double> getColor(double u = 0.0,
                                                       double v = 0.0) const override;
 
+        bool hasSpecular() const override;
+
+        double getShininess() const override;
+
+        double getSpecularStrength() const override;
+
         private:
         /// @brief Gets the luminance of a pixel
         /// @param pixel the pixel to which we calculate the luminance
@@ -58,5 +64,9 @@ namespace RayTracer {
         double _strength = 0;
         /// @brief The increment step used for texture sampling and gradient calculation
         double _step = 0;
+
+        double _shininess;
+
+        double _specularStrength;
     };
 }  // namespace RayTracer

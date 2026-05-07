@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "ConfigUtils.hpp"
+#include <iostream>
 
 Math::Vector3D<double> RayTracer::DirectionalLight::computeLight(const HitRecord& hit) const
 {
@@ -15,7 +16,7 @@ Math::Vector3D<double> RayTracer::DirectionalLight::computeLight(const HitRecord
 
 Math::Vector3D<double> RayTracer::DirectionalLight::getDirection() const
 {
-    return (-_direction).normalized();
+    return -_direction;
 }
 
 void RayTracer::DirectionalLight::init(const libconfig::Setting& setting)

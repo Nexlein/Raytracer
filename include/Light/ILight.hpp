@@ -32,6 +32,8 @@ namespace RayTracer {
 
         virtual Math::Vector3D<double> getDirection() const { return {0, 0, 0}; };
 
+        virtual bool hasDirection() const { return true; }
+
         protected:
         /// @brief Intensity of the light, used for rendering
         double _intensity;

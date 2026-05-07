@@ -13,7 +13,7 @@
 
 #include "IPrimitive.hpp"
 #include "MaterialUtils.hpp"
-#include "Core/ConfigUtils.hpp"
+#include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
 void RayTracer::Texture::init(const libconfig::Setting& setting)
@@ -34,8 +34,15 @@ void RayTracer::Texture::init(const libconfig::Setting& setting)
 
     if (!ConfigUtils::getAsDouble(setting, "strength", _strength))
         _strength = 0.0;
+
     if (!ConfigUtils::getAsDouble(setting, "step", _step))
         _step = 1.0;
+
+    if (!ConfigUtils::getAsDouble(setting, "shininess", _shininess))
+        _shininess = 32;
+
+    if (!ConfigUtils::getAsDouble(setting, "specularStrength", _specularStrength))
+        _specularStrength = 0.5;
 }
 
 bool RayTracer::Texture::scatter(const Ray& /*rayIn*/, HitRecord& rec,
@@ -124,6 +131,12 @@ double RayTracer::Texture::getLuminance(sf::Color pixel) const
 {
     return (0.2126 * pixel.r + 0.7152 * pixel.g + 0.0722 * pixel.b) / 255.0;
 }
+
+bool RayTracer::Texture::hasSpecular() const { return true; }
+
+double RayTracer::Texture::getShininess() const { return _shininess; }
+
+double RayTracer::Texture::getSpecularStrength() const { return _specularStrength; }
 
 extern "C" {
 RayTracer::IMaterial* entryPoint() { return new RayTracer::Texture(); }

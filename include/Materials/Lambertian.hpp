@@ -15,16 +15,22 @@ namespace RayTracer {
         public:
         Lambertian() = default;
 
-        /// @brief Create a lambertian material
-        /// @param name Name of the material
-        /// @param color Color of the material
-        Lambertian(std::string name, const Math::Vector3D<double>& color);
-
         /// @brief Initializes the material with settings from a configuration file
         /// @param setting The configuration settings for the material
         void init(const libconfig::Setting& setting) override;
 
         bool scatter(const Ray& rayIn, HitRecord& rec, Math::Vector3D<double>& attenuation,
                      Ray& scattered) const override;
+
+        bool hasSpecular() const override;
+
+        double getShininess() const override;
+
+        double getSpecularStrength() const override;
+
+        private:
+        double _shininess;
+
+        double _specularStrength;
     };
 }  // namespace RayTracer
