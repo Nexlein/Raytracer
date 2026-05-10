@@ -143,8 +143,18 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
                     double t = closestRec.material->getRefractive();
                     return refractiveColor * t + baseColor * 255.0 * (1.0 - t);
                 }
-            } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered))
-                return attenuation * totalLight * 255.0;
+            } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
+                Math::Vector3D<double> totalLightBumped(0.0, 0.0, 0.0);
+                for (const auto& light : lights) {
+                    if (!light->castsShadow() || !isInShadow(closestRec, light->getDirection(), primitives))
+                        totalLightBumped += light->computeLight(closestRec);
+                }
+                totalLightBumped._x = std::clamp(totalLightBumped._x, 0.0, 1.0);
+                totalLightBumped._y = std::clamp(totalLightBumped._y, 0.0, 1.0);
+                totalLightBumped._z = std::clamp(totalLightBumped._z, 0.0, 1.0);
+                
+                return attenuation * totalLightBumped * 255.0;
+            }
         }
         return baseColor * 255.0;
     }

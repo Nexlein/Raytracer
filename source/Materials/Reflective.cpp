@@ -23,7 +23,7 @@ void RayTracer::Reflective::init(const libconfig::Setting& setting)
         throw RayTracerException("Reflective material must have a refraction parameter");
 }
 
-bool RayTracer::Reflective::scatter(const Ray& rayIn, const HitRecord& rec,
+bool RayTracer::Reflective::scatter(const Ray& rayIn, HitRecord& rec,
                                     Math::Vector3D<double>& attenuation, Ray& scattered) const
 {
     Math::Vector3D<double> normal = rec.normal;

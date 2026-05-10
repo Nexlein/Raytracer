@@ -26,7 +26,7 @@ void RayTracer::Refractive::init(const libconfig::Setting& setting)
         throw RayTracerException("Refractive material must have a refraction parameter");
 }
 
-bool RayTracer::Refractive::scatter(const Ray& rayIn, const HitRecord& rec,
+bool RayTracer::Refractive::scatter(const Ray& rayIn, HitRecord& rec,
                                     Math::Vector3D<double>& attenuation, Ray& scattered) const
 {
     if (_transparency <= 0.0) return false;
