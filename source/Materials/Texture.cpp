@@ -14,7 +14,6 @@
 #include "ConfigUtils.hpp"
 #include "IPrimitive.hpp"
 #include "MaterialUtils.hpp"
-#include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
 void RayTracer::Texture::init(const libconfig::Setting& setting)

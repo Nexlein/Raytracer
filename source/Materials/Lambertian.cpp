@@ -18,8 +18,7 @@ void RayTracer::Lambertian::init(const libconfig::Setting& setting)
         throw RayTracerException("Lambertian material must have a name");
     ConfigUtils::parseColor(setting, "color", _color);
 
-    if (!ConfigUtils::getAsDouble(setting, "shininess", _shininess))
-        _shininess = 32;
+    if (!ConfigUtils::getAsDouble(setting, "shininess", _shininess)) _shininess = 32;
 
     if (!ConfigUtils::getAsDouble(setting, "specularStrength", _specularStrength))
         _specularStrength = 0.5;

@@ -21,7 +21,9 @@ namespace RayTracer {
 
         [[nodiscard]] inline Math::Vector3D<double> getColor(
             [[maybe_unused]] double u = 0.0, [[maybe_unused]] double v = 0.0) const override
-        { return _color; }
+        {
+            return _color;
+        }
 
         void setColor(const Math::Vector3D<double>& color) override { _color = color; }
 
