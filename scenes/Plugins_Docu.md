@@ -451,6 +451,31 @@ materials = {
 };
 ```
 
+### 4.5. Phong (`phongs`)
+
+Represents a material with full Phong illumination: ambient, diffuse, and specular components.
+
+**Parameters:**
+
+- `name` *(string)*: The material's unique identifier. **(Required)**
+- `color` *(block)*: The material's diffuse color `{r, g, b}` in 0–255 range. **(Required)**
+- `shininess` *(float, optinnal)*: Controls the size of the specular highlight. Higher values produce smaller, sharper highlights (polished); lower values produce softer highlights (matte). Typical range: 8–256. Default: 32.
+- `specularStrength` *(float, optionnal)*: Controls the intensity of the specular highlight. Range: 0.0 (none) to 1.0 (full intensity).  Default: 0.8.
+
+**Example:**
+```cfg
+materials = {
+    phongs = (
+        {
+            name = "shiny_gray";
+            color = { r = 100; g = 100; b = 100; };
+            shininess = 32;
+            specularStrength = 0.8;
+        }
+    );
+};
+```
+
 ---
 
 ## 5. Lights
