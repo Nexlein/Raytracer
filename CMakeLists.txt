@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5...4.0)
+cmake_minimum_required(VERSION 3.5...4.3.2)
 project(Raytracer LANGUAGES CXX)
 
 # === GLOBAL CONFIGURATION ===
@@ -31,8 +31,27 @@ target_include_directories(raytracerGlobal INTERFACE
 )
 
 # === Add OpenMP library ===
-find_package(OpenMP REQUIRED)
-target_link_libraries(raytracerGlobal INTERFACE OpenMP::OpenMP_CXX)
+find_package(OpenMP)
+
+if(NOT OpenMP_CXX_FOUND)
+    message(STATUS "OpenMP not found, fetching from GitHub...")
+
+    fetchcontent_declare(openmp
+        GIT_REPOSITORY https://github.com/llvm/llvm-project.git
+        GIT_TAG llvmorg-18.1.2
+        SOURCE_SUBDIR openmp
+        GIT_SHALLOW TRUE
+    )
+
+    set(LIBOMP_ENABLE_SHARED ON CACHE BOOL "" FORCE)
+    set(LIBOMP_INSTALL_ALIASES OFF CACHE BOOL "" FORCE)
+    fetchcontent_makeavailable(openmp)
+    
+    target_link_libraries(raytracerGlobal INTERFACE omp)
+else()
+    message(STATUS "OpenMP found")
+    target_link_libraries(raytracerGlobal INTERFACE OpenMP::OpenMP_CXX)
+endif()
 
 # === DEPENDENCIES: LIBCONFIG++ ===
 if(PKG_CONFIG_FOUND)
