@@ -88,9 +88,7 @@ bool RayTracer::Renderer::isInShadow(
     Ray shadowRay(hit.p + hit.normal * 0.001, lightDir);
     HitRecord tempRec;
     for (const auto& primitive : primitives) {
-        if (primitive->hits(shadowRay, tempRec) && std::isfinite(tempRec.distance) &&
-            tempRec.distance > 0.001)
-            return true;
+        if (primitive->hits(shadowRay, tempRec) && tempRec.distance > 0.001) return true;
     }
     return false;
 }
@@ -146,13 +144,14 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
             } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
                 Math::Vector3D<double> totalLightBumped(0.0, 0.0, 0.0);
                 for (const auto& light : lights) {
-                    if (!light->castsShadow() || !isInShadow(closestRec, light->getDirection(), primitives))
+                    if (!light->castsShadow() ||
+                        !isInShadow(closestRec, light->getDirection(), primitives))
                         totalLightBumped += light->computeLight(closestRec);
                 }
                 totalLightBumped._x = std::clamp(totalLightBumped._x, 0.0, 1.0);
                 totalLightBumped._y = std::clamp(totalLightBumped._y, 0.0, 1.0);
                 totalLightBumped._z = std::clamp(totalLightBumped._z, 0.0, 1.0);
-                
+
                 return attenuation * totalLightBumped * 255.0;
             }
         }

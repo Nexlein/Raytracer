@@ -60,18 +60,18 @@ Math::Vector3D<double> RayTracer::Sphere::applyRotation(Math::Vector3D<double>& 
     double rz = _rotation._z * std::numbers::pi / 180.0;
 
     Math::Vector3D<double> v = normal;
-    double y1 =  v._y * std::cos(rx) - v._z * std::sin(rx);
-    double z1 =  v._y * std::sin(rx) + v._z * std::cos(rx);
+    double y1 = v._y * std::cos(rx) - v._z * std::sin(rx);
+    double z1 = v._y * std::sin(rx) + v._z * std::cos(rx);
     v._y = y1;
     v._z = z1;
 
-    double x2 =  v._x * std::cos(ry) + v._z * std::sin(ry);
+    double x2 = v._x * std::cos(ry) + v._z * std::sin(ry);
     double z2 = -v._x * std::sin(ry) + v._z * std::cos(ry);
     v._x = x2;
     v._z = z2;
 
-    double x3 =  v._x * std::cos(rz) - v._y * std::sin(rz);
-    double y3 =  v._x * std::sin(rz) + v._y * std::cos(rz);
+    double x3 = v._x * std::cos(rz) - v._y * std::sin(rz);
+    double y3 = v._x * std::sin(rz) + v._y * std::cos(rz);
     v._x = x3;
     v._y = y3;
 
