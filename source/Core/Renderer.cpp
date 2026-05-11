@@ -10,7 +10,9 @@
 
 #include "Renderer.hpp"
 
+#ifdef _OPENMP
 #include <omp.h>
+#endif
 
 #include <fstream>
 
@@ -42,7 +44,9 @@ void RayTracer::Renderer::computeRows(const Camera& camera,
 {
     double ratio = static_cast<double>(_width) / _height;
 
+#ifdef _OPENMP
 #pragma omp parallel for schedule(dynamic, 8) collapse(2)
+#endif
 
     for (int y = _height - 1; y >= 0; y--) {
         for (int x = 0; x < _width; x++) {

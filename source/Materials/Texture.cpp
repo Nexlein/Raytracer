@@ -62,10 +62,10 @@ bool RayTracer::Texture::scatter(const Ray& /*rayIn*/, HitRecord& rec,
         unsigned int iNext = (i + _step < static_cast<unsigned int>(_width)) ? i + _step : i;
         unsigned int jNext = (j + _step < static_cast<unsigned int>(_height)) ? j + _step : j;
 
-        sf::Color currentPixel = _image.getPixel(i, j);
+        sf::Color currentPixel = _image.getPixel(sf::Vector2u(i, j));
         double lCurrentPixel = getLuminance(currentPixel);
-        double lRightPixel = getLuminance(_image.getPixel(iNext, j));
-        double lDownPixel = getLuminance(_image.getPixel(i, jNext));
+        double lRightPixel = getLuminance(_image.getPixel(sf::Vector2u(iNext, j)));
+        double lDownPixel = getLuminance(_image.getPixel(sf::Vector2u(i, jNext)));
 
         double du = (lCurrentPixel - lRightPixel) * _strength;
         double dv = (lCurrentPixel - lDownPixel) * _strength;
@@ -107,7 +107,7 @@ Math::Vector3D<double> RayTracer::Texture::getColor(double u, double v) const
         if (i >= static_cast<unsigned int>(_width)) i = _width - 1;
         if (j >= static_cast<unsigned int>(_height)) j = _height - 1;
 
-        sf::Color pixel = _image.getPixel(i, j);
+        sf::Color pixel = _image.getPixel(sf::Vector2u(i, j));
         return Math::Vector3D<double>(pixel.r, pixel.g, pixel.b);
     }
     return Math::Vector3D<double>(255, 0, 255);
