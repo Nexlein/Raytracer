@@ -370,7 +370,6 @@ Represents an image-based material mapped onto a primitive using UV coordinates.
 - `shininess` *(double, optional)*: Sharpness of the specular highlight. Higher values produce a tighter, more focused reflection. *(Default: 32.0)*
 - `specular_strength` *(double, optional)*: Intensity of the specular highlight. *(Default: 0.5)*
 
-
 **Example:**
 
 ```cfg
