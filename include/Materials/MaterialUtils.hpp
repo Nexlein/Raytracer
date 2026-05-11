@@ -17,6 +17,26 @@
 namespace RayTracer {
     class MaterialUtils {
         public:
+
+        /// @brief Checks if a point is in shadow
+        /// @param hit The hit record
+        /// @param lightDir The direction to the light
+        /// @param primitives The list of primitives in the scene
+        /// @return True if the point is in shadow, false otherwise
+        static bool isInShadow(
+            const HitRecord& rec, const Math::Vector3D<double>& lightDir,
+            const std::vector<std::unique_ptr<IPrimitive>>& primitives)
+        {
+            Ray shadowRay(rec.p + rec.normal * 0.001, lightDir);
+            HitRecord tempRec;
+            for (const auto& prim : primitives) {
+                if (prim->hits(shadowRay, tempRec) && std::isfinite(tempRec.distance) &&
+                    tempRec.distance > 0.001)
+                    return true;
+            }
+            return false;
+        }
+
         static double randomDouble()
         {
             thread_local std::uniform_real_distribution<double> distribution(0.0, 1.0);

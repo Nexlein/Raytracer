@@ -8,6 +8,7 @@
 #pragma once
 
 #include "IMaterial.hpp"
+#include "ILight.hpp"
 
 namespace RayTracer {
     struct HitRecord;
@@ -31,6 +32,10 @@ namespace RayTracer {
         bool isReflective() const override { return false; };
 
         double getReflective() const override { return 0.0; };
+
+        Math::Vector3D<double> computeSpecular(const Ray& /*ray*/, const HitRecord& /*rec*/,
+            const std::vector<std::unique_ptr<ILight>>& /*lights*/,
+            const std::vector<std::unique_ptr<IPrimitive>>& /*primitives*/ ) const override { return {0, 0, 0}; }
 
         virtual bool hasSpecular() const { return false; }
 
