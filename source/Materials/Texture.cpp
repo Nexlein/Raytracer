@@ -11,7 +11,7 @@
 #include <iostream>
 #include <numbers>
 
-#include "Core/ConfigUtils.hpp"
+#include "ConfigUtils.hpp"
 #include "IPrimitive.hpp"
 #include "MaterialUtils.hpp"
 #include "RayTracerException.hpp"
@@ -33,6 +33,7 @@ void RayTracer::Texture::init(const libconfig::Setting& setting)
     _height = _image.getSize().y;
 
     if (!ConfigUtils::getAsDouble(setting, "strength", _strength)) _strength = 0.0;
+
     if (!ConfigUtils::getAsDouble(setting, "step", _step)) _step = 1.0;
 }
 

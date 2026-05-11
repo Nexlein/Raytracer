@@ -192,12 +192,12 @@ add_raytracer_plugin(raytracer_torus source/Primitives/Torus.cpp)
 add_raytracer_plugin(raytracer_ambient source/Light/AmbientLight.cpp)
 add_raytracer_plugin(raytracer_directionals source/Light/DirectionalLight.cpp)
 add_raytracer_plugin(raytracer_lambertians source/Materials/Lambertian.cpp)
+add_raytracer_plugin(raytracer_phongs source/Materials/Phong.cpp)
 add_raytracer_plugin(raytracer_textures source/Materials/Texture.cpp)
 add_raytracer_plugin(raytracer_refractives source/Materials/Refractive.cpp)
 add_raytracer_plugin(raytracer_reflectives source/Materials/Reflective.cpp)
 
 add_raytracer_plugin(raytracer_mandelbulbs source/Primitives/Mandelbulb.cpp)
 target_link_libraries(raytracer_mandelbulbs PRIVATE afractal_static)
-
 add_raytracer_plugin(raytracer_sierpinskis source/Primitives/Sierpinski.cpp)
 target_link_libraries(raytracer_sierpinskis PRIVATE afractal_static)

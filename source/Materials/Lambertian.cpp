@@ -12,12 +12,6 @@
 #include "MaterialUtils.hpp"
 #include "RayTracerException.hpp"
 
-RayTracer::Lambertian::Lambertian(std::string name, const Math::Vector3D<double>& color)
-{
-    _name = name;
-    _color = color;
-}
-
 void RayTracer::Lambertian::init(const libconfig::Setting& setting)
 {
     if (!setting.lookupValue("name", _name))

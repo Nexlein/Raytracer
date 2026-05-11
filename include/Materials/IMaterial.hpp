@@ -8,12 +8,16 @@
 #pragma once
 
 #include <libconfig.h++>
+#include <memory>
+#include <vector>
 
 #include "Ray.hpp"
 #include "Vector3D.hpp"
 
 namespace RayTracer {
     struct HitRecord;
+    class ILight;
+    class IPrimitive;
 
     class IMaterial {
         public:
@@ -48,6 +52,11 @@ namespace RayTracer {
         /// @param color color to set
         virtual void setColor(const Math::Vector3D<double>& color) = 0;
 
+        virtual Math::Vector3D<double> computeSpecular(
+            const Ray& ray, const HitRecord& rec,
+            const std::vector<std::unique_ptr<ILight>>& lights,
+            const std::vector<std::unique_ptr<IPrimitive>>& primitives) const = 0;
+
         virtual bool isRefractive() const = 0;
 
         virtual double getRefractive() const = 0;
@@ -55,6 +64,12 @@ namespace RayTracer {
         virtual bool isReflective() const = 0;
 
         virtual double getReflective() const = 0;
+
+        virtual bool hasSpecular() const = 0;
+
+        virtual double getShininess() const = 0;
+
+        virtual double getSpecularStrength() const = 0;
 
         protected:
         /// @brief Name of the material
