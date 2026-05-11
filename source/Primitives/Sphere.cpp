@@ -42,13 +42,40 @@ bool RayTracer::Sphere::hits(const Ray& ray, HitRecord& rec) const
     rec.p = ray._origin + (ray._direction * rec.distance);
     rec.normal = (rec.p - _center) / _radius;
 
+    Math::Vector3D<double> n = applyRotation(rec.normal);
+
     // UV Mapping
-    double theta = std::acos(-rec.normal._y);
-    double phi = std::atan2(-rec.normal._z, rec.normal._x) + std::numbers::pi;
+    double theta = std::acos(-n._y);
+    double phi = std::atan2(-n._z, n._x) + std::numbers::pi;
     rec.u = phi / (2.0 * std::numbers::pi);
     rec.v = theta / std::numbers::pi;
 
     return true;
+}
+
+Math::Vector3D<double> RayTracer::Sphere::applyRotation(Math::Vector3D<double>& normal) const
+{
+    double rx = _rotation._x * std::numbers::pi / 180.0;
+    double ry = _rotation._y * std::numbers::pi / 180.0;
+    double rz = _rotation._z * std::numbers::pi / 180.0;
+
+    Math::Vector3D<double> v = normal;
+    double y1 =  v._y * std::cos(rx) - v._z * std::sin(rx);
+    double z1 =  v._y * std::sin(rx) + v._z * std::cos(rx);
+    v._y = y1;
+    v._z = z1;
+
+    double x2 =  v._x * std::cos(ry) + v._z * std::sin(ry);
+    double z2 = -v._x * std::sin(ry) + v._z * std::cos(ry);
+    v._x = x2;
+    v._z = z2;
+
+    double x3 =  v._x * std::cos(rz) - v._y * std::sin(rz);
+    double y3 =  v._x * std::sin(rz) + v._y * std::cos(rz);
+    v._x = x3;
+    v._y = y3;
+
+    return v;
 }
 
 void RayTracer::Sphere::init(const libconfig::Setting& setting)
@@ -61,6 +88,7 @@ void RayTracer::Sphere::init(const libconfig::Setting& setting)
 
     Math::Vector3D<double> rotation;
     ConfigUtils::parseVector3D(setting, "rotation", rotation, false);
+    _rotation = rotation;
 
     if (!ConfigUtils::getAsDouble(setting, "r", _radius))
         throw RayTracer::RayTracerException("Sphere: Missing required parameter 'r'.");

@@ -39,5 +39,11 @@ namespace RayTracer {
         /// @brief Initializes the sphere with settings from a configuration file
         /// @param setting The configuration settings for the sphere
         void init(const libconfig::Setting& setting) override;
+
+        private:
+        Vector3D applyRotation(Vector3D& normal) const;
+
+        /// @brief Rotation of the sphere (useful for texture)
+        Vector3D _rotation = {0.0, 0.0, 0.0};
     };
 }  // namespace RayTracer
