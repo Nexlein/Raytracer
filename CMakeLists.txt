@@ -30,8 +30,8 @@ target_include_directories(raytracerGlobal INTERFACE
     ${PROJECT_SOURCE_DIR}/include/Loader
 )
 
-# === Add OpenMP library ===
-find_package(OpenMP)
+# === DEPENDENCIES: OpenMP ===
+find_package(OpenMP QUIET)
 
 if(NOT OpenMP_CXX_FOUND)
     message(STATUS "OpenMP not found, fetching from GitHub...")
@@ -83,6 +83,7 @@ if(NOT LIBCONFIGXX_FOUND)
 
     foreach(tgt config config++)
         if(TARGET ${tgt})
+            target_compile_options(${tgt} PRIVATE -w)
             if(HAVE_USELOCALE)
                 target_compile_definitions(${tgt} PRIVATE HAVE_USELOCALE)
             endif()
