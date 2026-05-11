@@ -463,6 +463,7 @@ Represents a material with full Phong illumination: ambient, diffuse, and specul
 - `specularStrength` *(float, optionnal)*: Controls the intensity of the specular highlight. Range: 0.0 (none) to 1.0 (full intensity).  Default: 0.8.
 
 **Example:**
+
 ```cfg
 materials = {
     phongs = (
