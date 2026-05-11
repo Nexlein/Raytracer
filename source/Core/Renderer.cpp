@@ -82,20 +82,6 @@ void RayTracer::Renderer::render(const Camera& camera,
     outFile.close();
 }
 
-// bool RayTracer::Renderer::isInShadow(
-//     const HitRecord& hit, const Math::Vector3D<double>& lightDir,
-//     const std::vector<std::unique_ptr<IPrimitive>>& primitives) const
-// {
-//     Ray shadowRay(hit.p + hit.normal * 0.001, lightDir);
-//     HitRecord tempRec;
-//     for (const auto& primitive : primitives) {
-//         if (primitive->hits(shadowRay, tempRec) && std::isfinite(tempRec.distance) &&
-//             tempRec.distance > 0.001)
-//             return true;
-//     }
-//     return false;
-// }
-
 Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
     const Ray& ray, int depth, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
     const std::vector<std::unique_ptr<ILight>>& lights) const
