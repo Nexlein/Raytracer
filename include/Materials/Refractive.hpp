@@ -19,7 +19,7 @@ namespace RayTracer {
         /// @param setting The configuration settings for the material
         void init(const libconfig::Setting& setting) override;
 
-        bool scatter(const Ray& rayIn, const HitRecord& rec, Math::Vector3D<double>& attenuation,
+        bool scatter(const Ray& rayIn, HitRecord& rec, Math::Vector3D<double>& attenuation,
                      Ray& scattered) const override;
 
         bool isRefractive() const override { return true; }

@@ -30,7 +30,7 @@ namespace RayTracer {
         /// scattered ray
         /// @param scattered Output parameter for the scattered ray
         /// @return True if the ray was scattered, false otherwise
-        virtual bool scatter(const Ray& rayIn, const HitRecord& rec,
+        virtual bool scatter(const Ray& rayIn, HitRecord& rec,
                              Math::Vector3D<double>& attenuation, Ray& scattered) const = 0;
 
         /// @brief returns the name of the material

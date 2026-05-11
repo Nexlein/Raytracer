@@ -25,7 +25,7 @@ void RayTracer::Lambertian::init(const libconfig::Setting& setting)
     ConfigUtils::parseColor(setting, "color", _color);
 }
 
-bool RayTracer::Lambertian::scatter(const Ray& /*rayIn*/, const HitRecord& rec,
+bool RayTracer::Lambertian::scatter(const Ray& /*rayIn*/, HitRecord& rec,
                                     Math::Vector3D<double>& attenuation, Ray& scattered) const
 {
     Math::Vector3D<double> scatterDir = rec.normal + MaterialUtils::randomUnitVector();

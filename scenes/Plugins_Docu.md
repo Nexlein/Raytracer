@@ -354,12 +354,17 @@ materials = {
 
 ### 4.2. Texture (`texture`)
 
-Represents an image-based material mapped onto a primitive using UV coordinates.
+Represents an image-based material mapped onto a primitive using UV coordinates. Supports **bump mapping** (normal mapping) to simulate surface relief from the texture's luminance variations.
 
 **Parameters:**
 
 - `name` *(string)*: The material's unique identifier. **(Required)**
 - `filepath` *(string)*: Path to the texture image file. **(Required)**
+- `strength` *(float, optional)*: Intensity of the bump mapping effect. Controls how much the surface normals are perturbed based on the texture's luminance gradient. *(Default: `0.0`)*
+  - Recommended range: `0.5` – `2.0` for natural results
+  - Values above `3.0` may produce visual artifacts (doubled or blurred appearance)
+- `step` *(int, optional)*: Pixel offset used to compute the luminance gradient. A larger value captures low-frequency relief; a smaller value captures fine detail. *(Default: `1`)*
+  - Recommended range: `1` – `3`
 
 **Example:**
 
@@ -367,8 +372,16 @@ Represents an image-based material mapped onto a primitive using UV coordinates.
 materials = {
     textures = (
         {
-            name = "MyTextureName";
-            filepath = "texture/MyTexture.jpg";
+            # Texture with default bump mapping
+            name = "earth";
+            filepath = "textures/earth.jpg";
+        },
+        {
+            # Texture with custom bump intensity
+            name = "rough_stone";
+            filepath = "textures/stone.jpg";
+            strength = 1.8;
+            step = 2;
         }
     );
 };
