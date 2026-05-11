@@ -22,9 +22,9 @@ namespace RayTracer {
         bool scatter(const Ray& rayIn, HitRecord& rec, Math::Vector3D<double>& attenuation,
                      Ray& scattered) const override;
 
-        bool isReflective() const { return true; };
+        bool isReflective() const override { return true; };
 
-        double getReflective() const { return _reflectiveIndex; };
+        double getReflective() const override { return _reflectiveIndex; };
 
         private:
         /// @brief reflective index of the glass
