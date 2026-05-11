@@ -8,8 +8,8 @@
 #pragma once
 
 #include <libconfig.h++>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "Ray.hpp"
 #include "Vector3D.hpp"
@@ -34,8 +34,8 @@ namespace RayTracer {
         /// scattered ray
         /// @param scattered Output parameter for the scattered ray
         /// @return True if the ray was scattered, false otherwise
-        virtual bool scatter(const Ray& rayIn, HitRecord& rec,
-                             Math::Vector3D<double>& attenuation, Ray& scattered) const = 0;
+        virtual bool scatter(const Ray& rayIn, HitRecord& rec, Math::Vector3D<double>& attenuation,
+                             Ray& scattered) const = 0;
 
         /// @brief returns the name of the material
         /// @return The name of the material
@@ -52,10 +52,10 @@ namespace RayTracer {
         /// @param color color to set
         virtual void setColor(const Math::Vector3D<double>& color) = 0;
 
-        virtual Math::Vector3D<double> computeSpecular(const Ray& ray, const HitRecord& rec,
+        virtual Math::Vector3D<double> computeSpecular(
+            const Ray& ray, const HitRecord& rec,
             const std::vector<std::unique_ptr<ILight>>& lights,
-            const std::vector<std::unique_ptr<IPrimitive>>& primitives ) const = 0;
-
+            const std::vector<std::unique_ptr<IPrimitive>>& primitives) const = 0;
 
         virtual bool isRefractive() const = 0;
 

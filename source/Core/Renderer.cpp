@@ -42,7 +42,7 @@ void RayTracer::Renderer::computeRows(const Camera& camera,
 {
     double ratio = static_cast<double>(_width) / _height;
 
-    #pragma omp parallel for schedule(dynamic, 8) collapse(2)
+#pragma omp parallel for schedule(dynamic, 8) collapse(2)
 
     for (int y = _height - 1; y >= 0; y--) {
         for (int x = 0; x < _width; x++) {
@@ -96,7 +96,6 @@ void RayTracer::Renderer::render(const Camera& camera,
 //     return false;
 // }
 
-
 Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
     const Ray& ray, int depth, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
     const std::vector<std::unique_ptr<ILight>>& lights) const
@@ -122,7 +121,8 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
     if (hitAnything) {
         Math::Vector3D<double> totalLight(0.0, 0.0, 0.0);
         for (const auto& light : lights) {
-            if (!light->castsShadow() || !MaterialUtils::isInShadow(closestRec, light->getDirection(), primitives))
+            if (!light->castsShadow() ||
+                !MaterialUtils::isInShadow(closestRec, light->getDirection(), primitives))
                 totalLight += light->computeLight(closestRec);
         }
         totalLight._x = std::clamp(totalLight._x, 0.0, 1.0);
@@ -146,9 +146,8 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
                     return refractiveColor * t + baseColor * 255.0 * (1.0 - t);
                 }
             } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-                Math::Vector3D<double> specular = closestRec.material->computeSpecular(
-                    ray, closestRec, lights, primitives
-                );
+                Math::Vector3D<double> specular =
+                    closestRec.material->computeSpecular(ray, closestRec, lights, primitives);
                 return attenuation * totalLight * 255.0 + specular * 255.0;
             }
         }

@@ -22,9 +22,10 @@ namespace RayTracer {
         bool scatter(const Ray& rayIn, HitRecord& rec, Math::Vector3D<double>& attenuation,
                      Ray& scattered) const override;
 
-        Math::Vector3D<double> computeSpecular(const Ray& ray, const HitRecord& rec,
+        Math::Vector3D<double> computeSpecular(
+            const Ray& ray, const HitRecord& rec,
             const std::vector<std::unique_ptr<ILight>>& lights,
-            const std::vector<std::unique_ptr<IPrimitive>>& primitives ) const override;
+            const std::vector<std::unique_ptr<IPrimitive>>& primitives) const override;
 
         bool hasSpecular() const override;
 

@@ -8,12 +8,12 @@
 #include "Texture.hpp"
 
 #include <cmath>
-#include <numbers>
 #include <iostream>
+#include <numbers>
 
+#include "ConfigUtils.hpp"
 #include "IPrimitive.hpp"
 #include "MaterialUtils.hpp"
-#include "ConfigUtils.hpp"
 #include "RayTracerException.hpp"
 
 void RayTracer::Texture::init(const libconfig::Setting& setting)
@@ -32,11 +32,9 @@ void RayTracer::Texture::init(const libconfig::Setting& setting)
     _width = _image.getSize().x;
     _height = _image.getSize().y;
 
-    if (!ConfigUtils::getAsDouble(setting, "strength", _strength))
-        _strength = 0.0;
+    if (!ConfigUtils::getAsDouble(setting, "strength", _strength)) _strength = 0.0;
 
-    if (!ConfigUtils::getAsDouble(setting, "step", _step))
-        _step = 1.0;
+    if (!ConfigUtils::getAsDouble(setting, "step", _step)) _step = 1.0;
 }
 
 bool RayTracer::Texture::scatter(const Ray& /*rayIn*/, HitRecord& rec,
@@ -72,29 +70,23 @@ bool RayTracer::Texture::scatter(const Ray& /*rayIn*/, HitRecord& rec,
         double du = (lCurrentPixel - lRightPixel) * _strength;
         double dv = (lCurrentPixel - lDownPixel) * _strength;
 
-        Math::Vector3D<double> tangent(
-            rec.normal._z,
-            0.0,
-            -rec.normal._x
-        );
-        if (tangent.dot(tangent) < 1e-6)
-            tangent = Math::Vector3D<double>(1, 0, 0);
+        Math::Vector3D<double> tangent(rec.normal._z, 0.0, -rec.normal._x);
+        if (tangent.dot(tangent) < 1e-6) tangent = Math::Vector3D<double>(1, 0, 0);
         tangent = tangent.normalized();
 
         Math::Vector3D<double> bitangent = rec.normal.cross(tangent).normalized();
 
-        Math::Vector3D<double> worldNormal = (rec.normal + (tangent * du) + (bitangent * dv)).normalized();
+        Math::Vector3D<double> worldNormal =
+            (rec.normal + (tangent * du) + (bitangent * dv)).normalized();
         rec.normal = worldNormal;
 
         Math::Vector3D<double> sDir = worldNormal + MaterialUtils::randomUnitVector();
-        if (sDir.dot(sDir) < 1e-8)
-            sDir = worldNormal;
-    
+        if (sDir.dot(sDir) < 1e-8) sDir = worldNormal;
+
         scattered = Ray(rec.p, sDir);
 
-        attenuation = Math::Vector3D<double>(currentPixel.r / 255.0, 
-                                            currentPixel.g / 255.0, 
-                                            currentPixel.b / 255.0);
+        attenuation = Math::Vector3D<double>(currentPixel.r / 255.0, currentPixel.g / 255.0,
+                                             currentPixel.b / 255.0);
     } else
         attenuation = Math::Vector3D<double>(1, 0, 1);
 

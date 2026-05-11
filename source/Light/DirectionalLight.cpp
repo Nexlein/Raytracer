@@ -1,10 +1,10 @@
 #include "DirectionalLight.hpp"
 
 #include <algorithm>
+#include <iostream>
 #include <memory>
 
 #include "ConfigUtils.hpp"
-#include <iostream>
 
 Math::Vector3D<double> RayTracer::DirectionalLight::computeLight(const HitRecord& hit) const
 {
@@ -14,10 +14,7 @@ Math::Vector3D<double> RayTracer::DirectionalLight::computeLight(const HitRecord
     return (_color / 255.0) * intensity;
 }
 
-Math::Vector3D<double> RayTracer::DirectionalLight::getDirection() const
-{
-    return -_direction;
-}
+Math::Vector3D<double> RayTracer::DirectionalLight::getDirection() const { return -_direction; }
 
 void RayTracer::DirectionalLight::init(const libconfig::Setting& setting)
 {

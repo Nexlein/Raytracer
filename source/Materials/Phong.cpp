@@ -19,15 +19,14 @@ void RayTracer::Phong::init(const libconfig::Setting& setting)
 
     ConfigUtils::parseColor(setting, "color", _color);
 
-    if (!ConfigUtils::getAsDouble(setting, "shininess", _shininess))
-        _shininess = 32;
+    if (!ConfigUtils::getAsDouble(setting, "shininess", _shininess)) _shininess = 32;
 
     if (!ConfigUtils::getAsDouble(setting, "specularStrength", _specularStrength))
         _specularStrength = 0.5;
 }
 
 bool RayTracer::Phong::scatter(const Ray& /*rayIn*/, HitRecord& rec,
-                                    Math::Vector3D<double>& attenuation, Ray& scattered) const
+                               Math::Vector3D<double>& attenuation, Ray& scattered) const
 {
     Math::Vector3D<double> scatterDir = rec.normal + MaterialUtils::randomUnitVector();
 
@@ -39,17 +38,17 @@ bool RayTracer::Phong::scatter(const Ray& /*rayIn*/, HitRecord& rec,
 }
 
 Math::Vector3D<double> RayTracer::Phong::computeSpecular(
-    const Ray& ray,
-    const HitRecord& rec,
-    const std::vector<std::unique_ptr<ILight>>& lights,
-    const std::vector<std::unique_ptr<IPrimitive>>& primitives
-) const {
+    const Ray& ray, const HitRecord& rec, const std::vector<std::unique_ptr<ILight>>& lights,
+    const std::vector<std::unique_ptr<IPrimitive>>& primitives) const
+{
     Math::Vector3D<double> specular(0.0, 0.0, 0.0);
     Math::Vector3D<double> V = (-ray._direction).normalized();
 
     for (const auto& light : lights) {
         if (!light->hasDirection()) continue;
-        if (light->castsShadow() && MaterialUtils::isInShadow(rec, light->getDirection(), primitives)) continue;
+        if (light->castsShadow() &&
+            MaterialUtils::isInShadow(rec, light->getDirection(), primitives))
+            continue;
 
         Math::Vector3D<double> L = light->getDirection();
         Math::Vector3D<double> R = (rec.normal * 2.0 * rec.normal.dot(L) - L).normalized();
