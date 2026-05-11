@@ -20,8 +20,8 @@ bool RayTracer::AFractal::hits(const Ray& ray, HitRecord& hitRecord) const
 
     double t = 0.001;
     constexpr int MAX_STEPS = 300;
-    constexpr double MAX_DIST = 20.0;  // au lieu de 100
-    constexpr double EPSILON = 0.001;  // au lieu de 0.0001
+    constexpr double MAX_DIST = 20.0;
+    constexpr double EPSILON = 0.001;
 
     for (int i = 0; i < MAX_STEPS; ++i) {
         Math::Vector3D<double> p = origin + dir * t;

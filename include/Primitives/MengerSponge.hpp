@@ -28,8 +28,5 @@ namespace RayTracer {
         double crossDE(const Math::Vector3D<double>& p) const;
 
         double boxDE(const Math::Vector3D<double>& p, double size) const;
-
-        /// @brief Escape radius threshold — iteration stops when the orbit exceeds this value
-        double _bailout;
     };
 }  // namespace RayTracer
