@@ -28,9 +28,7 @@ namespace RayTracer {
             Ray shadowRay(rec.p + rec.normal * 0.001, lightDir);
             HitRecord tempRec;
             for (const auto& prim : primitives) {
-                if (prim->hits(shadowRay, tempRec) && std::isfinite(tempRec.distance) &&
-                    tempRec.distance > 0.001)
-                    return true;
+                if (prim->hits(shadowRay, tempRec) && tempRec.distance > 0.001) return true;
             }
             return false;
         }

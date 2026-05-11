@@ -43,10 +43,10 @@ namespace RayTracer {
             return {0, 0, 0};
         }
 
-        virtual bool hasSpecular() const { return false; }
+        virtual bool hasSpecular() const override { return false; }
 
-        virtual double getShininess() const { return 0.0; }
+        virtual double getShininess() const override { return 0.0; }
 
-        virtual double getSpecularStrength() const { return 0.0; }
+        virtual double getSpecularStrength() const override { return 0.0; }
     };
 }  // namespace RayTracer
