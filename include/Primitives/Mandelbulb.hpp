@@ -22,7 +22,7 @@ namespace RayTracer {
 
         void init(const libconfig::Setting& setting) override;
 
-        [[nodiscard]] double distanceEstimate(const Math::Vector3D<double>& p) const;
+        [[nodiscard]] double distanceEstimate(const Math::Vector3D<double>& p) const override;
 
         private:
         /// @brief mon vier

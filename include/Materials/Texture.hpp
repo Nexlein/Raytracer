@@ -29,8 +29,8 @@ namespace RayTracer {
         /// scattered ray
         /// @param scattered Output parameter for the scattered ray
         /// @return True if the ray was scattered, false otherwise
-        bool scatter(const Ray& /*rayIn*/, HitRecord& rec,
-                     Math::Vector3D<double>& attenuation, Ray& scattered) const override;
+        bool scatter(const Ray& /*rayIn*/, HitRecord& rec, Math::Vector3D<double>& attenuation,
+                     Ray& scattered) const override;
 
         /// @brief Gets the color of the texture at given UV coordinates
         /// @param u U coordinate
