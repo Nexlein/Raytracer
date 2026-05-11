@@ -42,7 +42,7 @@ void RayTracer::Renderer::computeRows(const Camera& camera,
 {
     double ratio = static_cast<double>(_width) / _height;
 
-#pragma omp parallel for schedule(dynamic, 8) collapse(2)
+    #pragma omp parallel for schedule(dynamic, 8) collapse(2)
 
     for (int y = _height - 1; y >= 0; y--) {
         for (int x = 0; x < _width; x++) {

@@ -21,5 +21,16 @@ namespace RayTracer {
 
         bool scatter(const Ray& rayIn, HitRecord& rec, Math::Vector3D<double>& attenuation,
                      Ray& scattered) const override;
+
+        bool hasSpecular() const override;
+
+        double getShininess() const override;
+
+        double getSpecularStrength() const override;
+
+        private:
+        double _shininess;
+
+        double _specularStrength;
     };
 }  // namespace RayTracer
