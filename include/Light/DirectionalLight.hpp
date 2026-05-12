@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "ILight.hpp"
+#include "ALight.hpp"
 #include "math.h"
 
 namespace RayTracer {
-    class DirectionalLight : public ILight {
+    class DirectionalLight : public ALight {
         public:
         /// @brief Default constructor for DirectionalLight
         DirectionalLight() = default;
