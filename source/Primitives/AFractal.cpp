@@ -12,16 +12,16 @@
 
 bool RayTracer::AFractal::hits(const Ray& ray, HitRecord& hitRecord) const
 {
+    double t = 0.05;
+    constexpr int MAX_STEPS = 300;
+    constexpr double MAX_DIST = 20.0;
+    constexpr double EPSILON = 0.001;
+
     hitRecord.primitive = this;
     hitRecord.material = _material.get();
     Math::Vector3D<double> origin = ray._origin - _position;
     Math::Vector3D<double> dir = rotateInverse(ray._direction);
     origin = rotateInverse(origin);
-
-    double t = 0.001;
-    constexpr int MAX_STEPS = 300;
-    constexpr double MAX_DIST = 20.0;
-    constexpr double EPSILON = 0.001;
 
     for (int i = 0; i < MAX_STEPS; ++i) {
         Math::Vector3D<double> p = origin + dir * t;
@@ -55,17 +55,14 @@ Math::Vector3D<double> RayTracer::AFractal::rotateInverse(const Math::Vector3D<d
     double ry = _rotation._y * M_PI / 180.0;
     double rz = _rotation._z * M_PI / 180.0;
 
-    // X
     double y1 = std::cos(rx) * v._y + std::sin(rx) * v._z;
     double z1 = -std::sin(rx) * v._y + std::cos(rx) * v._z;
     double x1 = v._x;
 
-    // Y
     double x2 = std::cos(ry) * x1 + std::sin(ry) * z1;
     double z2 = -std::sin(ry) * x1 + std::cos(ry) * z1;
     double y2 = y1;
 
-    // Z
     double x3 = std::cos(rz) * x2 - std::sin(rz) * y2;
     double y3 = std::sin(rz) * x2 + std::cos(rz) * y2;
     double z3 = z2;
@@ -79,17 +76,14 @@ Math::Vector3D<double> RayTracer::AFractal::rotate(const Math::Vector3D<double>&
     double ry = _rotation._y * M_PI / 180.0;
     double rz = _rotation._z * M_PI / 180.0;
 
-    // Z inverse
     double x1 = std::cos(rz) * v._x + std::sin(rz) * v._y;
     double y1 = -std::sin(rz) * v._x + std::cos(rz) * v._y;
     double z1 = v._z;
 
-    // Y inverse
     double x2 = std::cos(ry) * x1 - std::sin(ry) * z1;
     double z2 = std::sin(ry) * x1 + std::cos(ry) * z1;
     double y2 = y1;
 
-    // X inverse
     double y3 = std::cos(rx) * y2 - std::sin(rx) * z2;
     double z3 = std::sin(rx) * y2 + std::cos(rx) * z2;
     double x3 = x2;

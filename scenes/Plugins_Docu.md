@@ -377,8 +377,29 @@ mobiusstrips = (
     }
 );
 ```
+### 3.13. Tangle Cube (`tanglecubes`)
 
----
+Represents a Tangle Cube implicit surface, generated via ray marching. It is defined by the isosurface equation: x⁴ - 5x² + y⁴ - 5y² + z⁴ - 5z² + constant = 0
+This produces a smooth, organic shape with four rounded lobes connected by concave bridges, resembling a cube with heavily rounded and pinched faces.
+
+**Additional parameters:**
+
+- `scale`: Uniform size of the surface in world space. *(Default: 1.0)*
+- `constant` *(float)*: Controls the shape of the isosurface. `11.8` produces the classic four-lobed Tangle Cube. Lower values tighten the lobes, higher values expand them. Valid range is approximately `[0.0, 15.0]`. **(Required)**
+
+**Example:**
+
+```cfg
+tanglecubes = (
+    {
+        position = { x = 0.0; y = 0.0; z = 5.0 };
+        rotation = { x = 0.0; y = 160.0; z = 0.0 }; # Optional
+        scale    = 0.8; # Optional
+        constant = 11.8;
+        material = "mat_255_255_255"; # Optional
+    }
+);
+```
 
 ---
 

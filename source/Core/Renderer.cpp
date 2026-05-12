@@ -125,7 +125,8 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
             if (closestRec.material->isReflective()) {
                 return computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
             } else if (closestRec.material->isRefractive()) {
-                auto refractiveColor = computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
+                auto refractiveColor =
+                    computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
                 double t = closestRec.material->getRefractive();
                 return refractiveColor * t + baseColor * 255.0 * (1.0 - t);
             } else {
