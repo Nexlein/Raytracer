@@ -26,11 +26,25 @@ namespace RayTracer {
         /// @param setting The configuration settings for the light
         void init(const libconfig::Setting& setting) override;
 
+        /// @brief Computes the light contribution at a given hit point
+        /// @param hit The hit record for which to compute the light
+        /// @return Returns the color of the light contribution at the hit point
+        [[nodiscard]] Math::Vector3D<double> computeLight(
+            const HitRecord& hit) const override;
+
+        bool hasDirection() const override { return false; }
+
         private:
         /// @brief Position of the point light in world space
         Point3D _position = {0, 0, 0};
 
         /// @brief Rotation of the light (for potential future use)
         Vector3D _rotation = {0.0, 0.0, 0.0};
+        double _constantAttenuation = 1.0;
+        double _linearAttenuation = 0.09;
+        double _quadraticAttenuation = 0.032;
+
+        [[nodiscard]] Vector3D applyRotation(Vector3D vec) const;
+        [[nodiscard]] double calculateAttenuation(double distance) const;
     };
 }  // namespace RayTracer
