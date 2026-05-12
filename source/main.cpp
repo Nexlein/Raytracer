@@ -12,11 +12,11 @@
 #include <memory>
 #include <vector>
 
-#include "Core/Camera.hpp"
-#include "Core/Renderer.hpp"
-#include "Core/SceneParser.hpp"
-#include "Exceptions/RayTracerException.hpp"
-#include "Primitives/IPrimitive.hpp"
+#include "Camera.hpp"
+#include "Renderer.hpp"
+#include "SceneParser.hpp"
+#include "RayTracerException.hpp"
+#include "IPrimitive.hpp"
 
 /// @brief Usage message
 const std::string USAGE_MESSAGE =

@@ -324,6 +324,62 @@ sierpinskis = (
 );
 ```
 
+### 3.11. Menger Sponge (`mengersponges`)
+
+Represents a 3D Menger Sponge fractal, generated via ray marching and an IFS (Iterated Function System) distance estimator that recursively removes the center and face-center subcubes at each iteration.
+
+**Additional parameters:**
+
+- `scale`: Uniform size of the sponge in world space. (`1.0` by default)
+- `iterations`: Controls recursion depth and detail level. `3` is standard. Above `5` yields diminishing returns and heavier marching cost. **(Required)**
+
+**Example:**
+
+```cfg
+mengersponges = (
+    {
+        position = { x = 0.0; y = 0.0; z = 0.6 };
+        rotation = { x = 0.0; y = 0.0; z = 0.0 }; # Optional
+        scale = 0.8; # Optional
+        iterations = 5;
+        material = "mat_255_0_0"; # Optional
+    }
+);
+```
+
+---
+
+### 3.12. Möbius Strip (`mobiusstrips`)
+
+Represents a Möbius strip surface, generated via ray marching and a local-frame SDF projecting onto the twisted ribbon. The number of half-twists controls the topology of the surface.
+
+**Additional parameters:**
+
+- `scale`: Uniform size of the strip in world space. *(Default: 1.0)*
+- `radius` *(float)*: Distance from the world origin to the center line of the ribbon. *(Default: 1.0)*
+- `width` *(float)*: Half-width of the ribbon along its local tangent axis. *(Default: 4.0)*
+- `thickness` *(float)*: Half-thickness of the ribbon, giving it physical volume for ray marching. *(Default: 0.05)*
+- `halfTwist` *(int)*: Number of half-turns applied along the ribbon. `1` produces the classic single-sided Möbius strip. `0` produces a plain ring, even values produce orientable surfaces, odd values produce non-orientable ones. *(Default: 1.0)*
+
+**Example:**
+
+```cfg
+mobiusstrips = (
+    {
+        position = { x = 0.0; y = 0.0; z = 3.0 };
+        rotation = { x = 0.0; y = 0.0; z = 0.0 }; # Optional
+        scale = 0.8; # Optional
+        radius = 2.0; # Optional
+        width = 0.4; # Optional
+        thickness = 0.07; # Optional
+        halfTwist = 1; # Optional
+        material = "mat_255_255_255"; # Optional
+    }
+);
+```
+
+---
+
 ---
 
 ## 4. Materials
