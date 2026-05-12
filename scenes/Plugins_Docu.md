@@ -524,3 +524,68 @@ lights = {
     );
 };
 ```
+
+### 5.3. PointLight (`pointlight`)
+
+Point light source that emits light in all directions from a specific position in the scene.
+
+**Parameters (Required):**
+
+- `intensity` *(float)*: Light intensity. **(Required)**
+- `position` *(block)*: 3D position `{x, y, z}`. **(Required)**
+
+**Parameters (Optional):**
+
+- `color` *(block)*: Light color `{r, g, b}`. Default: white (255, 255, 255).
+- `translation` *(block)*: Global offset applied to position `{x, y, z}`. Default: {0, 0, 0}.
+- `rotation` *(block)*: Euler rotation in degrees `{x, y, z}`. Default: {0, 0, 0}.
+
+**Bonus Parameters (Attenuation & Radius):**
+
+- `constant_attenuation` *(float)*: Constant attenuation factor. Default: 1.0.
+- `linear_attenuation` *(float)*: Linear attenuation factor. Default: 0.09.
+- `quadratic_attenuation` *(float)*: Quadratic attenuation factor. Default: 0.032.
+- `radius` *(float)*: Physical size/reach of the light (0.0 = infinite). Default: 0.0.
+
+**Note on Attenuation:**
+
+Light intensity is reduced by distance using the formula:
+```
+attenuation = 1.0 / (constant + linear*distance + quadratic*distance²)
+```
+
+The `radius` parameter, when set to a value > 0.0, caps the maximum reach of the light for optimization (light has no effect beyond this distance).
+
+**Example (Basic):**
+
+```cfg
+lights = {
+    pointlight = (
+        {
+            intensity = 1.0;
+            position = { x = 5.0; y = 3.0; z = 5.0; };
+            color = { r = 255.0; g = 255.0; b = 255.0; }; # Optional
+        }
+    );
+};
+```
+
+**Example (With Attenuation & Radius):**
+
+```cfg
+lights = {
+    pointlight = (
+        {
+            intensity = 2.0;
+            position = { x = 0.0; y = 5.0; z = 0.0; };
+            color = { r = 255.0; g = 200.0; b = 150.0; }; # Warm light
+            translation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+            rotation = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+            constant_attenuation = 1.0; # Optional
+            linear_attenuation = 0.09; # Optional
+            quadratic_attenuation = 0.032; # Optional
+            radius = 20.0; # Optional - Light reach limit
+        }
+    );
+};
+```
