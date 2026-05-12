@@ -12,16 +12,16 @@
 
 bool RayTracer::AFractal::hits(const Ray& ray, HitRecord& hitRecord) const
 {
+    double t = 0.05;
+    constexpr int MAX_STEPS = 300;
+    constexpr double MAX_DIST = 20.0;
+    constexpr double EPSILON = 0.001;
+
     hitRecord.primitive = this;
     hitRecord.material = _material.get();
     Math::Vector3D<double> origin = ray._origin - _position;
     Math::Vector3D<double> dir = rotateInverse(ray._direction);
     origin = rotateInverse(origin);
-
-    double t = 0.001;
-    constexpr int MAX_STEPS = 300;
-    constexpr double MAX_DIST = 20.0;
-    constexpr double EPSILON = 0.001;
 
     for (int i = 0; i < MAX_STEPS; ++i) {
         Math::Vector3D<double> p = origin + dir * t;
