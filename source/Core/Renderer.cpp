@@ -82,77 +82,6 @@ void RayTracer::Renderer::render(const Camera& camera,
     outFile.close();
 }
 
-// Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
-//     const Ray& ray, int depth, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
-//     const std::vector<std::unique_ptr<ILight>>& lights) const
-// {
-//     if (depth <= 0) return {0.0, 0.0, 0.0};
-//     bool hitAnything = false;
-//     HitRecord tempRec;
-//     HitRecord closestRec;
-//     double closest = std::numeric_limits<double>::max();
-//     const IPrimitive* hitPrimitive = nullptr;
-
-//     for (const auto& primitive : primitives) {
-//         if (primitive->hits(ray, tempRec)) {
-//             if (tempRec.distance < closest && tempRec.distance > 0.001) {
-//                 closest = tempRec.distance;
-//                 closestRec = tempRec;
-//                 hitPrimitive = primitive.get();
-//                 hitAnything = true;
-//             }
-//         }
-//     }
-
-//     if (hitAnything) {
-//         Math::Vector3D<double> totalLight(0.0, 0.0, 0.0);
-//         for (const auto& light : lights) {
-//             if (!light->castsShadow() ||
-//                 !MaterialUtils::isInShadow(closestRec, light->getDirection(), primitives))
-//                 totalLight += light->computeLight(closestRec);
-//         }
-//         totalLight._x = std::clamp(totalLight._x, 0.0, 1.0);
-//         totalLight._y = std::clamp(totalLight._y, 0.0, 1.0);
-//         totalLight._z = std::clamp(totalLight._z, 0.0, 1.0);
-
-//         Math::Vector3D<double> baseColor = (hitPrimitive->getColor() / 255.0) * totalLight;
-//         if (closestRec.material) {
-//             Ray scattered;
-//             Math::Vector3D<double> attenuation;
-//             if (closestRec.material->isReflective()) {
-//                 if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-//                     auto reflectedColor = computeRayColor(scattered, depth - 1, primitives, lights);
-//                     return reflectedColor * attenuation;
-//                 }
-//             } else if (closestRec.material->isRefractive()) {
-//                 if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-//                     auto refractiveColor =
-//                         computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
-//                     double t = closestRec.material->getRefractive();
-//                     return refractiveColor * t + baseColor * 255.0 * (1.0 - t);
-//                 }
-//             } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-//                 Math::Vector3D<double> specular =
-//                     closestRec.material->computeSpecular(ray, closestRec, lights, primitives);
-//                 return attenuation * totalLight * 255.0 + specular * 255.0;
-//             }
-//         }
-//         return baseColor * 255.0;
-//     }
-
-//     if (_backgroundMaterial) {
-//         Math::Vector3D<double> unitDir = ray._direction.normalized();
-//         double theta = std::acos(-unitDir._y);
-//         double phi = std::atan2(-unitDir._z, unitDir._x) + std::numbers::pi;
-
-//         double u = phi / (2.0 * std::numbers::pi);
-//         double v = theta / std::numbers::pi;
-
-//         return _backgroundMaterial->getColor(u, v);
-//     }
-//     return {0.0, 0.0, 0.0};
-// }
-
 Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
     const Ray& ray, int depth, const std::vector<std::unique_ptr<IPrimitive>>& primitives,
     const std::vector<std::unique_ptr<ILight>>& lights) const
@@ -196,7 +125,8 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
             if (closestRec.material->isReflective()) {
                 return computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
             } else if (closestRec.material->isRefractive()) {
-                auto refractiveColor = computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
+                auto refractiveColor =
+                    computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
                 double t = closestRec.material->getRefractive();
                 return refractiveColor * t + baseColor * 255.0 * (1.0 - t);
             } else {

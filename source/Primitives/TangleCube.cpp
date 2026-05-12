@@ -33,12 +33,9 @@ double RayTracer::TangleCube::distanceEstimate(const Math::Vector3D<double>& pos
     Math::Vector3D<double> p = pos / _scale;
 
     double x2 = p._x * p._x, y2 = p._y * p._y, z2 = p._z * p._z;
-    double x4 = x2 * x2,     y4 = y2 * y2,     z4 = z2 * z2;
+    double x4 = x2 * x2, y4 = y2 * y2, z4 = z2 * z2;
 
-    double f = x4 - 5.0 * x2
-             + y4 - 5.0 * y2
-             + z4 - 5.0 * z2
-             + _constant;
+    double f = x4 - 5.0 * x2 + y4 - 5.0 * y2 + z4 - 5.0 * z2 + _constant;
 
     double gx = 4.0 * p._x * x2 - 10.0 * p._x;
     double gy = 4.0 * p._y * y2 - 10.0 * p._y;
