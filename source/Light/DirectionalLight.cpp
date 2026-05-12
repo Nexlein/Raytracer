@@ -21,7 +21,7 @@ void RayTracer::DirectionalLight::init(const libconfig::Setting& setting)
     if (!ConfigUtils::getAsDouble(setting, "intensity", _intensity))
         throw RayTracerException("DirectionalLight: Missing required parameter 'intensity'.");
 
-    ConfigUtils::parseColor(setting, "color", _color);
+    parseCommonProperties(setting);
 
     Vector3D direction;
     ConfigUtils::parseVector3D(setting, "direction", direction, true);
