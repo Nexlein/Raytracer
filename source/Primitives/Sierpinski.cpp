@@ -28,17 +28,15 @@ void RayTracer::Sierpinski::init(const libconfig::Setting& setting)
 
 double RayTracer::Sierpinski::distanceEstimate(const Math::Vector3D<double>& pos) const
 {
-    // Vertices du tétraèdre régulier
     static const Math::Vector3D<double> v0(1.0, 1.0, 1.0);
     static const Math::Vector3D<double> v1(-1.0, -1.0, 1.0);
     static const Math::Vector3D<double> v2(-1.0, 1.0, -1.0);
     static const Math::Vector3D<double> v3(1.0, -1.0, -1.0);
 
-    Math::Vector3D<double> p = pos;
+    Math::Vector3D<double> p = pos / _scale;
     double scale = 1.0;
 
     for (int i = 0; i < _iterations; ++i) {
-        // fold vers le vertex le plus proche
         double d0 = (p - v0).length();
         double d1 = (p - v1).length();
         double d2 = (p - v2).length();
@@ -46,23 +44,14 @@ double RayTracer::Sierpinski::distanceEstimate(const Math::Vector3D<double>& pos
 
         Math::Vector3D<double> closest = v0;
         double dmin = d0;
-        if (d1 < dmin) {
-            dmin = d1;
-            closest = v1;
-        }
-        if (d2 < dmin) {
-            dmin = d2;
-            closest = v2;
-        }
-        if (d3 < dmin) {
-            dmin = d3;
-            closest = v3;
-        }
+        if (d1 < dmin) { dmin = d1; closest = v1; }
+        if (d2 < dmin) { dmin = d2; closest = v2; }
+        if (d3 < dmin) { dmin = d3; closest = v3; }
 
         p = p * 2.0 - closest;
         scale *= 2.0;
     }
-    return p.length() / scale;
+    return (p.length() / scale) * _scale;
 }
 
 extern "C" {
