@@ -36,17 +36,12 @@ double RayTracer::MengerSponge::boxDE(const Math::Vector3D<double>& p, double si
            std::min(std::max({q._x, q._y, q._z}), 0.0);
 }
 
-double RayTracer::MengerSponge::crossDE(const Math::Vector3D<double>& p) const
-{
-    double a = std::abs(p._x) - 1.0 / 3.0;
-    double b = std::abs(p._y) - 1.0 / 3.0;
-    double c = std::abs(p._z) - 1.0 / 3.0;
-    // croix infinie sur les 3 axes
-    double dxy = std::max(a, b);
-    double dyz = std::max(b, c);
-    double dxz = std::max(a, c);
-    return std::min({dxy, dyz, dxz});
-}
+namespace {
+    double centeredModulo(double value, double period)
+    {
+        return value - period * std::floor(value / period + 0.5);
+    }
+}  // namespace
 
 double RayTracer::MengerSponge::distanceEstimate(const Math::Vector3D<double>& pos) const
 {
@@ -55,14 +50,21 @@ double RayTracer::MengerSponge::distanceEstimate(const Math::Vector3D<double>& p
     double s = 1.0;
 
     for (int i = 0; i < _iterations; ++i) {
-        Math::Vector3D<double> a(std::fmod(p._x * s, 2.0) - 1.0, std::fmod(p._y * s, 2.0) - 1.0,
-                                 std::fmod(p._z * s, 2.0) - 1.0);
+        Math::Vector3D<double> a(centeredModulo(p._x * s, 2.0), centeredModulo(p._y * s, 2.0),
+                                 centeredModulo(p._z * s, 2.0));
         s *= 3.0;
-        Math::Vector3D<double> r =
-            Math::Vector3D<double>(std::abs(a._x), std::abs(a._y), std::abs(a._z)) * (1.0 / s);
 
-        double c = crossDE(r);
-        d = std::max(d, c);
+        // coordonnées dans la cellule, échelle 3
+        double rx = std::abs(a._x * 3.0);
+        double ry = std::abs(a._y * 3.0);
+        double rz = std::abs(a._z * 3.0);
+
+        double da = std::max(rx, ry);
+        double db = std::max(ry, rz);
+        double dc = std::max(rx, rz);
+        double c = (std::min({da, db, dc}) - 1.0) / s;
+
+        d = std::max(d, -c);  // soustraction booléenne → creuse les trous
     }
     return d * _scale;
 }

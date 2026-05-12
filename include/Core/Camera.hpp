@@ -49,10 +49,10 @@ namespace RayTracer {
             double py = (2.0 * v - 1.0) * scale;
 
             Math::Vector3D<double> direction(px, py, 1.0);
-
             direction.rotateX(_rotation._x);
             direction.rotateY(_rotation._y);
             direction.rotateZ(_rotation._z);
+            direction = direction.normalized();
 
             return Ray(_position, direction);
         }
