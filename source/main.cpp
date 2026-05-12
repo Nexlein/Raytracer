@@ -13,10 +13,10 @@
 #include <vector>
 
 #include "Camera.hpp"
+#include "IPrimitive.hpp"
+#include "RayTracerException.hpp"
 #include "Renderer.hpp"
 #include "SceneParser.hpp"
-#include "RayTracerException.hpp"
-#include "IPrimitive.hpp"
 
 /// @brief Usage message
 const std::string USAGE_MESSAGE =

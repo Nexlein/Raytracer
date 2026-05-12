@@ -7,8 +7,8 @@
 
 #include "MobiusStrip.hpp"
 
-#include "RayTracerException.hpp"
 #include "ConfigUtils.hpp"
+#include "RayTracerException.hpp"
 
 void RayTracer::MobiusStrip::init(const libconfig::Setting& setting)
 {
@@ -34,25 +34,23 @@ void RayTracer::MobiusStrip::init(const libconfig::Setting& setting)
 
 double RayTracer::MobiusStrip::distanceEstimate(const Math::Vector3D<double>& p) const
 {
-    // applique le scale : ramène p dans l'espace "unit" du ruban
     Math::Vector3D<double> ps = p / _scale;
 
     double u = std::atan2(ps._y, ps._x);
 
-    double cu  = std::cos(u), su  = std::sin(u);
+    double cu = std::cos(u), su = std::sin(u);
     double cu2 = std::cos(u * _halfTwist / 2.0);
     double su2 = std::sin(u * _halfTwist / 2.0);
 
     Math::Vector3D<double> center(_radius * cu, _radius * su, 0.0);
     Math::Vector3D<double> diff = ps - center;
 
-    double along_width  =  diff._x * cu2 * cu + diff._y * cu2 * su + diff._z * su2;
+    double along_width = diff._x * cu2 * cu + diff._y * cu2 * su + diff._z * su2;
     double along_normal = -diff._x * su2 * cu - diff._y * su2 * su + diff._z * cu2;
 
-    double dw = std::abs(along_width)  - _width;
+    double dw = std::abs(along_width) - _width;
     double dn = std::abs(along_normal) - _thickness;
 
-    // rescale la distance de retour dans l'espace monde
     return std::max(dw, dn) * _scale;
 }
 

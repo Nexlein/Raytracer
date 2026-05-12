@@ -44,9 +44,18 @@ double RayTracer::Sierpinski::distanceEstimate(const Math::Vector3D<double>& pos
 
         Math::Vector3D<double> closest = v0;
         double dmin = d0;
-        if (d1 < dmin) { dmin = d1; closest = v1; }
-        if (d2 < dmin) { dmin = d2; closest = v2; }
-        if (d3 < dmin) { dmin = d3; closest = v3; }
+        if (d1 < dmin) {
+            dmin = d1;
+            closest = v1;
+        }
+        if (d2 < dmin) {
+            dmin = d2;
+            closest = v2;
+        }
+        if (d3 < dmin) {
+            dmin = d3;
+            closest = v3;
+        }
 
         p = p * 2.0 - closest;
         scale *= 2.0;
