@@ -37,10 +37,11 @@ double RayTracer::MengerSponge::boxDE(const Math::Vector3D<double>& p, double si
 }
 
 namespace {
-double centeredModulo(double value, double period) {
-    return value - period * std::floor(value / period + 0.5);
-}
-}
+    double centeredModulo(double value, double period)
+    {
+        return value - period * std::floor(value / period + 0.5);
+    }
+}  // namespace
 
 double RayTracer::MengerSponge::distanceEstimate(const Math::Vector3D<double>& pos) const
 {
@@ -49,11 +50,8 @@ double RayTracer::MengerSponge::distanceEstimate(const Math::Vector3D<double>& p
     double s = 1.0;
 
     for (int i = 0; i < _iterations; ++i) {
-        Math::Vector3D<double> a(
-            centeredModulo(p._x * s, 2.0),
-            centeredModulo(p._y * s, 2.0),
-            centeredModulo(p._z * s, 2.0)
-        );
+        Math::Vector3D<double> a(centeredModulo(p._x * s, 2.0), centeredModulo(p._y * s, 2.0),
+                                 centeredModulo(p._z * s, 2.0));
         s *= 3.0;
 
         // coordonnées dans la cellule, échelle 3
