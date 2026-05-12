@@ -30,15 +30,12 @@ namespace RayTracer {
         /// @return True if the light casts shadows, false otherwise
         virtual bool castsShadow() const { return true; }
 
-        virtual Math::Vector3D<double> getDirection() const { return {0, 0, 0}; };
+        /// @brief Gets the direction of the light (if applicable)
+        /// @return The direction vector of the light
+        virtual Math::Vector3D<double> getDirection() const { return {0, 0, 0}; }
 
+        /// @brief Checks if the light has a meaningful direction
+        /// @return True if the light has a direction, false otherwise
         virtual bool hasDirection() const { return true; }
-
-        protected:
-        /// @brief Intensity of the light, used for rendering
-        double _intensity;
-
-        /// @brief Color of the light, used for rendering
-        Math::Vector3D<double> _color;
     };
 }  // namespace RayTracer
