@@ -32,6 +32,8 @@ namespace RayTracer {
         [[nodiscard]] Math::Vector3D<double> computeLight(
             const HitRecord& hit) const override;
 
+        [[nodiscard]] Vector3D getDirection(const HitRecord& hit) const;
+
         bool hasDirection() const override { return false; }
 
         private:

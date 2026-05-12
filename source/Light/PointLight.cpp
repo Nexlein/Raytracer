@@ -41,15 +41,17 @@ void RayTracer::PointLight::init(const libconfig::Setting& setting)
 
 Math::Vector3D<double> RayTracer::PointLight::computeLight(const HitRecord& hit) const
 {
-    // Calculate direction from hit point to light
-    Vector3D toLight = (_position - hit.p).normalized();
-
-    // Calculate distance from hit point to light
+    Vector3D toLight = getDirection(hit);
     double distance = (_position - hit.p).length();
     double attenuation = calculateAttenuation(distance);
     double intensity = _intensity * std::max(0.0, hit.normal.dot(toLight)) * attenuation;
 
     return (_color / 255.0) * intensity;
+}
+
+RayTracer::Vector3D<double> RayTracer::PointLight::getDirection(const HitRecord& hit) const
+{
+    return (_position - hit.p).normalized();
 }
 
 RayTracer::Vector3D<double> RayTracer::PointLight::applyRotation(Vector3D vec) const
