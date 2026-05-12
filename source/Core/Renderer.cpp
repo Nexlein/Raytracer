@@ -105,6 +105,11 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
     }
 
     if (hitAnything) {
+        Ray scattered;
+        Math::Vector3D<double> attenuation;
+        if (closestRec.material)
+            closestRec.material->scatter(ray, closestRec, attenuation, scattered);
+
         Math::Vector3D<double> totalLight(0.0, 0.0, 0.0);
         for (const auto& light : lights) {
             if (!light->castsShadow() ||
@@ -117,21 +122,13 @@ Math::Vector3D<double> RayTracer::Renderer::computeRayColor(
 
         Math::Vector3D<double> baseColor = (hitPrimitive->getColor() / 255.0) * totalLight;
         if (closestRec.material) {
-            Ray scattered;
-            Math::Vector3D<double> attenuation;
             if (closestRec.material->isReflective()) {
-                if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-                    auto reflectedColor = computeRayColor(scattered, depth - 1, primitives, lights);
-                    return reflectedColor * attenuation;
-                }
+                return computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
             } else if (closestRec.material->isRefractive()) {
-                if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
-                    auto refractiveColor =
-                        computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
-                    double t = closestRec.material->getRefractive();
-                    return refractiveColor * t + baseColor * 255.0 * (1.0 - t);
-                }
-            } else if (closestRec.material->scatter(ray, closestRec, attenuation, scattered)) {
+                auto refractiveColor = computeRayColor(scattered, depth - 1, primitives, lights) * attenuation;
+                double t = closestRec.material->getRefractive();
+                return refractiveColor * t + baseColor * 255.0 * (1.0 - t);
+            } else {
                 Math::Vector3D<double> specular =
                     closestRec.material->computeSpecular(ray, closestRec, lights, primitives);
                 return attenuation * totalLight * 255.0 + specular * 255.0;
