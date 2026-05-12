@@ -377,6 +377,7 @@ mobiusstrips = (
     }
 );
 ```
+
 ### 3.13. Tangle Cube (`tanglecubes`)
 
 Represents a Tangle Cube implicit surface, generated via ray marching. It is defined by the isosurface equation: x⁴ - 5x² + y⁴ - 5y² + z⁴ - 5z² + constant = 0
