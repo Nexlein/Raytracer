@@ -31,6 +31,15 @@ target_include_directories(raytracerGlobal INTERFACE
 )
 
 # === DEPENDENCIES: OpenMP ===
+# Help CMake find Homebrew's libomp on macOS
+if(APPLE)
+    if(EXISTS "/opt/homebrew/opt/libomp")
+        set(OpenMP_ROOT /opt/homebrew/opt/libomp)
+    elseif(EXISTS "/usr/local/opt/libomp")
+        set(OpenMP_ROOT /usr/local/opt/libomp)
+    endif()
+endif()
+
 find_package(OpenMP QUIET)
 
 if(NOT OpenMP_CXX_FOUND)
