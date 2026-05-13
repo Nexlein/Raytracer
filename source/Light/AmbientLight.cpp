@@ -17,7 +17,7 @@ void RayTracer::AmbientLight::init(const libconfig::Setting& setting)
     _intensity = 0.0;
     ConfigUtils::getAsDouble(setting, "ambient", _intensity);
 
-    ConfigUtils::parseColor(setting, "color", _color);
+    parseCommonProperties(setting);
 }
 
 extern "C" {

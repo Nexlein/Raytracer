@@ -31,6 +31,15 @@ target_include_directories(raytracerGlobal INTERFACE
 )
 
 # === DEPENDENCIES: OpenMP ===
+# Help CMake find Homebrew's libomp on macOS
+if(APPLE)
+    if(EXISTS "/opt/homebrew/opt/libomp")
+        set(OpenMP_ROOT /opt/homebrew/opt/libomp)
+    elseif(EXISTS "/usr/local/opt/libomp")
+        set(OpenMP_ROOT /usr/local/opt/libomp)
+    endif()
+endif()
+
 find_package(OpenMP QUIET)
 
 if(NOT OpenMP_CXX_FOUND)
@@ -46,7 +55,7 @@ if(NOT OpenMP_CXX_FOUND)
     set(LIBOMP_ENABLE_SHARED ON CACHE BOOL "" FORCE)
     set(LIBOMP_INSTALL_ALIASES OFF CACHE BOOL "" FORCE)
     fetchcontent_makeavailable(openmp)
-    
+
     target_link_libraries(raytracerGlobal INTERFACE omp)
 else()
     message(STATUS "OpenMP found")
@@ -189,8 +198,9 @@ add_raytracer_plugin(raytracer_cylinders source/Primitives/Cylinder.cpp)
 add_raytracer_plugin(raytracer_cones source/Primitives/Cone.cpp)
 add_raytracer_plugin(raytracer_objs source/Primitives/Obj.cpp)
 add_raytracer_plugin(raytracer_torus source/Primitives/Torus.cpp)
-add_raytracer_plugin(raytracer_ambient source/Light/AmbientLight.cpp)
-add_raytracer_plugin(raytracer_directionals source/Light/DirectionalLight.cpp)
+add_raytracer_plugin(raytracer_ambient source/Light/AmbientLight.cpp source/Light/ALight.cpp)
+add_raytracer_plugin(raytracer_directionals source/Light/DirectionalLight.cpp source/Light/ALight.cpp)
+add_raytracer_plugin(raytracer_pointlight source/Light/PointLight.cpp source/Light/ALight.cpp)
 add_raytracer_plugin(raytracer_lambertians source/Materials/Lambertian.cpp)
 add_raytracer_plugin(raytracer_phongs source/Materials/Phong.cpp)
 add_raytracer_plugin(raytracer_textures source/Materials/Texture.cpp)

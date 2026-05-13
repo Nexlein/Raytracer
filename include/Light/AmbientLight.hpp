@@ -5,13 +5,13 @@
 ** AmbientLight
 */
 
-#include "ILight.hpp"
+#include "ALight.hpp"
 #include "math.h"
 
 #pragma once
 
 namespace RayTracer {
-    class AmbientLight : public ILight {
+    class AmbientLight : public ALight {
         public:
         /// @brief Default constructor for AmbientLight
         AmbientLight() = default;
