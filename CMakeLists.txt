@@ -34,7 +34,20 @@ target_include_directories(raytracerGlobal INTERFACE
 find_package(OpenMP QUIET)
 
 if(NOT OpenMP_CXX_FOUND)
-    message(STATUS "OpenMP not found, building without OpenMP support")
+    message(STATUS "OpenMP not found, fetching from GitHub...")
+
+    fetchcontent_declare(openmp
+        GIT_REPOSITORY https://github.com/llvm/llvm-project.git
+        GIT_TAG llvmorg-18.1.2
+        SOURCE_SUBDIR openmp
+        GIT_SHALLOW TRUE
+    )
+
+    set(LIBOMP_ENABLE_SHARED ON CACHE BOOL "" FORCE)
+    set(LIBOMP_INSTALL_ALIASES OFF CACHE BOOL "" FORCE)
+    fetchcontent_makeavailable(openmp)
+
+    target_link_libraries(raytracerGlobal INTERFACE omp)
 else()
     message(STATUS "OpenMP found")
     target_link_libraries(raytracerGlobal INTERFACE OpenMP::OpenMP_CXX)
