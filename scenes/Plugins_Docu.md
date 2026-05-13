@@ -624,7 +624,8 @@ Point light source that emits light in all directions from a specific position i
 **Note on Attenuation:**
 
 Light intensity is reduced by distance using the formula:
-```
+
+```python
 attenuation = 1.0 / (constant + linear*distance + quadratic*distance²)
 ```
 
