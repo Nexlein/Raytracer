@@ -28,14 +28,14 @@ namespace RayTracer {
 
         /// @brief Checks if the light casts shadows
         /// @return True if the light casts shadows, false otherwise
-        virtual bool castsShadow() const { return true; }
+        virtual bool castsShadow() const = 0;
 
         /// @brief Gets the direction of the light (if applicable)
         /// @return The direction vector of the light
-        virtual Math::Vector3D<double> getDirection() const { return {0, 0, 0}; }
+        virtual Math::Vector3D<double> getDirection() const = 0;
 
         /// @brief Checks if the light has a meaningful direction
         /// @return True if the light has a direction, false otherwise
-        virtual bool hasDirection() const { return true; }
+        virtual bool hasDirection() const = 0;
     };
 }  // namespace RayTracer
