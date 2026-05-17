@@ -20,8 +20,8 @@
 #include "ILight.hpp"
 #include "IMaterial.hpp"
 #include "IPrimitive.hpp"
-#include "Renderer.hpp"
 #include "PrimitiveGroup.hpp"
+#include "Renderer.hpp"
 
 /// @brief Namespace for the Ray Tracer project
 namespace RayTracer {
@@ -53,15 +53,13 @@ namespace RayTracer {
             const std::map<std::string, std::shared_ptr<IMaterial>>& materials);
 
         void parse_import(const libconfig::Setting& importSetting,
-            std::vector<std::unique_ptr<IPrimitive>>& primitives,
-            std::map<std::string, std::shared_ptr<IMaterial>> materials,
-            std::vector<std::unique_ptr<ILight>>& lights);
+                          std::vector<std::unique_ptr<IPrimitive>>& primitives,
+                          std::map<std::string, std::shared_ptr<IMaterial>> materials,
+                          std::vector<std::unique_ptr<ILight>>& lights);
 
-        void add_primitiveGroup_lights(
-            const libconfig::Setting& setting,
-            SceneData& data,
-            std::vector<std::unique_ptr<IPrimitive>>& primitives,
-            std::map<std::string, std::shared_ptr<IMaterial>> materials,
-            std::vector<std::unique_ptr<ILight>>& lights);
+        void add_primitiveGroup_lights(const libconfig::Setting& setting, SceneData& data,
+                                       std::vector<std::unique_ptr<IPrimitive>>& primitives,
+                                       std::map<std::string, std::shared_ptr<IMaterial>> materials,
+                                       std::vector<std::unique_ptr<ILight>>& lights);
     };
 }  // namespace RayTracer

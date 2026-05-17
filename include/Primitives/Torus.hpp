@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "IPrimitive.hpp"
+#include "APrimitive.hpp"
 #include "Point3D.hpp"
 
 struct QuadraticCoeffs {
@@ -31,7 +31,7 @@ namespace RayTracer {
     using Vector3D = Math::Vector3D<double>;
 
     /// @brief Represents a torus in 3D space
-    class Torus : public IPrimitive {
+    class Torus : public APrimitive {
         public:
         /// @brief Constructs a torus object
         Torus() = default;

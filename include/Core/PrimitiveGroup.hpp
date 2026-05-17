@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "IPrimitive.hpp"
+#include "APrimitive.hpp"
 #include "Point3D.hpp"
 
 /// @brief Namespace for the RayTracer project
@@ -20,7 +20,7 @@ namespace RayTracer {
 
     /// @brief Represents a PrimitiveGroup, which is a collection of primitives
     /// that can be treated as a single entity
-    class PrimitiveGroup : public IPrimitive {
+    class PrimitiveGroup : public APrimitive {
         public:
         PrimitiveGroup() = default;
 

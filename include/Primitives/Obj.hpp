@@ -13,8 +13,8 @@
 #include <string>
 #include <vector>
 
+#include "APrimitive.hpp"
 #include "IMaterial.hpp"
-#include "IPrimitive.hpp"
 #include "Point3D.hpp"
 
 namespace RayTracer {
@@ -68,7 +68,7 @@ namespace RayTracer {
     };
 
     /// @brief Represents a 3D model loaded from an .OBJ file
-    class Obj : public IPrimitive {
+    class Obj : public APrimitive {
         public:
         Obj() = default;
 

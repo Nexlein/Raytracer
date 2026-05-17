@@ -10,13 +10,13 @@
 
 #pragma once
 
-#include "IPrimitive.hpp"
+#include "APrimitive.hpp"
 
 namespace RayTracer {
     using Point3D = Math::Point3D<double>;
     using Vector3D = Math::Vector3D<double>;
 
-    class AFractal : public IPrimitive {
+    class AFractal : public APrimitive {
         public:
         AFractal() = default;
 

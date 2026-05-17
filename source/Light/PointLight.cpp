@@ -51,8 +51,7 @@ Math::Vector3D<double> RayTracer::PointLight::computeLight(const HitRecord& hit)
     double distance = (_position - hit.p).length();
 
     // Radius cutoff: light contributes nothing beyond its radius (bonus)
-    if (_radius > 0.0 && distance > _radius)
-        return {0.0, 0.0, 0.0};
+    if (_radius > 0.0 && distance > _radius) return {0.0, 0.0, 0.0};
 
     // Attenuation factor based on distance (bonus)
     double attenuation = calculateAttenuation(distance);
@@ -66,10 +65,7 @@ Math::Vector3D<double> RayTracer::PointLight::computeLight(const HitRecord& hit)
 
 // Required by ILight interface — returns a zero vector because a point light
 // has no fixed direction. Use getDirectionFrom(point) for the actual direction.
-Math::Vector3D<double> RayTracer::PointLight::getDirection() const
-{
-    return {0.0, 0.0, 0.0};
-}
+Math::Vector3D<double> RayTracer::PointLight::getDirection() const { return {0.0, 0.0, 0.0}; }
 
 // Returns the normalized direction from a world-space point toward the light.
 // This is what callers (renderer, shadow rays) should use for point lights.
@@ -85,8 +81,7 @@ double RayTracer::PointLight::getDistance(const Point3D& point) const
 
 Math::Vector3D<double> RayTracer::PointLight::applyRotation(Vector3D vec) const
 {
-    if (_rotation.length() == 0.0)
-        return vec;
+    if (_rotation.length() == 0.0) return vec;
 
     double rx = _rotation._x * M_PI / 180.0;
     double ry = _rotation._y * M_PI / 180.0;
@@ -118,9 +113,8 @@ double RayTracer::PointLight::calculateAttenuation(double distance) const
     // Clamp minimum distance to avoid division by zero / singularity at origin
     double d = std::max(distance, 0.001);
 
-    double denominator = _constantAttenuation
-                       + _linearAttenuation * d
-                       + _quadraticAttenuation * d * d;
+    double denominator =
+        _constantAttenuation + _linearAttenuation * d + _quadraticAttenuation * d * d;
 
     return 1.0 / denominator;
 }

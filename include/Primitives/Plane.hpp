@@ -12,7 +12,7 @@
 
 #include <string>
 
-#include "IPrimitive.hpp"
+#include "APrimitive.hpp"
 #include "Point3D.hpp"
 
 /// @brief Namespace for the RayTracer project
@@ -21,7 +21,7 @@ namespace RayTracer {
     using Vector3D = Math::Vector3D<double>;
 
     /// @brief Represents a plane in 3D space
-    class Plane : public IPrimitive {
+    class Plane : public APrimitive {
         public:
         /// @brief Constructs a plane object
         Plane() = default;
