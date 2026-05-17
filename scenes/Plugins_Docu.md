@@ -347,8 +347,6 @@ mengersponges = (
 );
 ```
 
----
-
 ### 3.12. Möbius Strip (`mobiusstrips`)
 
 Represents a Möbius strip surface, generated via ray marching and a local-frame SDF projecting onto the twisted ribbon. The number of half-twists controls the topology of the surface.
@@ -401,6 +399,92 @@ tanglecubes = (
     }
 );
 ```
+## 3.13. Composite Primitives
+
+The raytracer supports two ways to group primitives into a single transformable unit: **Scene Graph** (inline children) and **Scene Import** (external `.cfg` file). Both produce a `PrimitiveGroup` internally and support `position`, `rotation`, and `scale`.
+
+### 3.13.1. Scene Graph — `children`
+
+Attach child primitives directly to a parent primitive inside the same `.cfg` file. The parent and all its children share the group's transform (position, rotation, scale).
+
+**Parameters:**
+
+- `children` *(block)*: Contains one or more primitive type lists. Accepts any primitive type as key.
+> **Note:** Child positions are expressed in the **parent's local space**.
+
+**Example:**
+
+```cfg
+primitives:
+{
+    boxes = (
+        {
+            position = { x = 0; y = 0; z = 1; };
+            dimension = { x = 1; y = 1; z = 1; };
+            material = "red";
+            children = {
+                rotation    = { x = 0.0; y = 0.0; z = 0.0; }; # Optional
+                translation = { x = 0.0; y = 0.0;  z = 0.0; }; # Optional
+
+                boxes = (
+                    {
+                        position  = { x = 0; y = 0; z = 0; }; # local space
+                        dimension = { x = 1; y = 1; z = 1; };
+                        material  = "white";
+                    }
+                );
+            };
+        }
+    );
+};
+``` 
+
+### 3.13.2. Scene Import — `import`
+
+Load an external `.cfg` scene file as a sub-scene and place it in the current scene. All primitives from the imported file are wrapped into a `PrimitiveGroup` and transformed as a unit.
+
+**Parameters:**
+
+- `filepath` *(string)*: Path to the `.cfg` scene file to import, relative to the working directory. **(Required)**
+- `position` *(group)*: World-space offset applied to the imported sub-scene. *(Optional)*
+- `rotation` *(group)*: Euler angles in degrees applied to the imported sub-scene. *(Optional)*
+- `scale` *(float)*: Uniform scale factor applied to the imported sub-scene. *(Default: `1.0`)* *(Optional)*
+
+> **Note:** Multiple scenes can be imported in the same `import` list. Each entry is independent and gets its own transform.
+
+**Example:**
+
+```cfg
+# Single import
+primitives:
+{
+    import = (
+        {
+            filepath = "scenes/primitives/scene_sphere.cfg";
+            position = { x = 0; y = 2; z = 2; }; # Optional
+            rotation = { x = 0; y = 45; z = 0; }; # Optional
+            scale    = 1.5;                        # Optional
+        }
+    );
+};
+
+# Multiple imports
+primitives:
+{
+    import = (
+        {
+            filepath = "scenes/primitives/scene_sphere.cfg";
+            position = { x = 0; y = 2; z = 2; };
+        },
+        {
+            filepath = "scenes/primitives/scene_tangleCube.cfg";
+            position = { x = -1; y = 0; z = 0; };
+            scale    = 0.5;
+        }
+    );
+};
+```
+
 
 ---
 

@@ -24,6 +24,12 @@ namespace RayTracer {
         /// @param setting The configuration settings for the light
         virtual void init(const libconfig::Setting& setting) = 0;
 
+        bool castsShadow() const { return true; }
+
+        Math::Vector3D<double> getDirection() const { return {0, 0, 0}; }
+
+        bool hasDirection() const { return true; }
+
         protected:
         /// @brief Intensity of the light, used for rendering
         double _intensity = 1.0;

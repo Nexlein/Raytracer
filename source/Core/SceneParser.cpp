@@ -9,6 +9,7 @@
 
 #include <string>
 
+#include "PrimitiveGroup.hpp"
 #include "AmbientLight.hpp"
 #include "ConfigUtils.hpp"
 #include "PluginFactory.hpp"
@@ -21,7 +22,12 @@ void RayTracer::SceneParser::setMaterialstoPrimitives(
     const std::map<std::string, std::shared_ptr<IMaterial>>& materials)
 {
     for (auto& primitive : primitives) {
-        if (!primitive->getMaterialName().empty()) {
+        if (primitive->isGroup()) {
+            auto* group = static_cast<PrimitiveGroup*>(primitive.get());
+            setMaterialstoPrimitives(group->getChildren(), materials);
+        } else if (!primitive->getMaterialName().empty()) {
+            if (primitive->getMaterial() != nullptr)
+                continue;
             auto it = materials.find(primitive->getMaterialName());
             if (it != materials.end())
                 primitive->setMaterial(it->second);
@@ -29,6 +35,47 @@ void RayTracer::SceneParser::setMaterialstoPrimitives(
                 throw RayTracerException("SceneParser: Material '" + primitive->getMaterialName() +
                                          "' not found for primitive.");
         }
+    }
+}
+
+void RayTracer::SceneParser::add_primitiveGroup_lights(
+    const libconfig::Setting& setting,
+    SceneData& data,
+    std::vector<std::unique_ptr<IPrimitive>>& primitives,
+    std::map<std::string, std::shared_ptr<IMaterial>> materials,
+    std::vector<std::unique_ptr<ILight>>& lights)
+{
+    PrimitiveGroup group;
+
+    ConfigUtils::parsePoint3D(setting, "position", group._position, true);
+
+    ConfigUtils::parseVector3D(setting, "rotation", group._rotation, false);
+
+    for (auto& p : data.primitives)
+        group.addPrimitive(std::move(p));
+
+    primitives.push_back(std::make_unique<RayTracer::PrimitiveGroup>(std::move(group)));
+
+    for (auto& [name, mat] : data.materials)
+        materials.emplace(name, mat);
+
+    for (auto& l : data.lights)
+        lights.push_back(std::move(l));
+
+}
+
+void RayTracer::SceneParser::parse_import(
+    const libconfig::Setting& importSetting,
+    std::vector<std::unique_ptr<IPrimitive>>& primitives,
+    std::map<std::string, std::shared_ptr<IMaterial>> materials,
+    std::vector<std::unique_ptr<ILight>>& lights)
+{
+    for (const auto& setting : importSetting) {
+        std::string scenePath;
+        if (!setting.lookupValue("filepath", scenePath))
+            throw RayTracerException("Import Scene: parameter 'filepath' not found");
+        SceneData data = parse(scenePath);
+        add_primitiveGroup_lights(setting, data, primitives, materials, lights);
     }
 }
 
@@ -58,8 +105,7 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
         if (root.exists("materials")) {
             const libconfig::Setting& materialsSetting = root["materials"];
 
-            for (int i = 0; i < materialsSetting.getLength(); ++i) {
-                const libconfig::Setting& mat = materialsSetting[i];
+            for (const auto& mat : materialsSetting) {
                 std::string typeName = mat.getName();
 
                 for (int j = 0; j < mat.getLength(); ++j) {
@@ -73,14 +119,49 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
         if (root.exists("primitives")) {
             const libconfig::Setting& primitivesSetting = root["primitives"];
 
-            for (int i = 0; i < primitivesSetting.getLength(); ++i) {
-                const libconfig::Setting& listSetting = primitivesSetting[i];
+            for (const auto& listSetting : primitivesSetting) {
                 std::string typeName = listSetting.getName();
 
-                for (int j = 0; j < listSetting.getLength(); ++j) {
+                if (typeName == "import") {
+                    parse_import(listSetting, primitives, materials, lights);
+                    continue;
+                }
+                for (const auto& setting : listSetting) {
+                    if (setting.exists("children")) {
+                        auto primitivesGroup = std::make_unique<PrimitiveGroup>();
+
+                        ConfigUtils::parsePoint3D(setting, "position", primitivesGroup->_position, true);
+                        std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
+                        auto primitive = PluginFactory<IPrimitive>::create(pluginPath, setting);
+                        primitivesGroup->addPrimitive(std::move(primitive));
+
+                        const libconfig::Setting& childrenSetting = setting["children"];
+                        for (const auto& c : childrenSetting) {
+                            std::string childTypeName = c.getName();
+
+                            if (childTypeName == "translation") {
+                                Math::Point3D<double> translation;
+                                ConfigUtils::parsePoint3D(childrenSetting, "translation", translation, false);
+                                primitivesGroup->_position._x += translation._x;
+                                primitivesGroup->_position._y += translation._y;
+                                primitivesGroup->_position._z += translation._z;
+                                continue;
+                            } else if (childTypeName == "rotation") {
+                                ConfigUtils::parseVector3D(childrenSetting, "rotation", primitivesGroup->_rotation, false);
+                                continue;
+                            }
+                            std::string childPluginPath = "./plugins/raytracer_" + childTypeName + ".so";
+                            for (const auto& childSetting : c) {
+                                primitivesGroup->addPrimitive(
+                                    PluginFactory<IPrimitive>::create(childPluginPath, childSetting));
+                            }
+                        }
+                        primitives.push_back(std::move(primitivesGroup));
+                        continue;
+                    }
                     std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
                     primitives.push_back(
-                        PluginFactory<IPrimitive>::create(pluginPath, listSetting[j]));
+                        PluginFactory<IPrimitive>::create(pluginPath, setting));
                 }
             }
         }
@@ -88,15 +169,14 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
         if (root.exists("lights")) {
             const libconfig::Setting& lightsSetting = root["lights"];
 
-            for (int i = 0; i < lightsSetting.getLength(); ++i) {
-                const libconfig::Setting& lightSetting = lightsSetting[i];
+            for (const auto& lightSetting : lightsSetting) {
                 std::string typeName = lightSetting.getName();
 
                 if (lightSetting.isList() || lightSetting.isArray() || lightSetting.isGroup()) {
-                    for (int j = 0; j < lightSetting.getLength(); ++j) {
+                    for (const auto& setting : lightSetting) {
                         std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
                         lights.push_back(
-                            PluginFactory<ILight>::create(pluginPath, lightSetting[j]));
+                            PluginFactory<ILight>::create(pluginPath, setting));
                     }
                 } else {
                     std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
@@ -114,7 +194,6 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
                 throw RayTracerException("SceneParser: Background Material '" +
                                          renderer.getBackgroundMaterialName() + "' not found.");
         }
-
         return SceneData{std::move(cam), std::move(renderer), std::move(primitives),
                          std::move(lights), std::move(materials)};
 
