@@ -85,6 +85,8 @@ namespace RayTracer {
             return _material;
         }
 
+        virtual bool isGroup() const { return false; }
+
         protected:
         /// @brief Name of the material associated with the primitive, used to link the material
         std::string _materialName;
