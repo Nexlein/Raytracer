@@ -158,6 +158,7 @@ endif()
 # === PROJECT CORE ===
 file(GLOB_RECURSE CORE_FILES CONFIGURE_DEPENDS "source/*.cpp")
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Primitives/.*\\.cpp$")
+list(APPEND CORE_FILES source/Primitives/APrimitive.cpp)
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Light/.*\\.cpp$")
 list(FILTER CORE_FILES EXCLUDE REGEX "source/Materials/.*\\.cpp$")
 

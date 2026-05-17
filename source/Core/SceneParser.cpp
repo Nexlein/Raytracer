@@ -9,11 +9,11 @@
 
 #include <string>
 
-#include "PrimitiveGroup.hpp"
 #include "AmbientLight.hpp"
 #include "ConfigUtils.hpp"
 #include "PluginFactory.hpp"
 #include "Point3D.hpp"
+#include "PrimitiveGroup.hpp"
 #include "RayTracerException.hpp"
 #include "Vector3D.hpp"
 
@@ -26,8 +26,7 @@ void RayTracer::SceneParser::setMaterialstoPrimitives(
             auto* group = static_cast<PrimitiveGroup*>(primitive.get());
             setMaterialstoPrimitives(group->getChildren(), materials);
         } else if (!primitive->getMaterialName().empty()) {
-            if (primitive->getMaterial() != nullptr)
-                continue;
+            if (primitive->getMaterial() != nullptr) continue;
             auto it = materials.find(primitive->getMaterialName());
             if (it != materials.end())
                 primitive->setMaterial(it->second);
@@ -39,8 +38,7 @@ void RayTracer::SceneParser::setMaterialstoPrimitives(
 }
 
 void RayTracer::SceneParser::add_primitiveGroup_lights(
-    const libconfig::Setting& setting,
-    SceneData& data,
+    const libconfig::Setting& setting, SceneData& data,
     std::vector<std::unique_ptr<IPrimitive>>& primitives,
     std::map<std::string, std::shared_ptr<IMaterial>> materials,
     std::vector<std::unique_ptr<ILight>>& lights)
@@ -51,22 +49,17 @@ void RayTracer::SceneParser::add_primitiveGroup_lights(
 
     ConfigUtils::parseVector3D(setting, "rotation", group._rotation, false);
 
-    for (auto& p : data.primitives)
-        group.addPrimitive(std::move(p));
+    for (auto& p : data.primitives) group.addPrimitive(std::move(p));
 
     primitives.push_back(std::make_unique<RayTracer::PrimitiveGroup>(std::move(group)));
 
-    for (auto& [name, mat] : data.materials)
-        materials.emplace(name, mat);
+    for (auto& [name, mat] : data.materials) materials.emplace(name, mat);
 
-    for (auto& l : data.lights)
-        lights.push_back(std::move(l));
-
+    for (auto& l : data.lights) lights.push_back(std::move(l));
 }
 
 void RayTracer::SceneParser::parse_import(
-    const libconfig::Setting& importSetting,
-    std::vector<std::unique_ptr<IPrimitive>>& primitives,
+    const libconfig::Setting& importSetting, std::vector<std::unique_ptr<IPrimitive>>& primitives,
     std::map<std::string, std::shared_ptr<IMaterial>> materials,
     std::vector<std::unique_ptr<ILight>>& lights)
 {
@@ -130,7 +123,8 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
                     if (setting.exists("children")) {
                         auto primitivesGroup = std::make_unique<PrimitiveGroup>();
 
-                        ConfigUtils::parsePoint3D(setting, "position", primitivesGroup->_position, true);
+                        ConfigUtils::parsePoint3D(setting, "position", primitivesGroup->_position,
+                                                  true);
                         std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
                         auto primitive = PluginFactory<IPrimitive>::create(pluginPath, setting);
                         primitivesGroup->addPrimitive(std::move(primitive));
@@ -141,27 +135,29 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
 
                             if (childTypeName == "translation") {
                                 Math::Point3D<double> translation;
-                                ConfigUtils::parsePoint3D(childrenSetting, "translation", translation, false);
+                                ConfigUtils::parsePoint3D(childrenSetting, "translation",
+                                                          translation, false);
                                 primitivesGroup->_position._x += translation._x;
                                 primitivesGroup->_position._y += translation._y;
                                 primitivesGroup->_position._z += translation._z;
                                 continue;
                             } else if (childTypeName == "rotation") {
-                                ConfigUtils::parseVector3D(childrenSetting, "rotation", primitivesGroup->_rotation, false);
+                                ConfigUtils::parseVector3D(childrenSetting, "rotation",
+                                                           primitivesGroup->_rotation, false);
                                 continue;
                             }
-                            std::string childPluginPath = "./plugins/raytracer_" + childTypeName + ".so";
+                            std::string childPluginPath =
+                                "./plugins/raytracer_" + childTypeName + ".so";
                             for (const auto& childSetting : c) {
-                                primitivesGroup->addPrimitive(
-                                    PluginFactory<IPrimitive>::create(childPluginPath, childSetting));
+                                primitivesGroup->addPrimitive(PluginFactory<IPrimitive>::create(
+                                    childPluginPath, childSetting));
                             }
                         }
                         primitives.push_back(std::move(primitivesGroup));
                         continue;
                     }
                     std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
-                    primitives.push_back(
-                        PluginFactory<IPrimitive>::create(pluginPath, setting));
+                    primitives.push_back(PluginFactory<IPrimitive>::create(pluginPath, setting));
                 }
             }
         }
@@ -175,8 +171,7 @@ RayTracer::SceneData RayTracer::SceneParser::parse(const std::string& filePath)
                 if (lightSetting.isList() || lightSetting.isArray() || lightSetting.isGroup()) {
                     for (const auto& setting : lightSetting) {
                         std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";
-                        lights.push_back(
-                            PluginFactory<ILight>::create(pluginPath, setting));
+                        lights.push_back(PluginFactory<ILight>::create(pluginPath, setting));
                     }
                 } else {
                     std::string pluginPath = "./plugins/raytracer_" + typeName + ".so";

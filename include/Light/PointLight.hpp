@@ -29,8 +29,7 @@ namespace RayTracer {
         /// @brief Computes the light contribution at a given hit point
         /// @param hit The hit record for which to compute the light
         /// @return Returns the color of the light contribution at the hit point
-        [[nodiscard]] Math::Vector3D<double> computeLight(
-            const HitRecord& hit) const override;
+        [[nodiscard]] Math::Vector3D<double> computeLight(const HitRecord& hit) const override;
 
         /// @brief Gets the direction from hit point to light position
         /// @return Returns the normalized direction vector from hit to light

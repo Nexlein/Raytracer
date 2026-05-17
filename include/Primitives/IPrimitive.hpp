@@ -12,6 +12,7 @@
 
 #include <libconfig.h++>
 #include <memory>
+#include <string>
 
 #include "IMaterial.hpp"
 #include "Ray.hpp"
@@ -55,43 +56,21 @@ namespace RayTracer {
 
         /// @brief Gets the color of the primitive
         /// @return The color vector of the primitive
-        [[nodiscard]] inline const Math::Vector3D<double> getColor() const
-        {
-            if (!_material) return Math::Vector3D<double>(0, 0, 0);
-            return _material->getColor();
-        }
+        [[nodiscard]] virtual const Math::Vector3D<double> getColor() const = 0;
 
         /// @brief Sets the color of the primitive
         /// @param color The color vector to set for the primitive
-        inline void setColor(const Math::Vector3D<double>& color) { _material->setColor(color); }
+        virtual void setColor(const Math::Vector3D<double>& color) = 0;
 
-        [[nodiscard]] inline const std::string& getMaterialName() const { return _materialName; }
+        [[nodiscard]] virtual const std::string& getMaterialName() const = 0;
 
-        inline const std::string& setMaterialName(const std::string& materialName)
-        {
-            _materialName = materialName;
-            return _materialName;
-        }
+        virtual const std::string& setMaterialName(const std::string& materialName) = 0;
 
-        [[nodiscard]] inline const std::shared_ptr<IMaterial>& getMaterial() const
-        {
-            return _material;
-        }
+        [[nodiscard]] virtual const std::shared_ptr<IMaterial>& getMaterial() const = 0;
 
-        inline const std::shared_ptr<IMaterial>& setMaterial(
-            const std::shared_ptr<IMaterial>& material)
-        {
-            _material = material;
-            return _material;
-        }
+        virtual const std::shared_ptr<IMaterial>& setMaterial(
+            const std::shared_ptr<IMaterial>& material) = 0;
 
-        virtual bool isGroup() const { return false; }
-
-        protected:
-        /// @brief Name of the material associated with the primitive, used to link the material
-        std::string _materialName;
-
-        /// @brief Shared pointer to the material associated with the primitive, used for rendering
-        std::shared_ptr<IMaterial> _material;
+        virtual bool isGroup() const = 0;
     };
 }  // namespace RayTracer

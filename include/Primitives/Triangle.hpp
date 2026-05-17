@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "IPrimitive.hpp"
+#include "APrimitive.hpp"
 #include "Point3D.hpp"
 
 /// @brief Namespace for the RayTracer project
@@ -19,7 +19,7 @@ namespace RayTracer {
     using Vector3D = Math::Vector3D<double>;
 
     /// @brief Represents a triangle in 3D space
-    class Triangle : public IPrimitive {
+    class Triangle : public APrimitive {
         public:
         Triangle() = default;
 
