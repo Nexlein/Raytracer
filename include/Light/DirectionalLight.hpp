@@ -8,7 +8,6 @@
 #pragma once
 
 #include "ALight.hpp"
-#include "math.h"
 
 namespace RayTracer {
     class DirectionalLight : public ALight {

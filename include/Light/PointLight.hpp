@@ -9,7 +9,6 @@
 
 #include "ALight.hpp"
 #include "Point3D.hpp"
-#include "math.h"
 
 namespace RayTracer {
     using Point3D = Math::Point3D<double>;

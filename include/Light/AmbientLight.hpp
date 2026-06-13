@@ -6,7 +6,6 @@
 */
 
 #include "ALight.hpp"
-#include "math.h"
 
 #pragma once
 
